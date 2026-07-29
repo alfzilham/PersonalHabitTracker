@@ -1,0 +1,1267 @@
+/* ==========================================================================
+   global.css — Anthropic Courses Documentation
+   Design foundation: CSS variables, reset, typography, layout utilities
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. DESIGN TOKENS — CSS Variables (from DESIGN.md)
+   ========================================================================== */
+
+:root {
+
+    /* --- Backgrounds --- */
+    --color-bg: #F5F0E8;
+    /* warm cream — main background */
+    --color-bg-card: #EDE8DC;
+    /* slightly darker cream — cards */
+    --color-bg-sidebar: #E8E0D0;
+    /* sidebar / panel background */
+
+    /* --- Text --- */
+    --color-text-primary: #1A1915;
+    /* near-black — headings */
+    --color-text-secondary: #4A4740;
+    /* dark brown-gray — body */
+    --color-text-muted: #8A8478;
+    /* muted — captions, labels */
+
+    /* --- Accents: Sage Green --- */
+    --color-sage: #6B7F5E;
+    /* sage green — primary accent */
+    --color-sage-light: #8FA882;
+    /* light sage — hover states */
+    --color-sage-bg: #DCE8D4;
+    /* sage tint — badges, highlights */
+
+    /* --- Accents: Dusty Blue --- */
+    --color-blue: #5B7A9E;
+    /* dusty blue — secondary accent */
+    --color-blue-light: #7A9ABE;
+    /* light blue — hover */
+    --color-blue-bg: #D4E0EC;
+    /* blue tint — info badges */
+
+    /* --- Borders --- */
+    --color-border: #D4CBBB;
+    /* warm border */
+    --color-border-light: #E8E0D0;
+    /* subtle border */
+
+    /* --- Status Colors --- */
+    --color-completed: #6B7F5E;
+    /* sage — completed */
+    --color-required: #5B7A9E;
+    /* blue — required */
+    --color-optional: #8A8478;
+    /* muted — optional */
+
+    /* --- Font Families --- */
+    --font-sans: 'Anthropic Sans', sans-serif;
+    /* body, UI, labels */
+    --font-serif: 'Anthropic Serif', serif;
+    /* headings, titles */
+    --font-mono: 'Anthropic Mono', monospace;
+    /* code blocks */
+
+    /* --- Font Sizes --- */
+    --text-xs: 0.75rem;
+    /* 12px — captions */
+    --text-sm: 0.875rem;
+    /* 14px — labels, badges */
+    --text-base: 1rem;
+    /* 16px — body */
+    --text-lg: 1.125rem;
+    /* 18px — large body */
+    --text-xl: 1.25rem;
+    /* 20px — small headings */
+    --text-2xl: 1.5rem;
+    /* 24px — section headings */
+    --text-3xl: 1.875rem;
+    /* 30px — page titles */
+    --text-4xl: 2.25rem;
+    /* 36px — hero headings */
+
+    /* --- Font Weights --- */
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-bold: 700;
+
+    /* --- Line Heights --- */
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-loose: 1.75;
+
+    /* --- Spacing Scale --- */
+    --space-1: 0.25rem;
+    /* 4px */
+    --space-2: 0.5rem;
+    /* 8px */
+    --space-3: 0.75rem;
+    /* 12px */
+    --space-4: 1rem;
+    /* 16px */
+    --space-5: 1.25rem;
+    /* 20px */
+    --space-6: 1.5rem;
+    /* 24px */
+    --space-8: 2rem;
+    /* 32px */
+    --space-10: 2.5rem;
+    /* 40px */
+    --space-12: 3rem;
+    /* 48px */
+    --space-16: 4rem;
+    /* 64px */
+
+    /* --- Border Radius --- */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    /* pills */
+
+    /* --- Shadows --- */
+    --shadow-sm: 0 1px 3px rgba(26, 25, 21, 0.08);
+    --shadow-md: 0 4px 12px rgba(26, 25, 21, 0.10);
+    --shadow-lg: 0 8px 24px rgba(26, 25, 21, 0.12);
+
+    /* --- Transitions --- */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 400ms ease;
+
+}
+
+/* --- Dark Theme --- */
+[data-theme="dark"] {
+    --color-bg: #1A1A1A;
+    --color-bg-card: #252525;
+    --color-bg-sidebar: #2A2A2A;
+    --color-text-primary: #E8E0D0;
+    --color-text-secondary: #B8B0A0;
+    --color-text-muted: #8A8478;
+    --color-sage: #8FA882;
+    --color-sage-light: #A8C0A0;
+    --color-sage-bg: #2A3A2A;
+    --color-blue: #7A9ABE;
+    --color-blue-light: #90B0D0;
+    --color-blue-bg: #283040;
+    --color-border: #3A3830;
+    --color-border-light: #2E2C28;
+    --color-completed: #8FA882;
+    --color-required: #7A9ABE;
+    --color-optional: #8A8478;
+}
+
+
+/* ==========================================================================
+     2. RESET — Modern CSS reset
+     ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    /* Prevent font size inflation on mobile */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-normal);
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove list styles on ul/ol with a list role */
+ul[role="list"],
+ol[role="list"] {
+    list-style: none;
+}
+
+/* Set sensible image defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Inherit fonts for form elements */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
+
+/* Remove default button styles */
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+/* Remove default anchor styles */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Remove default table styles */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Remove default fieldset styles */
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+
+/* ==========================================================================
+     3. TYPOGRAPHY — Headings, body text, code, lists
+     ========================================================================== */
+
+/* --- Headings — Anthropic Serif --- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-serif);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    color: var(--color-text-primary);
+}
+
+h1 {
+    font-size: var(--text-4xl);
+    /* 36px — hero headings */
+}
+
+h2 {
+    font-size: var(--text-3xl);
+    /* 30px — page titles */
+}
+
+h3 {
+    font-size: var(--text-2xl);
+    /* 24px — section headings */
+}
+
+h4 {
+    font-size: var(--text-xl);
+    /* 20px — small headings */
+}
+
+h5 {
+    font-size: var(--text-lg);
+    /* 18px */
+}
+
+h6 {
+    font-size: var(--text-base);
+    /* 16px */
+}
+
+/* --- Body text — Anthropic Sans --- */
+p {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-weight: var(--weight-regular);
+    line-height: var(--leading-loose);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Large body text --- */
+.text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--leading-loose);
+}
+
+/* --- Lead paragraph (intro text) --- */
+.lead {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-loose);
+    font-weight: var(--weight-regular);
+}
+
+/* --- Labels & captions — Anthropic Sans --- */
+label,
+caption,
+.caption {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-normal);
+}
+
+/* --- Code & pre — Anthropic Mono --- */
+code,
+kbd,
+samp {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    /* slightly smaller than surrounding text */
+    background-color: var(--color-bg-card);
+    color: var(--color-sage);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.1em 0.4em;
+}
+
+pre {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    overflow-x: auto;
+    line-height: var(--leading-loose);
+    margin-bottom: var(--space-6);
+}
+
+/* Reset code inside pre (no double styling) */
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--color-text-primary);
+    border-radius: 0;
+}
+
+/* --- Lists --- */
+ul,
+ol {
+    padding-left: var(--space-6);
+    margin-bottom: var(--space-4);
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+li {
+    font-size: var(--text-base);
+    line-height: var(--leading-loose);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+/* Nested lists */
+ul ul,
+ol ol,
+ul ol,
+ol ul {
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+/* --- Blockquote --- */
+blockquote {
+    border-left: 3px solid var(--color-sage);
+    padding: var(--space-4) var(--space-6);
+    margin: var(--space-6) 0;
+    background-color: var(--color-sage-bg);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+blockquote p {
+    font-size: var(--text-lg);
+    font-style: italic;
+    color: var(--color-text-primary);
+    margin-bottom: 0;
+}
+
+/* --- Horizontal rule --- */
+hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: var(--space-8) 0;
+}
+
+/* --- Strong & emphasis --- */
+strong,
+b {
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+}
+
+em,
+i {
+    font-style: italic;
+}
+
+/* --- Text utility classes --- */
+.text-primary {
+    color: var(--color-text-primary);
+}
+
+.text-secondary {
+    color: var(--color-text-secondary);
+}
+
+.text-muted {
+    color: var(--color-text-muted);
+}
+
+.text-sage {
+    color: var(--color-sage);
+}
+
+.text-blue {
+    color: var(--color-blue);
+}
+
+.text-xs {
+    font-size: var(--text-xs);
+}
+
+.text-sm {
+    font-size: var(--text-sm);
+}
+
+.text-base {
+    font-size: var(--text-base);
+}
+
+.text-xl {
+    font-size: var(--text-xl);
+}
+
+.text-2xl {
+    font-size: var(--text-2xl);
+}
+
+.text-3xl {
+    font-size: var(--text-3xl);
+}
+
+.text-4xl {
+    font-size: var(--text-4xl);
+}
+
+.font-sans {
+    font-family: var(--font-sans);
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+.font-regular {
+    font-weight: var(--weight-regular);
+}
+
+.font-medium {
+    font-weight: var(--weight-medium);
+}
+
+.font-bold {
+    font-weight: var(--weight-bold);
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.tracking-wide {
+    letter-spacing: 0.05em;
+}
+
+.tracking-wider {
+    letter-spacing: 0.1em;
+}
+
+
+/* ==========================================================================
+     4. LAYOUT UTILITIES — Flex, Grid, Spacing, Sizing, Display
+     ========================================================================== */
+
+/* --- Display --- */
+.block {
+    display: block;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.inline {
+    display: inline;
+}
+
+.flex {
+    display: flex;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Show/hide on desktop vs mobile (used by bottom nav) */
+.hidden-desktop {
+    display: none;
+}
+
+.hidden-mobile {
+    display: block;
+}
+
+/* --- Flex utilities --- */
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.items-stretch {
+    align-items: stretch;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-around {
+    justify-content: space-around;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-auto {
+    flex: auto;
+}
+
+.flex-none {
+    flex: none;
+}
+
+.self-start {
+    align-self: flex-start;
+}
+
+.self-center {
+    align-self: center;
+}
+
+.self-end {
+    align-self: flex-end;
+}
+
+/* --- Gap utilities --- */
+.gap-1 {
+    gap: var(--space-1);
+}
+
+.gap-2 {
+    gap: var(--space-2);
+}
+
+.gap-3 {
+    gap: var(--space-3);
+}
+
+.gap-4 {
+    gap: var(--space-4);
+}
+
+.gap-5 {
+    gap: var(--space-5);
+}
+
+.gap-6 {
+    gap: var(--space-6);
+}
+
+.gap-8 {
+    gap: var(--space-8);
+}
+
+.gap-10 {
+    gap: var(--space-10);
+}
+
+.gap-12 {
+    gap: var(--space-12);
+}
+
+/* --- Grid utilities --- */
+.grid-cols-1 {
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* --- Margin utilities --- */
+.m-0 {
+    margin: 0;
+}
+
+.m-1 {
+    margin: var(--space-1);
+}
+
+.m-2 {
+    margin: var(--space-2);
+}
+
+.m-3 {
+    margin: var(--space-3);
+}
+
+.m-4 {
+    margin: var(--space-4);
+}
+
+.m-6 {
+    margin: var(--space-6);
+}
+
+.m-8 {
+    margin: var(--space-8);
+}
+
+.mt-0 {
+    margin-top: 0;
+}
+
+.mt-1 {
+    margin-top: var(--space-1);
+}
+
+.mt-2 {
+    margin-top: var(--space-2);
+}
+
+.mt-3 {
+    margin-top: var(--space-3);
+}
+
+.mt-4 {
+    margin-top: var(--space-4);
+}
+
+.mt-5 {
+    margin-top: var(--space-5);
+}
+
+.mt-6 {
+    margin-top: var(--space-6);
+}
+
+.mt-8 {
+    margin-top: var(--space-8);
+}
+
+.mt-10 {
+    margin-top: var(--space-10);
+}
+
+.mt-12 {
+    margin-top: var(--space-12);
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: var(--space-1);
+}
+
+.mb-2 {
+    margin-bottom: var(--space-2);
+}
+
+.mb-3 {
+    margin-bottom: var(--space-3);
+}
+
+.mb-4 {
+    margin-bottom: var(--space-4);
+}
+
+.mb-5 {
+    margin-bottom: var(--space-5);
+}
+
+.mb-6 {
+    margin-bottom: var(--space-6);
+}
+
+.mb-8 {
+    margin-bottom: var(--space-8);
+}
+
+.mb-10 {
+    margin-bottom: var(--space-10);
+}
+
+.mb-12 {
+    margin-bottom: var(--space-12);
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.mr-auto {
+    margin-right: auto;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Padding utilities --- */
+.p-0 {
+    padding: 0;
+}
+
+.p-1 {
+    padding: var(--space-1);
+}
+
+.p-2 {
+    padding: var(--space-2);
+}
+
+.p-3 {
+    padding: var(--space-3);
+}
+
+.p-4 {
+    padding: var(--space-4);
+}
+
+.p-5 {
+    padding: var(--space-5);
+}
+
+.p-6 {
+    padding: var(--space-6);
+}
+
+.p-8 {
+    padding: var(--space-8);
+}
+
+.p-10 {
+    padding: var(--space-10);
+}
+
+.p-12 {
+    padding: var(--space-12);
+}
+
+.pt-4 {
+    padding-top: var(--space-4);
+}
+
+.pt-6 {
+    padding-top: var(--space-6);
+}
+
+.pt-8 {
+    padding-top: var(--space-8);
+}
+
+.pb-4 {
+    padding-bottom: var(--space-4);
+}
+
+.pb-6 {
+    padding-bottom: var(--space-6);
+}
+
+.pb-8 {
+    padding-bottom: var(--space-8);
+}
+
+.px-4 {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+}
+
+.px-6 {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+}
+
+.px-8 {
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
+}
+
+.py-4 {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+}
+
+.py-6 {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+}
+
+.py-8 {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+}
+
+/* --- Width & Height utilities --- */
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+
+.w-auto {
+    width: auto;
+}
+
+/* --- Max-width containers --- */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+}
+
+.container-sm {
+    max-width: 768px;
+}
+
+.container-md {
+    max-width: 960px;
+}
+
+/* --- Position utilities --- */
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.sticky {
+    position: sticky;
+}
+
+/* --- Overflow utilities --- */
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.overflow-auto {
+    overflow: auto;
+}
+
+.overflow-x-auto {
+    overflow-x: auto;
+}
+
+/* --- Border radius utilities --- */
+.rounded-sm {
+    border-radius: var(--radius-sm);
+}
+
+.rounded-md {
+    border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+    border-radius: var(--radius-lg);
+}
+
+.rounded-xl {
+    border-radius: var(--radius-xl);
+}
+
+.rounded-full {
+    border-radius: var(--radius-full);
+}
+
+/* --- Shadow utilities --- */
+.shadow-sm {
+    box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+    box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+    box-shadow: var(--shadow-lg);
+}
+
+/* --- Cursor utilities --- */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+/* --- Opacity utilities --- */
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-50 {
+    opacity: 0.5;
+}
+
+.opacity-75 {
+    opacity: 0.75;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+
+/* ==========================================================================
+     5. BASE PAGE LAYOUT — Dashboard shell (used by index.html)
+     ========================================================================== */
+
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
+/* --- App wrapper — full viewport, flex column --- */
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--color-bg);
+}
+
+/* --- Top header bar --- */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-8);
+    background-color: var(--color-bg-sidebar);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.app-header__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+}
+
+/* --- Main content area — sidebar + panel --- */
+.app-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+/* --- Left sidebar --- */
+.app-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100%;
+    background-color: var(--color-bg-sidebar);
+    border-right: 1px solid var(--color-border);
+    padding: var(--space-6) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+/* --- Right panel --- */
+.app-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-8);
+    min-height: 0;
+}
+
+/* .app-panel::-webkit-scrollbar {
+    display: none;
+} */
+
+
+/* ==========================================================================
+     6. BASE COURSE PAGE LAYOUT — Used by pages/[slug].html
+     ========================================================================== */
+
+/* --- Course page wrapper --- */
+.course-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+}
+
+/* --- Back nav bar --- */
+.course-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+}
+
+/* --- Course header (title + badges) --- */
+.course-header {
+    margin-bottom: var(--space-10);
+}
+
+.course-header__badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.course-header__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-4xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-4);
+}
+
+/* --- Section headings inside course pages --- */
+.section-heading {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* --- Course sections --- */
+.course-section {
+    margin-bottom: var(--space-12);
+}
+
+/* --- Takeaways card grid — 3 cols by default --- */
+.takeaways-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+}
+
+
+/* ==========================================================================
+     7. FOCUS & ACCESSIBILITY
+     ========================================================================== */
+
+/* Visible focus outline for keyboard navigation */
+:focus-visible {
+    outline: 2px solid var(--color-sage);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* Remove focus ring for mouse users */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* ==========================================================================
+     8. SCROLLBAR — Custom styled to match the earthy theme
+     ========================================================================== */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-sidebar);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+}
+
+
+/* ==========================================================================
+     9. SELECTION — Branded text selection color
+     ========================================================================== */
+
+::selection {
+    background-color: var(--color-sage-bg);
+    color: var(--color-text-primary);
+}
+
+::-moz-selection {
+    background-color: var(--color-sage-bg);
+    color: var(--color-text-primary);
+}

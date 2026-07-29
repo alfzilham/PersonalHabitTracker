@@ -1,0 +1,1 @@
+const STUDY_COURSES = [];

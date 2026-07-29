@@ -1,0 +1,16 @@
+# Dependencies
+server/node_modules/
+
+# Environment variables — jangan commit key asli
+server/.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/console.log
+
+# OpenCode artifacts (local saja)
+graphify-out/
+ruvector.db

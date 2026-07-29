@@ -1,0 +1,835 @@
+/* ==========================================================================
+   responsive.css — License Courses Tracker
+   Mobile responsive overrides. Desktop-first.
+   Load AFTER global.css and components.css
+   ========================================================================== */
+
+
+/* ==========================================================================
+    1. TABLET — max-width: 1024px
+    Spacing & font scale-down
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+
+    .app-panel {
+        padding: var(--space-6);
+    }
+
+    .table tbody td.col-name {
+        min-width: 160px;
+    }
+
+    .table tbody td.col-desc {
+        max-width: 200px;
+    }
+
+    .takeaways-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* ==========================================================================
+    2. MOBILE UTAMA — max-width: 768px
+    Bottom nav, full-screen modal, 1 kolom, table scroll
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+    /* ============================================
+       2z. Login Split — stack vertikal
+       ============================================ */
+
+    .login-split {
+        flex-direction: column;
+    }
+
+    .login-visual {
+        display: none;
+    }
+
+    .login-panel {
+        padding: var(--space-4);
+        align-items: center;
+        padding-top: 0;
+        min-height: 100vh;
+    }
+
+    .login-panel .login-card {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .login-panel .login-card__header {
+        text-align: center;
+        align-items: center;
+    }
+
+    .login-panel .login-form {
+        gap: var(--space-4);
+    }
+
+    /* ============================================
+       2a. Typography & Spacing Scale-down
+       ============================================ */
+
+    .app-panel {
+        padding: var(--space-4);
+        padding-bottom: 72px;
+        /* ruang bottom nav */
+        overflow-x: hidden;
+    }
+
+    .app-header {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .app-header__title {
+        font-size: var(--text-lg);
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+
+    h1,
+    .text-4xl {
+        font-size: var(--text-3xl);
+    }
+
+    h2,
+    .text-3xl {
+        font-size: var(--text-2xl);
+    }
+
+    h3,
+    .text-2xl {
+        font-size: var(--text-xl);
+    }
+
+    .card-stat__value {
+        font-size: var(--text-2xl);
+    }
+
+
+    /* ============================================
+       2b. App Shell — Sidebar → Bottom Navigation
+       ============================================ */
+
+    .app-sidebar {
+        display: none;
+    }
+
+    .app-body {
+        flex-direction: column;
+    }
+
+    .hidden-desktop {
+        display: flex;
+    }
+
+    .hidden-mobile {
+        display: none;
+    }
+
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background-color: var(--color-bg-sidebar);
+        border-top: 1px solid var(--color-border);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .bottom-nav__item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        flex: 1;
+        min-height: 56px;
+        padding: var(--space-1) 0;
+        border: none;
+        background: transparent;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        font-family: var(--font-sans);
+        font-size: 9px;
+        line-height: 1.1;
+        text-align: center;
+        transition: color var(--transition-fast);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .bottom-nav__item svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .bottom-nav__item.active {
+        color: var(--color-sage);
+    }
+
+    .bottom-nav__item.active svg {
+        color: var(--color-sage);
+    }
+
+
+    /* ============================================
+       2c. Bottom Sheet — More menu
+       ============================================ */
+
+    .bottom-sheet-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(26, 25, 21, 0.5);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--transition-normal);
+    }
+
+    .bottom-sheet-overlay.is-open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .bottom-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 201;
+        background: var(--color-bg);
+        border-top-left-radius: var(--radius-xl);
+        border-top-right-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        padding: var(--space-4) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0));
+        transform: translateY(100%);
+        transition: transform var(--transition-normal);
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .bottom-sheet.is-open {
+        transform: translateY(0);
+    }
+
+    .bottom-sheet__handle {
+        width: 40px;
+        height: 4px;
+        border-radius: var(--radius-full);
+        background: var(--color-border);
+        margin: 0 auto var(--space-4);
+    }
+
+    .bottom-sheet__title {
+        font-family: var(--font-serif);
+        font-size: var(--text-lg);
+        font-weight: var(--weight-bold);
+        color: var(--color-text-primary);
+        margin-bottom: var(--space-4);
+        text-align: center;
+    }
+
+    .bottom-sheet__item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        border: none;
+        background: transparent;
+        color: var(--color-text-secondary);
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        transition: background var(--transition-fast);
+        text-align: left;
+    }
+
+    .bottom-sheet__item svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        color: var(--color-text-muted);
+    }
+
+    .bottom-sheet__item:hover {
+        background: var(--color-sage-bg);
+    }
+
+    .bottom-sheet__divider {
+        height: 1px;
+        background: var(--color-border);
+        margin: var(--space-2) var(--space-4);
+    }
+
+    .bottom-sheet__profile {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        margin-top: var(--space-2);
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        transition: background var(--transition-fast);
+    }
+
+    .bottom-sheet__profile:hover {
+        background: var(--color-sage-bg);
+    }
+
+    .bottom-sheet__profile img {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-full);
+        object-fit: cover;
+    }
+
+    .bottom-sheet__profile-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .bottom-sheet__profile-name {
+        font-size: var(--text-sm);
+        font-weight: var(--weight-bold);
+        color: var(--color-text-primary);
+        display: block;
+    }
+
+    .bottom-sheet__profile-role {
+        font-size: var(--text-xs);
+        color: var(--color-text-muted);
+        display: block;
+    }
+
+    /* Hide sidebar profile in mobile */
+    .sidebar-profile {
+        display: none;
+    }
+
+
+    /* ============================================
+       2d. Header — simplify for mobile
+       ============================================ */
+
+    #header-counter {
+        gap: var(--space-2);
+    }
+
+    #header-counter .text-sm {
+        font-size: 10px;
+    }
+
+    #header-counter .font-bold.text-primary {
+        font-size: 11px;
+    }
+
+    #header-counter .flex.items-center.gap-2 {
+        gap: 4px;
+    }
+
+
+    /* ============================================
+       2e. View Bar & Filters — stack vertikal
+       ============================================ */
+
+    .view-bar {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .view-bar .filter-search {
+        max-width: 100% !important;
+        flex: 1 1 100%;
+        order: -1;
+    }
+
+    .view-bar .view-dropdown {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* FAB style tombol add */
+    .btn-primary:has(i[data-lucide="plus"]) {
+        /* FAB untuk tombol Add yang ada icon plus */
+    }
+
+    #add-course-btn span,
+    #todo-add-btn span,
+    #finance-add-btn span,
+    #cert-add-btn span {
+        display: none !important;
+    }
+
+    #add-course-btn,
+    #todo-add-btn,
+    #finance-add-btn,
+    #cert-add-btn,
+    #study-add-subject-btn {
+        position: fixed;
+        bottom: calc(72px + env(safe-area-inset-bottom, 0));
+        right: var(--space-4);
+        z-index: 50;
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        padding: 0;
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-md);
+        font-size: 0;
+        line-height: 0;
+        overflow: hidden;
+        gap: 0;
+    }
+
+    #add-course-btn i,
+    #todo-add-btn i,
+    #finance-add-btn i,
+    #cert-add-btn i,
+    #study-add-subject-btn i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 22px;
+        height: 22px;
+        margin: 0;
+        display: block;
+    }
+
+    /* Study progress row — beri ruang untuk FAB */
+    #panel-study .flex.items-stretch.gap-4.mb-6 {
+        flex-direction: column;
+    }
+
+    .study-progress-card {
+        flex: 1 1 auto;
+    }
+
+
+    /* ============================================
+       2f. Table — horizontal scroll
+       ============================================ */
+
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+
+    .table {
+        font-size: var(--text-xs);
+        min-width: 600px;
+    }
+
+    .table thead th {
+        font-size: 10px;
+        padding: var(--space-2) var(--space-3);
+        white-space: nowrap;
+    }
+
+    .table tbody td {
+        padding: var(--space-3);
+        white-space: nowrap;
+    }
+
+    .table tbody td.col-name {
+        min-width: 140px;
+        font-size: var(--text-xs);
+    }
+
+    .table tbody td.col-desc {
+        max-width: 140px;
+        font-size: 10px;
+    }
+
+    /* Empty state — jangan terpotong */
+    .archived-empty,
+    .study-empty {
+        max-width: 100%;
+        padding: var(--space-8) var(--space-4);
+        word-break: break-word;
+    }
+
+    .archived-empty p,
+    .study-empty p {
+        max-width: 100%;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+
+    #panel-todo .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ============================================
+       2g. Analytics Grid — 1 column
+       ============================================ */
+
+    #panel-analytics .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+
+    #panel-analytics .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-canvas-wrapper--pie {
+        width: 200px;
+        height: 200px;
+    }
+
+    .chart-canvas-wrapper--bar {
+        height: 200px;
+    }
+
+
+    /* ============================================
+       2h. Certificate Gallery
+       ============================================ */
+
+    .cert-gallery.has-certs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+
+    /* ============================================
+       2i. Journal — masonry 1 column
+       ============================================ */
+
+    .masonry-grid {
+        column-count: 1 !important;
+    }
+
+
+    /* ============================================
+       2j. Finance — search & Add split
+       ============================================ */
+
+    #panel-finance .flex.items-center.justify-between.mb-6 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    #panel-finance .flex.items-center.gap-3 {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    #panel-finance .filter-search {
+        max-width: 100% !important;
+        flex: 1 1 100%;
+    }
+
+
+    /* ============================================
+       2k. Study progress row
+       ============================================ */
+
+    #panel-study .flex.items-stretch.gap-4.mb-6 {
+        flex-direction: column;
+    }
+
+
+    /* ============================================
+       2l. Modal — full screen policy
+       ============================================ */
+
+    .modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .modal-overlay .modal,
+    .modal-overlay .lightbox {
+        width: 100%;
+        max-width: none;
+        max-height: 100%;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .modal__form {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: var(--space-4);
+    }
+
+    .lightbox__body {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal__actions {
+        position: sticky;
+        bottom: 0;
+        background: var(--color-bg);
+        padding-top: var(--space-4);
+        margin-top: 0;
+        border-top: 1px solid var(--color-border);
+    }
+
+    /* Confirm modals tetap centered */
+    .modal-overlay .modal--confirm {
+        width: auto;
+        max-width: 90vw;
+        height: auto;
+        max-height: auto;
+        border-radius: var(--radius-xl);
+        display: block;
+    }
+
+    .modal-overlay .modal--confirm .modal__form {
+        flex: none;
+        overflow: visible;
+    }
+
+    .modal-overlay .modal--confirm .modal__actions {
+        position: static;
+        border-top: none;
+        background: transparent;
+    }
+
+    /* Lightbox khusus mobile */
+    .lightbox__image {
+        max-height: 40vh;
+    }
+
+    .lightbox__footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--color-bg);
+    }
+
+
+    /* ============================================
+       2m. Settings — 2-panel → stack
+       ============================================ */
+
+    .modal-overlay .settings-modal {
+        width: 100%;
+        max-width: none;
+        max-height: 100%;
+        height: 100%;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .settings-layout {
+        flex: 1;
+        flex-direction: column;
+        height: auto;
+        overflow: hidden;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+        padding: var(--space-2) var(--space-3);
+        overflow-x: auto;
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        -webkit-overflow-scrolling: touch;
+        flex-shrink: 0;
+    }
+
+    .settings-sidebar .filter-search {
+        display: none;
+    }
+
+    .settings-nav-group {
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        flex-shrink: 0;
+        border: none;
+        padding: 0;
+    }
+
+    .settings-nav-group__title {
+        display: none;
+    }
+
+    .settings-nav__item {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: var(--text-xs);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-md);
+    }
+
+    .settings-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: var(--space-4);
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .settings-section {
+        max-width: 100%;
+    }
+
+    .settings-close {
+        top: var(--space-3);
+        right: var(--space-3);
+    }
+
+    /* Profile grid → stack */
+    .settings-profile-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .settings-profile-grid__right {
+        order: -1;
+        display: flex;
+        justify-content: center;
+    }
+
+
+    /* ============================================
+       2n. Danger Card — stack vertikal
+       ============================================ */
+
+    .danger-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+    }
+
+    .danger-card .btn {
+        width: 100%;
+    }
+
+
+    /* ============================================
+       2o. To-do
+       ============================================ */
+
+    .todo-item {
+        padding: var(--space-3);
+    }
+
+    .todo-day-separator {
+        margin-top: var(--space-3);
+        margin-bottom: var(--space-2);
+    }
+
+
+    /* ============================================
+       2p. Study card dalam journal
+       ============================================ */
+
+    .study-card {
+        break-inside: avoid;
+        margin-bottom: var(--space-4);
+    }
+
+
+    /* ============================================
+       2q. Course Editor mobile
+       ============================================ */
+
+    .editor-badges {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ============================================
+       2r. About section tables — responsive
+       ============================================ */
+
+    #section-about .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #section-about .table {
+        width: 100%;
+        table-layout: fixed;
+        min-width: 0;
+    }
+
+    #section-about .table td,
+    #section-about .table th {
+        white-space: normal;
+        word-break: break-word;
+        padding: var(--space-2) var(--space-3);
+    }
+
+    #section-about .table td:first-child {
+        width: 30%;
+        white-space: nowrap;
+        font-weight: var(--weight-medium);
+    }
+
+    #section-about .table td:last-child {
+        width: 70%;
+    }
+
+}
+
+
+/* ==========================================================================
+    3. MOBILE KECIL — max-width: 400px
+    Fine tuning
+   ========================================================================== */
+
+@media (max-width: 400px) {
+
+    .app-panel {
+        padding: var(--space-3);
+        padding-bottom: 64px;
+    }
+
+    .cert-gallery.has-certs {
+        grid-template-columns: 1fr;
+    }
+
+    .bottom-nav__item {
+        font-size: 8px;
+        min-height: 48px;
+    }
+
+    .bottom-nav__item svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .chart-canvas-wrapper--pie {
+        width: 160px;
+        height: 160px;
+    }
+
+    .modal__time-range {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .modal__time-range .view-dropdown {
+        width: 100%;
+    }
+
+}

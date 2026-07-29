@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Personal Habit Tracker</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
+
+    <!-- Anthropic Fonts -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body>
+
+    <!-- =====================================================================
+    LOGIN PAGE — Split layout
+  ====================================================================== -->
+    <div class="login-split">
+
+        <!-- LEFT: Visual Panel -->
+        <div class="login-visual">
+            <div class="login-visual__grid"></div>
+            <div class="login-brand">
+                <h1 class="login-brand__title">Personal Habit<br>Tracker</h1>
+                <p class="login-brand__desc">
+                    Dashboard personal untuk melacak kursus online,<br>
+                    jadwal kuliah, tugas, dan keuangan harian.
+                </p>
+                <div class="login-brand__features">
+                    <span>Multi-user</span>
+                    <span>Cloud sync</span>
+                    <span>100% privat</span>
+                </div>
+                <blockquote class="login-brand__quote">
+                    "Setiap kursus yang terselesaikan adalah<br>
+                    satu langkah lebih dekat menuju penguasaan."
+                </blockquote>
+                <div class="login-brand__footer">
+                    &copy; 2026 Alfiz Ilham. All rights reserved.
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Form Panel -->
+        <div class="login-panel">
+            <div class="login-card">
+                <div class="login-card__header">
+                    <h1 class="login-card__title">Masuk</h1>
+                    <p class="login-card__subtitle">Masukkan username dan key Anda</p>
+                </div>
+
+                <form id="login-form" class="login-form">
+                    <!-- Username -->
+                    <div class="modal__field">
+                        <label class="modal__label" for="login-username">Username</label>
+                        <input class="modal__input" type="text" id="login-username" placeholder="Buat username Anda"
+                            autocomplete="username" required>
+                        <span class="login-hint">Buat username baru untuk login pertama, atau pakai username yang sudah
+                            ada.</span>
+                    </div>
+
+                    <!-- Developer Key — masked slot input -->
+                    <div class="modal__field">
+                        <label class="modal__label">Developer Key</label>
+                        <div class="key-input-wrap">
+                            <div class="key-input-slots">
+                                <span class="key-slot" data-index="0">X</span>
+                                <span class="key-slot" data-index="1">X</span>
+                                <span class="key-slot" data-index="2">X</span>
+                                <span class="key-dash">–</span>
+                                <span class="key-slot" data-index="3">X</span>
+                                <span class="key-slot" data-index="4">X</span>
+                                <span class="key-slot" data-index="5">X</span>
+                            </div>
+                            <input type="text" id="login-key" maxlength="6" autocomplete="off"
+                                class="key-hidden-input">
+                        </div>
+                        <span class="login-hint">Masukkan 6 huruf kapital Developer Key Anda.</span>
+                    </div>
+
+                    <!-- Error message -->
+                    <div id="login-error" class="login-error hidden"></div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-primary login-btn" id="login-submit">
+                        <i data-lucide="log-in"></i>
+                        <span>Login</span>
+                    </button>
+                </form>
+
+                <div class="login-divider"></div>
+
+                <div class="login-footer">
+                    <p>Belum punya key?</p>
+                    <a href="https://wa.me/6285213896460" target="_blank" rel="noopener"
+                       class="login-wa-link">Hubungi developer via WhatsApp</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="assets/js/login.js"></script>
+</body>
+
+</html>

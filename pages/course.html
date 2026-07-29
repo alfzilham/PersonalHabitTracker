@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Notes — Personal Habit Tracker</title>
+
+    <link rel="icon" type="image/x-icon" href="../assets/favicon/favicon.ico">
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
+
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+
+<body>
+
+    <div class="course-page" id="course-root">
+
+        <!-- Back button -->
+        <nav class="course-nav">
+            <a href="../index.html" class="btn-back">
+                <i data-lucide="arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </nav>
+
+        <!-- Course info — editable -->
+        <div class="card mb-6">
+            <div class="editor-field">
+                <label class="modal__label">Course Title</label>
+                <input class="modal__input" type="text" id="editor-title" placeholder="Nama course"
+                    autocomplete="off">
+            </div>
+            <div class="editor-badges">
+                <div class="editor-field">
+                    <label class="modal__label">Role</label>
+                    <input class="modal__input" type="text" id="editor-role" placeholder="e.g. AI Engineer"
+                        autocomplete="off">
+                </div>
+                <div class="editor-field">
+                    <label class="modal__label">Category</label>
+                    <input class="modal__input" type="text" id="editor-category" placeholder="e.g. Machine Learning"
+                        autocomplete="off">
+                </div>
+                <div class="editor-field">
+                    <label class="modal__label">Company</label>
+                    <input class="modal__input" type="text" id="editor-company" placeholder="e.g. Anthropic"
+                        autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes editor -->
+        <div class="card">
+            <h2 class="text-xl font-bold text-primary font-serif mb-4">Course Notes</h2>
+
+            <!-- Markdown toolbar -->
+            <div class="editor-toolbar" id="editor-toolbar">
+                <button type="button" class="editor-toolbar__btn" data-md="bold" title="Bold">
+                    <i data-lucide="bold"></i>
+                </button>
+                <button type="button" class="editor-toolbar__btn" data-md="italic" title="Italic">
+                    <i data-lucide="italic"></i>
+                </button>
+                <button type="button" class="editor-toolbar__btn" data-md="heading" title="Heading">
+                    <i data-lucide="heading"></i>
+                </button>
+                <button type="button" class="editor-toolbar__btn" data-md="list" title="Bulleted list">
+                    <i data-lucide="list"></i>
+                </button>
+                <button type="button" class="editor-toolbar__btn" data-md="link" title="Link">
+                    <i data-lucide="link"></i>
+                </button>
+                <span class="editor-toolbar__sep"></span>
+                <button type="button" class="editor-toolbar__btn editor-toolbar__btn--preview" id="editor-preview-toggle" title="Toggle preview">
+                    <i data-lucide="eye"></i>
+                </button>
+            </div>
+
+            <!-- Textarea -->
+            <textarea class="editor-textarea" id="editor-content"
+                placeholder="Tulis catatan course Anda di sini...&#10;&#10;Mendukung format Markdown:&#10;**bold** _italic_ ### Heading&#10;- list item&#10;[link text](url)"
+                rows="15"></textarea>
+
+            <!-- Preview area (hidden by default) -->
+            <div class="editor-preview hidden" id="editor-preview"></div>
+
+            <!-- Actions -->
+            <div class="editor-actions">
+                <span class="editor-status" id="editor-status"></span>
+                <div class="editor-actions__right">
+                    <button class="btn btn-ghost" id="editor-delete-btn">
+                        <i data-lucide="trash-2"></i> Hapus
+                    </button>
+                    <button class="btn btn-primary" id="editor-save-btn">
+                        <i data-lucide="check"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/data-study.js"></script>
+    <script src="../assets/js/study-db.js"></script>
+    <script src="../assets/js/dashboard-i18n.js"></script>
+    <script src="../assets/js/dashboard-core.js"></script>
+
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var courseId = params.get('id');
+
+            if (!courseId) {
+                document.getElementById('course-root').innerHTML =
+                    '<nav class="course-nav"><a href="../index.html" class="btn-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a></nav>' +
+                    '<div class="card" style="padding:var(--space-10);text-align:center;margin-top:var(--space-8);">' +
+                    '<p class="text-muted">Course not found.</p></div>';
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            /* Elements */
+            var titleInput = document.getElementById('editor-title');
+            var roleInput = document.getElementById('editor-role');
+            var catInput = document.getElementById('editor-category');
+            var companyInput = document.getElementById('editor-company');
+            var contentArea = document.getElementById('editor-content');
+            var previewArea = document.getElementById('editor-preview');
+            var previewToggle = document.getElementById('editor-preview-toggle');
+            var saveBtn = document.getElementById('editor-save-btn');
+            var deleteBtn = document.getElementById('editor-delete-btn');
+            var statusEl = document.getElementById('editor-status');
+            var toolbar = document.getElementById('editor-toolbar');
+
+            var previewVisible = false;
+            var saveTimer = null;
+
+            /* Load existing course info from custom_courses */
+            function loadCourseInfo() {
+                try {
+                    var raw = localStorage.getItem('custom_courses');
+                    if (raw) {
+                        var list = JSON.parse(raw);
+                        var course = list.find(function (c) { return c.id === courseId; });
+                        if (course) {
+                            titleInput.value = course.title || '';
+                            roleInput.value = course.role || '';
+                            catInput.value = course.subCategory || '';
+                            companyInput.value = course.company || '';
+                            return true;
+                        }
+                    }
+                } catch (e) {}
+                return false;
+            }
+
+            /* Load notes from course_notes */
+            function loadNotes() {
+                var allNotes = loadCourseNotes();
+                var note = allNotes[courseId];
+                if (note) {
+                    if (note.title) titleInput.value = note.title;
+                    if (note.badges) {
+                        if (note.badges.role) roleInput.value = note.badges.role;
+                        if (note.badges.subCategory) catInput.value = note.badges.subCategory;
+                        if (note.badges.company) companyInput.value = note.badges.company;
+                    }
+                    contentArea.value = note.content || '';
+                    renderPreview(contentArea.value);
+                }
+            }
+
+            /* Render markdown preview */
+            function renderPreview(src) {
+                if (!src) { previewArea.innerHTML = '<p class="text-muted">Preview akan muncul di sini...</p>'; return; }
+                previewArea.innerHTML = renderMarkdown(src);
+            }
+
+            /* Toggle preview */
+            function togglePreview() {
+                previewVisible = !previewVisible;
+                contentArea.classList.toggle('hidden', previewVisible);
+                previewArea.classList.toggle('hidden', !previewVisible);
+                var icon = previewToggle.querySelector('i');
+                if (previewVisible) {
+                    renderPreview(contentArea.value);
+                    previewToggle.classList.add('is-active');
+                    if (icon) icon.setAttribute('data-lucide', 'file-text');
+                } else {
+                    previewToggle.classList.remove('is-active');
+                    if (icon) icon.setAttribute('data-lucide', 'eye');
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+
+            /* Set status message */
+            function setStatus(msg, isError) {
+                statusEl.textContent = msg;
+                statusEl.style.color = isError ? 'var(--color-danger)' : 'var(--color-sage)';
+                clearTimeout(statusEl._timer);
+                statusEl._timer = setTimeout(function () { statusEl.textContent = ''; }, 3000);
+            }
+
+            /* Save notes */
+            function saveNotes() {
+                var allNotes = loadCourseNotes();
+                allNotes[courseId] = {
+                    title: titleInput.value.trim(),
+                    badges: {
+                        role: roleInput.value.trim(),
+                        subCategory: catInput.value.trim(),
+                        company: companyInput.value.trim(),
+                    },
+                    content: contentArea.value,
+                    updatedAt: new Date().toISOString(),
+                };
+                saveCourseNotes(allNotes);
+                document.title = (titleInput.value.trim() || 'Course Notes') + ' \u2014 Personal Habit Tracker';
+                setStatus('Tersimpan.');
+            }
+
+            /* Auto-save on input */
+            function autoSave() {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(saveNotes, 800);
+            }
+
+            /* Delete notes */
+            function deleteNotes() {
+                showConfirm('Hapus Catatan', 'Yakin ingin menghapus catatan course ini?', function () {
+                    var allNotes = loadCourseNotes();
+                    delete allNotes[courseId];
+                    saveCourseNotes(allNotes);
+                    contentArea.value = '';
+                    previewArea.innerHTML = '<p class="text-muted">Preview akan muncul di sini...</p>';
+                    setStatus('Catatan dihapus.');
+                });
+            }
+
+            /* Init */
+            loadCourseInfo();
+            loadNotes();
+
+            if (!titleInput.value) {
+                document.title = 'Course Notes \u2014 Personal Habit Tracker';
+            } else {
+                document.title = titleInput.value + ' \u2014 Personal Habit Tracker';
+            }
+
+            /* Event listeners */
+            [titleInput, roleInput, catInput, companyInput].forEach(function (el) {
+                el.addEventListener('input', autoSave);
+            });
+
+            contentArea.addEventListener('input', function () {
+                autoSave();
+                if (previewVisible) renderPreview(contentArea.value);
+            });
+
+            previewToggle.addEventListener('click', togglePreview);
+
+            saveBtn.addEventListener('click', saveNotes);
+            deleteBtn.addEventListener('click', deleteNotes);
+
+            /* Markdown toolbar */
+            if (toolbar) {
+                toolbar.addEventListener('click', function (e) {
+                    var btn = e.target.closest('.editor-toolbar__btn');
+                    if (!btn || btn.classList.contains('editor-toolbar__btn--preview')) return;
+                    insertMarkdownSyntax(contentArea, btn.dataset.md);
+                    contentArea.focus();
+                    if (previewVisible) renderPreview(contentArea.value);
+                });
+            }
+
+            if (window.lucide) lucide.createIcons();
+
+        })();
+    </script>
+
+</body>
+
+</html>
