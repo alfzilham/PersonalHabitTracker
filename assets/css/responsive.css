@@ -39,7 +39,8 @@
 @media (max-width: 768px) {
 
     /* Enable pull-to-refresh on mobile */
-    html, body {
+    html,
+    body {
         overflow: auto;
         height: auto;
     }
@@ -760,6 +761,16 @@
 
     .editor-badges {
         grid-template-columns: 1fr;
+    }
+
+    .editor-header {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .editor-header .btn-sm {
+        width: 100%;
+        justify-content: center;
     }
 
 

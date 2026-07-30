@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
+
 <body>
 
     <div class="course-page" id="course-root">
@@ -31,23 +33,31 @@
             <div class="editor-badges">
                 <div class="editor-field">
                     <label class="modal__label">Role</label>
-                    <input class="modal__input" type="text" id="editor-role" placeholder="e.g. AI Engineer" autocomplete="off">
+                    <input class="modal__input" type="text" id="editor-role" placeholder="e.g. AI Engineer"
+                        autocomplete="off">
                 </div>
                 <div class="editor-field">
                     <label class="modal__label">Category</label>
-                    <input class="modal__input" type="text" id="editor-category" placeholder="e.g. Machine Learning" autocomplete="off">
+                    <input class="modal__input" type="text" id="editor-category" placeholder="e.g. Machine Learning"
+                        autocomplete="off">
                 </div>
                 <div class="editor-field">
                     <label class="modal__label">Company</label>
-                    <input class="modal__input" type="text" id="editor-company" placeholder="e.g. Anthropic" autocomplete="off">
+                    <input class="modal__input" type="text" id="editor-company" placeholder="e.g. Anthropic"
+                        autocomplete="off">
                 </div>
             </div>
         </div>
 
         <!-- Quill Editor -->
         <div class="card">
-            <h2 class="text-xl font-bold text-primary font-serif mb-4">Course Notes</h2>
-            <div id="editor-container" style="min-height:300px;"></div>
+            <div class="editor-header">
+                <h2 class="text-xl font-bold text-primary font-serif">Course Notes</h2>
+                <button type="button" class="btn btn-secondary btn-sm" id="mermaid-open-btn">
+                    <i data-lucide="workflow"></i> Diagram
+                </button>
+            </div>
+            <div id="editor-container"></div>
             <div class="editor-actions">
                 <span class="editor-status" id="editor-status"></span>
                 <div class="editor-actions__right">
@@ -76,9 +86,22 @@
                 </div>
                 <div class="modal__actions">
                     <button class="btn btn-ghost" id="mermaid-cancel">Batal</button>
-                    <button class="btn btn-secondary" id="mermaid-preview-btn"><i data-lucide="eye"></i> Preview</button>
+                    <button class="btn btn-secondary" id="mermaid-preview-btn"><i data-lucide="eye"></i>
+                        Preview</button>
                     <button class="btn btn-primary" id="mermaid-insert"><i data-lucide="plus"></i> Insert</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal (self-contained, tidak bergantung ke index.html) -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal modal--confirm">
+            <h3 class="modal__title" id="confirm-title">Konfirmasi</h3>
+            <p class="modal__body" id="confirm-body"></p>
+            <div class="modal__actions">
+                <button class="btn btn-ghost" id="confirm-cancel">Batal</button>
+                <button class="btn btn-primary" id="confirm-ok"><i data-lucide="check"></i> Ya</button>
             </div>
         </div>
     </div>
@@ -87,7 +110,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({ startOnLoad: false, theme: 'neutral' });</script>
+    <script>mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });</script>
 
     <script src="../assets/js/data.js"></script>
     <script src="../assets/js/data-study.js"></script>
@@ -101,8 +124,8 @@
             var courseId = params.get('id');
             var saveTimer = null;
             var statusEl = document.getElementById('editor-status');
-            var mermaidCode = '';
             var mermaidInsertIndex = null;
+            var confirmCallback = null;
 
             if (!courseId) {
                 document.getElementById('course-root').innerHTML =
@@ -112,22 +135,18 @@
                 return;
             }
 
-            /* Init Quill */
+            /* Init Quill — toolbar tanpa custom format button (mencegah toolbar rusak/overflow).
+               Mermaid diinsert lewat tombol terpisah "Diagram" di header card. */
             var quill = new Quill('#editor-container', {
                 theme: 'snow',
                 modules: {
-                    toolbar: {
-                        container: [
-                            ['bold', 'italic', 'underline'],
-                            [{ 'header': [1, 2, false] }],
-                            [{ 'list': 'bullet' }, { 'list': 'ordered' }],
-                            ['link', 'code-block'],
-                            ['mermaid']
-                        ],
-                        handlers: {
-                            mermaid: openMermaidModal
-                        }
-                    }
+                    toolbar: [
+                        [{ 'header': [1, 2, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+                        ['link', 'code-block'],
+                        ['clean']
+                    ]
                 },
                 placeholder: 'Tulis catatan course Anda di sini...'
             });
@@ -146,7 +165,7 @@
                             document.getElementById('editor-company').value = course.company || '';
                         }
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
 
             function loadNotes() {
@@ -161,6 +180,7 @@
                     }
                     if (note.content) {
                         quill.root.innerHTML = note.content;
+                        renderAllMermaidBlocks();
                     }
                 }
                 updateTitle();
@@ -178,7 +198,8 @@
                 statusEl._timer = setTimeout(function () { statusEl.textContent = ''; }, 3000);
             }
 
-            /* Save */
+            /* Save — localStorage dulu (instant), lalu sync ke server di background.
+               syncToServer() & apiFetch() berasal dari dashboard-core.js. */
             function saveNotes() {
                 var allNotes = loadCourseNotes();
                 allNotes[courseId] = {
@@ -194,6 +215,12 @@
                 saveCourseNotes(allNotes);
                 updateTitle();
                 setStatus('Tersimpan.');
+
+                if (typeof syncToServer === 'function') {
+                    syncToServer().catch(function () {
+                        setStatus('Tersimpan lokal. Gagal sync ke server.', true);
+                    });
+                }
             }
 
             function autoSave() {
@@ -201,16 +228,34 @@
                 saveTimer = setTimeout(saveNotes, 800);
             }
 
-            /* Delete notes */
+            /* Delete notes — pakai confirm modal lokal (self-contained di halaman ini) */
             function deleteNotes() {
-                showConfirm('Hapus Catatan', 'Yakin ingin menghapus catatan course ini?', function () {
+                showLocalConfirm('Hapus Catatan', 'Yakin ingin menghapus catatan course ini?', function () {
                     var allNotes = loadCourseNotes();
                     delete allNotes[courseId];
                     saveCourseNotes(allNotes);
                     quill.setText('');
                     setStatus('Catatan dihapus.');
+                    if (typeof syncToServer === 'function') syncToServer().catch(function () { });
                 });
             }
+
+            function showLocalConfirm(title, message, onConfirm) {
+                document.getElementById('confirm-title').textContent = title;
+                document.getElementById('confirm-body').textContent = message;
+                confirmCallback = onConfirm;
+                document.getElementById('confirm-modal').classList.add('is-open');
+            }
+
+            document.getElementById('confirm-ok').addEventListener('click', function () {
+                document.getElementById('confirm-modal').classList.remove('is-open');
+                if (typeof confirmCallback === 'function') confirmCallback();
+                confirmCallback = null;
+            });
+            document.getElementById('confirm-cancel').addEventListener('click', function () {
+                document.getElementById('confirm-modal').classList.remove('is-open');
+                confirmCallback = null;
+            });
 
             /* ======== MERMAID ======== */
 
@@ -223,45 +268,44 @@
                 reinitLucide();
             }
 
-            function renderMermaidPreview() {
+            async function renderMermaidPreview() {
                 var code = document.getElementById('mermaid-code').value.trim();
-                if (!code) return;
                 var container = document.getElementById('mermaid-preview');
-                container.innerHTML = '<div class="mermaid">' + code.replace(/</g, '&lt;') + '</div>';
+                if (!code) { container.innerHTML = ''; return; }
                 try {
-                    mermaid.run({ nodes: [container.querySelector('.mermaid')] });
+                    var id = 'mermaid-preview-' + Date.now();
+                    var result = await mermaid.render(id, code);
+                    container.innerHTML = result.svg;
                 } catch (e) {
-                    container.innerHTML = '<p class="text-muted" style="color:var(--color-danger);">Error: ' + e.message + '</p>';
+                    container.innerHTML = '<p class="text-muted" style="color:var(--color-danger);">Error: ' + escapeHtml(e.message || String(e)) + '</p>';
                 }
             }
 
-            function insertMermaid() {
+            async function insertMermaid() {
                 var code = document.getElementById('mermaid-code').value.trim();
                 if (!code) return;
 
-                var tempDiv = document.createElement('div');
-                tempDiv.innerHTML = '<div class="mermaid">' + code.replace(/</g, '&lt;') + '</div>';
-                var svgContainer = document.createElement('div');
-
-                mermaid.run({ nodes: [tempDiv.querySelector('.mermaid')] }).then(function () {
-                    var svg = tempDiv.querySelector('svg');
-                    var html;
-                    if (svg) {
-                        html = '<div class="ql-mermaid" data-mermaid-code="' + escapeHtml(code) + '">' + svg.outerHTML + '</div>';
-                    } else {
-                        html = '<pre><code>' + escapeHtml(code) + '</code></pre>';
-                    }
-                    quill.clipboard.dangerouslyPasteHTML(mermaidInsertIndex, html, 'silent');
-                    document.getElementById('mermaid-modal').classList.remove('is-open');
-                    autoSave();
-                }).catch(function () {
+                var html;
+                try {
+                    var id = 'mermaid-insert-' + Date.now();
+                    var result = await mermaid.render(id, code);
+                    html = '<div class="ql-mermaid" data-mermaid-code="' + escapeHtml(code) + '" contenteditable="false">' + result.svg + '</div><p><br></p>';
+                } catch (e) {
                     html = '<pre><code>' + escapeHtml(code) + '</code></pre>';
-                    quill.clipboard.dangerouslyPasteHTML(mermaidInsertIndex, html, 'silent');
-                    document.getElementById('mermaid-modal').classList.remove('is-open');
-                });
+                }
+                quill.clipboard.dangerouslyPasteHTML(mermaidInsertIndex, html, 'silent');
+                document.getElementById('mermaid-modal').classList.remove('is-open');
+                autoSave();
             }
 
-            /* Click Mermaid block to re-edit */
+            /* Render ulang semua block mermaid yang tersimpan sebagai HTML/SVG statis
+               (dipanggil saat load, karena SVG disimpan langsung, bukan di-render ulang tiap saat) */
+            function renderAllMermaidBlocks() {
+                var blocks = quill.root.querySelectorAll('.ql-mermaid svg');
+                blocks.forEach(function (svg) { svg.style.maxWidth = '100%'; });
+            }
+
+            /* Klik dua kali block Mermaid untuk edit ulang */
             quill.root.addEventListener('dblclick', function (e) {
                 var mermaidBlock = e.target.closest('.ql-mermaid');
                 if (!mermaidBlock) return;
@@ -269,8 +313,8 @@
                 if (!code) return;
                 mermaidInsertIndex = getCaretIndex(mermaidBlock);
                 document.getElementById('mermaid-code').value = code;
-                renderMermaidPreview();
                 document.getElementById('mermaid-modal').classList.add('is-open');
+                renderMermaidPreview();
                 reinitLucide();
             });
 
@@ -291,11 +335,14 @@
                 document.getElementById(id).addEventListener('input', autoSave);
             });
 
-            quill.on('text-change', autoSave);
+            quill.on('text-change', function (delta, oldDelta, source) {
+                if (source === 'user') autoSave();
+            });
             document.getElementById('editor-save-btn').addEventListener('click', saveNotes);
             document.getElementById('editor-delete-btn').addEventListener('click', deleteNotes);
 
             /* Mermaid modal */
+            document.getElementById('mermaid-open-btn').addEventListener('click', openMermaidModal);
             document.getElementById('mermaid-preview-btn').addEventListener('click', renderMermaidPreview);
             document.getElementById('mermaid-insert').addEventListener('click', insertMermaid);
             document.getElementById('mermaid-cancel').addEventListener('click', function () {
@@ -307,4 +354,5 @@
         })();
     </script>
 </body>
+
 </html>

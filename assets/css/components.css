@@ -3569,121 +3569,13 @@
     gap: var(--space-2);
 }
 
-.editor-toolbar {
+/* Header row above Quill: title + "Diagram" button */
+.editor-header {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
-    padding: var(--space-2);
-    background: var(--color-bg-sidebar);
-    border: 1px solid var(--color-border);
-    border-bottom: none;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-}
-
-.editor-toolbar__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: transparent;
-    border-radius: var(--radius-sm);
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    transition: background var(--transition-fast), color var(--transition-fast);
-}
-
-.editor-toolbar__btn:hover {
-    background: var(--color-bg-card);
-    color: var(--color-sage);
-}
-
-.editor-toolbar__btn.is-active {
-    background: var(--color-sage-bg);
-    color: var(--color-sage);
-}
-
-.editor-toolbar__btn svg {
-    width: 16px;
-    height: 16px;
-}
-
-.editor-toolbar__sep {
-    width: 1px;
-    height: 20px;
-    background: var(--color-border);
-    margin: 0 var(--space-1);
-}
-
-.editor-textarea {
-    width: 100%;
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    padding: var(--space-5);
-    outline: none;
-    resize: vertical;
-    line-height: var(--leading-loose);
-    transition: border-color var(--transition-fast);
-}
-
-.editor-textarea:focus {
-    border-color: var(--color-sage);
-}
-
-.editor-textarea::placeholder {
-    color: var(--color-text-muted);
-}
-
-.editor-preview {
-    font-family: var(--font-sans);
-    font-size: var(--text-base);
-    color: var(--color-text-secondary);
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-    padding: var(--space-5);
-    line-height: var(--leading-loose);
-    min-height: 200px;
-}
-
-.editor-preview h1,
-.editor-preview h2,
-.editor-preview h3,
-.editor-preview h4 {
-    font-family: var(--font-serif);
-    color: var(--color-text-primary);
-    font-weight: var(--weight-bold);
-    margin: var(--space-5) 0 var(--space-2);
-}
-
-.editor-preview p {
+    justify-content: space-between;
+    gap: var(--space-3);
     margin-bottom: var(--space-4);
-}
-
-.editor-preview p:last-child {
-    margin-bottom: 0;
-}
-
-.editor-preview ul {
-    margin: 0 0 var(--space-4);
-    padding-left: var(--space-6);
-}
-
-.editor-preview li {
-    margin-bottom: var(--space-1);
-}
-
-.editor-preview strong {
-    color: var(--color-text-primary);
-}
-
-.editor-preview a {
-    color: var(--color-blue);
 }
 
 .editor-actions {
@@ -4130,9 +4022,11 @@
         overflow: auto;
         min-height: 100vh;
     }
+
     .onb-visual {
         display: none;
     }
+
     .onb-panel {
         padding: var(--space-4);
         align-items: center;
@@ -4140,12 +4034,15 @@
         min-height: 100vh;
         padding-top: var(--space-6);
     }
+
     .onb-card {
         padding: var(--space-4);
     }
+
     .onb-steps__line {
         width: 24px;
     }
+
     .onb-step__title {
         font-size: var(--text-xl);
     }
@@ -4308,10 +4205,12 @@
     .ql-toolbar.ql-snow {
         flex-wrap: wrap;
     }
+
     .ql-editor {
         padding: var(--space-3);
         min-height: 200px;
     }
+
     .ql-container.ql-snow {
         min-height: 200px;
     }
