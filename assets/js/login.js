@@ -78,7 +78,7 @@
             submitBtn.innerHTML = '<i data-lucide="loader-circle"></i><span>Memproses...</span>';
         } else {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i data-lucide="log-in"></i><span>Login</span>';
+            submitBtn.innerHTML = '<i data-lucide="log-in"></i><span>Masuk</span>';
         }
         if (window.lucide) lucide.createIcons();
     }
