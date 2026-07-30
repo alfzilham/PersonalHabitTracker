@@ -2798,6 +2798,17 @@
     color: var(--color-text-muted);
 }
 
+.sidebar-profile__email {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--color-text-muted);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
 .sidebar-profile__dot {
     flex-shrink: 0;
     padding: var(--space-1);

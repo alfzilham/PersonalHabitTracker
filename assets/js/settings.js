@@ -13,6 +13,7 @@ function openSettings() {
     var defaults = getDefaultSettings();
     Object.keys(defaults).forEach(function (k) { if (settings[k] === undefined) settings[k] = defaults[k]; });
     document.getElementById('settings-name').value = settings.name || '';
+    document.getElementById('settings-email').value = settings.email || '';
     document.getElementById('settings-role').value = settings.role || '';
     var theme = settings.theme || 'light';
     document.getElementById('settings-theme').value = theme;
@@ -44,6 +45,7 @@ function autoSaveSettings() {
         var avatarSrc = document.getElementById('settings-avatar-preview').src;
         var data = {
             name: name,
+            email: document.getElementById('settings-email').value.trim(),
             role: document.getElementById('settings-role').value.trim(),
             theme: document.getElementById('settings-theme').value,
             language: document.getElementById('settings-lang').value,

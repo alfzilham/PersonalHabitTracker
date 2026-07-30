@@ -148,7 +148,7 @@
                     <img class="sidebar-profile__img" src="assets/image/emptyProfile.webp" alt="Profile">
                     <div class="sidebar-profile__info">
                         <span class="sidebar-profile__name">Alfiz Ilham</span>
-                        <span class="sidebar-profile__role">Owner</span>
+                        <span class="sidebar-profile__email" id="sidebar-profile-email">—</span>
                     </div>
                     <button class="btn btn-ghost btn-sm sidebar-profile__dot" id="settings-btn" aria-label="Settings">
                         <i data-lucide="settings"></i>
@@ -1569,8 +1569,14 @@
                                     autocomplete="off">
                             </div>
                             <div class="settings-field">
+                                <label class="settings-field__label" for="settings-email"
+                                    data-i18n="label-email">Email</label>
+                                <input class="settings-field__input" type="email" id="settings-email"
+                                    placeholder="email@example.com" autocomplete="off">
+                            </div>
+                            <div class="settings-field">
                                 <label class="settings-field__label" for="settings-role"
-                                    data-i18n="label-role">Role</label>
+                                    data-i18n="label-role">Role (opsional)</label>
                                 <input class="settings-field__input" type="text" id="settings-role" value="Owner"
                                     autocomplete="off">
                             </div>

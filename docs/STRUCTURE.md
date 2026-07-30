@@ -70,7 +70,6 @@
 
 ## Notes
 
-- `docs/news/KULIAH_PENDING.md` is a legacy filename kept as-is (historical record) — not part of the active codebase naming.
 - `data.js` and `data-study.js` are now empty arrays — all course/subject data is user-generated.
 - `server/` was added during the multi-user migration (Express + NeonDB).
 - `graphify-out/` and `ruvector.db` (OpenCode tooling artifacts) are excluded from app concerns.

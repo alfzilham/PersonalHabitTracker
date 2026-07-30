@@ -202,7 +202,7 @@ function saveSettings(data) {
     try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(data)); } catch (e) {}
 }
 function getDefaultSettings() {
-    return { name: '', role: '', theme: 'light', notifTodo: true, language: 'en' };
+    return { name: '', email: '', role: '', theme: 'light', notifTodo: true, language: 'en' };
 }
 
 /* Course notes */
@@ -887,10 +887,10 @@ function initProfile() {
 
 function updateSidebarProfile(data) {
     var nameEl = document.querySelector('.sidebar-profile__name');
-    var roleEl = document.querySelector('.sidebar-profile__role');
+    var emailEl = document.querySelector('.sidebar-profile__email');
     var imgEl = document.querySelector('.sidebar-profile__img');
     if (nameEl) nameEl.textContent = data.name || 'User';
-    if (roleEl) roleEl.textContent = data.role || '';
+    if (emailEl) emailEl.textContent = data.email || '—';
     if (imgEl) imgEl.src = data.avatar || 'assets/image/emptyProfile.webp';
 
     /* Sync bottom sheet profile */
@@ -898,7 +898,7 @@ function updateSidebarProfile(data) {
     var bsRole = document.getElementById('bottom-sheet-role');
     var bsAvatar = document.getElementById('bottom-sheet-avatar');
     if (bsName) bsName.textContent = data.name || 'User';
-    if (bsRole) bsRole.textContent = data.role || '';
+    if (bsRole) bsRole.textContent = data.email || '';
     if (bsAvatar) bsAvatar.src = data.avatar || 'assets/image/emptyProfile.webp';
 }
 
