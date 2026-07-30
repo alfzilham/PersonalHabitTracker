@@ -199,7 +199,7 @@ function importAllData(file) {
         try {
             var data = JSON.parse(e.target.result);
             Object.keys(data).forEach(function (k) { localStorage.setItem(k, JSON.stringify(data[k])); });
-            showAlert('Data berhasil diimport. Memuat ulang...');
+            showToast();
             syncToServer().then(function () {
                 window.location.reload();
             });
