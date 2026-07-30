@@ -38,6 +38,12 @@
 
 @media (max-width: 768px) {
 
+    /* Enable pull-to-refresh on mobile */
+    html, body {
+        overflow: auto;
+        height: auto;
+    }
+
     /* ============================================
        2z. Login Split — stack vertikal
        ============================================ */
