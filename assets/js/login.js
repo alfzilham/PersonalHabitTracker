@@ -38,38 +38,16 @@
         if (window.lucide) lucide.createIcons();
     }
 
-    function updateKeySlots() {
-        var val = keyInput.value;
-        var slots = document.querySelectorAll('.key-slot');
-        slots.forEach(function (slot, i) {
-            if (i < val.length) {
-                slot.textContent = val[i];
-                slot.classList.add('filled');
-            } else {
-                slot.textContent = 'X';
-                slot.classList.remove('filled');
-            }
-        });
-    }
-
-    /* Input masking — hanya huruf kapital, max 6 */
+    /* Input masking — auto-format FHGDIA jadi FHG DIA */
     keyInput.addEventListener('input', function () {
-        var val = this.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6);
-        this.value = val;
-        updateKeySlots();
-        hideError();
-    });
-
-    /* Focus the hidden input when user clicks on the visual slots */
-    document.querySelector('.key-input-wrap').addEventListener('click', function () {
-        keyInput.focus();
-    });
-
-    /* Clear slots on backspace in empty field (visual feedback) */
-    keyInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Backspace' && this.value.length === 0) {
-            /* izin reset — handled by input event */
+        var raw = this.value.toUpperCase().replace(/[^A-Z\s]/g, '').replace(/\s/g, '');
+        var formatted = '';
+        for (var i = 0; i < raw.length && i < 6; i++) {
+            if (i === 3) formatted += ' ';
+            formatted += raw[i];
         }
+        this.value = formatted;
+        hideError();
     });
 
     form.addEventListener('submit', async function (e) {
@@ -77,13 +55,12 @@
         hideError();
 
         var username = usernameInput.value.trim();
-        var rawKey = keyInput.value;
+        var raw = keyInput.value.replace(/\s/g, '');
 
         if (!username) { showError('Username wajib diisi.'); return; }
-        if (rawKey.length !== 6) { showError('Developer Key harus 6 huruf kapital. Contoh: FHG DIA'); return; }
+        if (raw.length !== 6) { showError('Developer Key harus 6 huruf kapital. Contoh: FHG DIA'); return; }
 
-        /* Format: "FHGDIA" → "FHG DIA" */
-        var formattedKey = rawKey.slice(0, 3) + ' ' + rawKey.slice(3);
+        var formattedKey = raw.slice(0, 3) + ' ' + raw.slice(3);
 
         setLoading(true);
 

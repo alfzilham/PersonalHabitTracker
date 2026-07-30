@@ -68,24 +68,14 @@
                             ada.</span>
                     </div>
 
-                    <!-- Developer Key — masked slot input -->
-                    <div class="modal__field">
-                        <label class="modal__label">Developer Key</label>
-                        <div class="key-input-wrap">
-                            <div class="key-input-slots">
-                                <span class="key-slot" data-index="0">X</span>
-                                <span class="key-slot" data-index="1">X</span>
-                                <span class="key-slot" data-index="2">X</span>
-                                <span class="key-dash">–</span>
-                                <span class="key-slot" data-index="3">X</span>
-                                <span class="key-slot" data-index="4">X</span>
-                                <span class="key-slot" data-index="5">X</span>
-                            </div>
-                            <input type="text" id="login-key" maxlength="6" autocomplete="off"
-                                class="key-hidden-input">
-                        </div>
-                        <span class="login-hint">Masukkan 6 huruf kapital Developer Key Anda.</span>
-                    </div>
+                <!-- Developer Key — input biasa, center -->
+                <div class="modal__field">
+                    <label class="modal__label">Developer Key</label>
+                    <input class="modal__input" type="text" id="login-key" maxlength="7"
+                        placeholder="FHG DIA" autocomplete="off" required
+                        style="text-align:center;letter-spacing:0.2em;font-family:var(--font-mono);text-transform:uppercase;">
+                    <span class="login-hint">Masukkan 6 huruf kapital. Contoh: FHG DIA</span>
+                </div>
 
                     <!-- Error message -->
                     <div id="login-error" class="login-error hidden"></div>
