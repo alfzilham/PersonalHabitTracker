@@ -1,0 +1,7 @@
+{
+  "name": "personal-habit-tracker",
+  "scripts": {
+    "build": "cd server && npm install",
+    "start": "cd server && node server.js"
+  }
+}

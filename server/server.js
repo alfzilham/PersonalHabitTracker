@@ -3,7 +3,6 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env.local') }
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { google } = require('googleapis');
 
 const { initDb } = require('./database/db');
 
@@ -13,15 +12,6 @@ const oauthRoutes = require('./routes/oauth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-/* Google OAuth2 client */
-const oauth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_CALLBACK_URL
-);
-
-app.set('oauth2Client', oauth2Client);
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));

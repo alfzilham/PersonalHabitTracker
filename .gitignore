@@ -1,5 +1,6 @@
 # Dependencies
 server/node_modules/
+node_modules/
 
 # Environment variables — jangan commit key asli
 server/.env.local
@@ -9,8 +10,11 @@ server/.env.local
 Thumbs.db
 
 # Logs
-logs/console.log
+logs/
 
 # OpenCode artifacts (local saja)
 graphify-out/
 ruvector.db
+
+# Documentation
+docs/
