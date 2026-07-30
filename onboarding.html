@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding — Personal Habit Tracker</title>
+
+    <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+
+<body>
+
+    <div class="onb-split">
+
+        <!-- LEFT: Form Panel -->
+        <div class="onb-panel">
+            <div class="onb-card">
+
+                <!-- Step indicator dots -->
+                <div class="onb-steps">
+                    <div class="onb-steps__item is-active" data-step="1">
+                        <span class="onb-steps__dot">1</span>
+                        <span class="onb-steps__label">Username</span>
+                    </div>
+                    <span class="onb-steps__line"></span>
+                    <div class="onb-steps__item" data-step="2">
+                        <span class="onb-steps__dot">2</span>
+                        <span class="onb-steps__label">Role</span>
+                    </div>
+                    <span class="onb-steps__line"></span>
+                    <div class="onb-steps__item" data-step="3">
+                        <span class="onb-steps__dot">3</span>
+                        <span class="onb-steps__label">Key</span>
+                    </div>
+                </div>
+
+                <div class="onb-body">
+                    <!-- Hidden fields -->
+                    <input type="hidden" id="onb-google-id" value="">
+                    <input type="hidden" id="onb-email" value="">
+                    <input type="hidden" id="onb-avatar" value="">
+
+                    <!-- STEP 1: Username -->
+                    <div class="onb-step" data-step="1">
+                        <h2 class="onb-step__title">Buat Username</h2>
+                        <p class="onb-step__desc">Username akan digunakan untuk login manual.</p>
+                        <div class="modal__field">
+                            <input class="modal__input" type="text" id="onb-username"
+                                placeholder="Username Anda" autocomplete="off" required
+                                style="text-align:center;font-size:var(--text-lg);padding:var(--space-4);">
+                        </div>
+                        <button class="btn btn-primary onb-btn" id="onb-step1-next">
+                            Selanjutnya <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- STEP 2: Role -->
+                    <div class="onb-step hidden" data-step="2">
+                        <h2 class="onb-step__title">Pilih Peran</h2>
+                        <p class="onb-step__desc">Pilih peran yang paling sesuai dengan Anda.</p>
+                        <div class="modal__field">
+                            <div id="onb-role-container" class="view-dropdown" style="min-width:100%;"></div>
+                        </div>
+                        <div style="display:flex;gap:var(--space-3);">
+                            <button class="btn btn-ghost onb-btn" id="onb-step2-back">
+                                <i data-lucide="arrow-left"></i> Kembali
+                            </button>
+                            <button class="btn btn-primary onb-btn" id="onb-step2-next">
+                                Selanjutnya <i data-lucide="arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Developer Key -->
+                    <div class="onb-step hidden" data-step="3">
+                        <h2 class="onb-step__title">Masukkan Developer Key</h2>
+                        <p class="onb-step__desc">Key diberikan oleh developer untuk menyelesaikan pendaftaran.</p>
+                        <div class="modal__field">
+                            <input class="modal__input" type="text" id="onb-key" maxlength="7"
+                                placeholder="XXX XXX" autocomplete="off" required
+                                style="text-align:center;letter-spacing:0.2em;font-family:var(--font-mono);text-transform:uppercase;font-size:var(--text-lg);padding:var(--space-4);">
+                        </div>
+                        <div style="display:flex;gap:var(--space-3);">
+                            <button class="btn btn-ghost onb-btn" id="onb-step3-back">
+                                <i data-lucide="arrow-left"></i> Kembali
+                            </button>
+                            <button class="btn btn-primary onb-btn" id="onb-submit">
+                                Selesai <i data-lucide="check"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="onb-error" class="onb-error hidden"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Visual Panel -->
+        <div class="onb-visual">
+            <div class="onb-visual__grid"></div>
+            <div class="onb-brand">
+                <h1 class="onb-brand__title">Personal Habit<br>Tracker</h1>
+                <p class="onb-brand__desc">Satu langkah lagi untuk menyelesaikan pendaftaran.</p>
+                <div class="onb-brand__steps">
+                    <div class="onb-brand__step" data-step="1">
+                        <span class="onb-brand__step-num">01</span>
+                        <span class="onb-brand__step-text">Buat Username</span>
+                    </div>
+                    <div class="onb-brand__step" data-step="2">
+                        <span class="onb-brand__step-num">02</span>
+                        <span class="onb-brand__step-text">Pilih Peran</span>
+                    </div>
+                    <div class="onb-brand__step" data-step="3">
+                        <span class="onb-brand__step-num">03</span>
+                        <span class="onb-brand__step-text">Masukkan Key</span>
+                    </div>
+                </div>
+                <div class="onb-brand__footer">
+                    &copy; 2026 Alfiz Ilham. All rights reserved.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <script>lucide.createIcons();</script>
+    <script src="assets/js/dashboard-core.js"></script>
+    <script src="assets/js/onboarding.js"></script>
+</body>
+
+</html>

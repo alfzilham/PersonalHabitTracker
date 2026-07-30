@@ -3875,3 +3875,249 @@
 .login-contact .login-wa-link {
     font-size: var(--text-xs);
 }
+
+
+/* ==========================================================================
+     37. ONBOARDING — Split page, dusty blue theme, 3 steps
+    ========================================================================== */
+
+.onb-split {
+    display: flex;
+    min-height: 100vh;
+    background: var(--color-bg);
+}
+
+/* Form panel (kiri) */
+.onb-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+}
+
+.onb-card {
+    max-width: 420px;
+    width: 100%;
+    padding: var(--space-8);
+}
+
+/* Step indicator */
+.onb-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-10);
+}
+
+.onb-steps__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    cursor: default;
+}
+
+.onb-steps__dot {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    border: 2px solid var(--color-border);
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    transition: all var(--transition-normal);
+}
+
+.onb-steps__item.is-active .onb-steps__dot {
+    border-color: var(--color-blue);
+    background: var(--color-blue);
+    color: #fff;
+}
+
+.onb-steps__item.is-done .onb-steps__dot {
+    border-color: var(--color-blue);
+    background: var(--color-blue);
+    color: #fff;
+}
+
+.onb-steps__label {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.onb-steps__item.is-active .onb-steps__label {
+    color: var(--color-blue);
+    font-weight: var(--weight-bold);
+}
+
+.onb-steps__item.is-done .onb-steps__label {
+    color: var(--color-blue);
+}
+
+.onb-steps__line {
+    width: 40px;
+    height: 2px;
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-6);
+}
+
+/* Step body */
+.onb-body {
+    min-height: 220px;
+}
+
+.onb-step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.onb-step__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-text-primary);
+}
+
+.onb-step__desc {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.onb-btn {
+    padding: var(--space-4);
+    font-size: var(--text-base);
+    gap: var(--space-2);
+    flex: 1;
+}
+
+.onb-error {
+    font-size: var(--text-sm);
+    color: var(--color-danger);
+    background-color: rgba(200, 80, 80, 0.1);
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    margin-top: var(--space-4);
+    line-height: var(--leading-normal);
+}
+
+/* Visual panel (kanan) — dusty blue */
+.onb-visual {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10);
+    background: linear-gradient(120deg, var(--color-blue) 0%, var(--color-blue-light) 100%);
+    overflow: hidden;
+}
+
+.onb-visual__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(90deg, var(--color-blue-bg) 1px, transparent 1px),
+        linear-gradient(180deg, var(--color-blue-bg) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.onb-brand {
+    position: relative;
+    z-index: 1;
+    max-width: 400px;
+    color: #fff;
+}
+
+.onb-brand__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-4xl);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    color: #fff;
+    margin-bottom: var(--space-4);
+}
+
+.onb-brand__desc {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-loose);
+    color: #fff;
+    opacity: 0.85;
+    margin-bottom: var(--space-8);
+}
+
+.onb-brand__steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-bottom: var(--space-10);
+}
+
+.onb-brand__step {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    opacity: 0.4;
+    transition: opacity var(--transition-normal);
+}
+
+.onb-brand__step.is-active {
+    opacity: 1;
+}
+
+.onb-brand__step.is-done {
+    opacity: 0.6;
+}
+
+.onb-brand__step-num {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    width: 28px;
+    text-align: right;
+}
+
+.onb-brand__step-text {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+}
+
+.onb-brand__footer {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    color: #fff;
+    opacity: 0.5;
+    margin-top: var(--space-6);
+}
+
+/* Responsive — stack vertikal */
+@media (max-width: 768px) {
+    .onb-split {
+        flex-direction: column;
+    }
+    .onb-visual {
+        display: none;
+    }
+    .onb-panel {
+        padding: var(--space-4);
+        align-items: flex-start;
+        padding-top: var(--space-6);
+    }
+}

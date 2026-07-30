@@ -46,22 +46,13 @@
         showGoogleError(errorMsg);
     }
 
-    /* Mode onboarding Google */
+    /* Mode onboarding Google — redirect ke halaman khusus */
     if (onboarding === 'google' && googleId) {
-        formTitle.textContent = 'Lengkapi Data';
-        formSubtitle.textContent = 'Satu langkah lagi untuk menyelesaikan pendaftaran';
-        hiddenGoogleId.value = googleId;
-        hiddenGoogleAvatar.value = googleAvatar || '';
-        if (googleEmail) {
-            /* Tampilkan email sebagai info */
-            var emailHint = document.createElement('div');
-            emailHint.className = 'modal__field';
-            emailHint.innerHTML = '<label class="modal__label">Email (dari Google)</label>' +
-                '<p class="text-sm text-primary" style="padding:var(--space-2) 0;">' + googleEmail + '</p>';
-            form.insertBefore(emailHint, form.querySelector('.modal__field'));
-        }
-        googleBtn.style.display = 'none';
-        document.getElementById('login-divider').style.display = 'none';
+        var onboardingUrl = 'onboarding.html?googleId=' + encodeURIComponent(googleId);
+        if (googleEmail) onboardingUrl += '&email=' + encodeURIComponent(googleEmail);
+        if (googleAvatar) onboardingUrl += '&avatar=' + encodeURIComponent(googleAvatar);
+        window.location.href = onboardingUrl;
+        return;
     }
 
     function showError(msg) {

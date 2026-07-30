@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
 
 /* POST /api/login/google — menyelesaikan onboarding Google */
 router.post('/login/google', async (req, res) => {
-  const { googleId, email, avatarUrl, username, developerKey } = req.body;
+  const { googleId, email, avatarUrl, username, role, developerKey } = req.body;
 
   if (!googleId) return res.status(400).json({ error: 'Google ID diperlukan.' });
   if (!username || !username.trim()) return res.status(400).json({ error: 'Username wajib diisi.' });
@@ -74,12 +74,10 @@ router.post('/login/google', async (req, res) => {
   const token = uuidv4();
   await db.createSession(userId, token);
 
-  /* Simpan data Google ke settings_profile */
+  /* Simpan data Google ke settings_profile — include role */
   try {
-    await db.upsertUserData(userId, 'settings', 'settings_profile', JSON.stringify({
-      name: username.trim(), email: email || '', avatar: avatarUrl || '',
-      theme: 'light', notifTodo: true, language: 'en',
-    }));
+    var settings = { name: username.trim(), email: email || '', avatar: avatarUrl || '', role: role || '', theme: 'light', notifTodo: true, language: 'en' };
+    await db.upsertUserData(userId, 'settings', 'settings_profile', JSON.stringify(settings));
   } catch (e) {}
 
   res.json({ token, username: username.trim(), isNewUser: true });
