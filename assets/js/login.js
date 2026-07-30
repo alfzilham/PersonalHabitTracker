@@ -15,6 +15,7 @@
     var formSubtitle = document.getElementById('login-form-subtitle');
     var hiddenGoogleId = document.getElementById('login-google-id');
     var hiddenGoogleAvatar = document.getElementById('login-google-avatar');
+    var googleErrorEl = document.getElementById('google-error');
 
     /* Cek parameter URL */
     var params = new URLSearchParams(window.location.search);
@@ -41,7 +42,8 @@
 
     /* Jika ada error dari Google */
     if (errorParam === 'google_auth_failed') {
-        showError('Login Google gagal. Silakan coba lagi.');
+        var errorMsg = params.get('msg') || 'Login Google gagal. Silakan coba lagi.';
+        showGoogleError(errorMsg);
     }
 
     /* Mode onboarding Google */
@@ -67,9 +69,25 @@
         errorEl.classList.remove('hidden');
     }
 
+    function showGoogleError(msg) {
+        if (googleErrorEl) {
+            googleErrorEl.textContent = msg;
+            googleErrorEl.classList.remove('hidden');
+        }
+    }
+
     function hideError() {
         errorEl.classList.add('hidden');
         errorEl.textContent = '';
+    }
+
+    function hideAllErrors() {
+        errorEl.classList.add('hidden');
+        errorEl.textContent = '';
+        if (googleErrorEl) {
+            googleErrorEl.classList.add('hidden');
+            googleErrorEl.textContent = '';
+        }
     }
 
     function setLoading(loading) {
@@ -99,13 +117,13 @@
             formatted += raw[i];
         }
         this.value = formatted;
-        hideError();
+        hideAllErrors();
     });
 
     /* Form submit */
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        hideError();
+        hideAllErrors();
 
         var username = usernameInput.value.trim();
         var raw = keyInput.value.replace(/\s/g, '');
