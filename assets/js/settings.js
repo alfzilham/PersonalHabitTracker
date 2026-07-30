@@ -210,7 +210,7 @@ function importAllData(file) {
 
 function resetAllData() {
     showConfirm('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', function () {
-        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'finance_records', 'settings_profile'];
+        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'finance_records'];
         keys.forEach(function (k) { localStorage.removeItem(k); });
         syncToServer().then(function () {
             window.location.reload();
