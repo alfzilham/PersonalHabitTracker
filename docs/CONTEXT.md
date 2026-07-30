@@ -26,14 +26,16 @@ A single personal dashboard as a productivity hub with 8 tabs:
 
 ## Key Architecture Decisions
 
-| Decision                | Reason                                |
-| ----------------------- | ------------------------------------- |
-| **Vanilla JS**          | No frameworks, ever                   |
-| **NeonDB (PostgreSQL)** | True multi-user, cloud persistence    |
-| **Express backend**     | Same JS ecosystem, simple REST API    |
+| Decision | Reason |
+|----------|--------|
+| **Vanilla JS** | No frameworks, ever |
+| **NeonDB (PostgreSQL)** | True multi-user, cloud persistence |
+| **Express backend** | Same JS ecosystem, simple REST API |
 | **Developer key login** | Offline-first auth, no email/password |
-| **localStorage cache**  | Offline fallback + fast reads         |
-| **Sync on tab switch**  | Periodic save without blocking UX     |
+| **Google OAuth** | Optional — auto-fill email, avatar |
+| **Onboarding flow** | 3 steps: username → role dropdown (20 options) → dev key |
+| **localStorage cache** | Offline fallback + fast reads |
+| **Sync on tab switch** | Periodic save without blocking UX |
 
 ---
 
@@ -78,3 +80,17 @@ A single personal dashboard as a productivity hub with 8 tabs:
 - Format: `XXX XXX` (3 uppercase + space + 3 uppercase)
 - Can only be used by ONE user (key uniqueness enforced)
 - Example: `FHG DIA`, `QWE RTY`, `LKJ HGF`
+
+## Google OAuth
+
+- **Client:** Google Cloud Console OAuth 2.0
+- **Callback:** `/auth/google/callback`
+- **New users:** Redirected to `onboarding.html` (3 step: username → role → dev key)
+- **Existing users:** Auto-login, profile synced (email, avatar, google_id)
+- **Role dropdown:** 20 selectable roles (Product Management, Engineering, etc.)
+
+## Profile Fields
+
+- **Name:** Default from session username, editable in Settings
+- **Email:** Auto-filled from Google (or manual input)
+- **Role:** Selected from 20-option dropdown during onboarding (editable free-text in Settings)

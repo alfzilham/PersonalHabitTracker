@@ -13,11 +13,12 @@ Personal-Habit-Tracker/
 │
 ├── index.html                  # SPA — sidebar + bottom nav + 8 tab panels + modals
 ├── login.html                  # Login page (split layout)
+├── onboarding.html             # 3-step onboarding (Google users)
 │
 ├── assets/
 │   ├── css/
 │   │   ├── global.css          # CSS variables (incl. dark mode), reset, base typography
-│   │   ├── components.css      # 36 numbered sections — all UI components
+│   │   ├── components.css      # 37 numbered sections — all UI components
 │   │   └── responsive.css      # Mobile responsive overrides (bottom nav, modal fullscreen)
 │   ├── favicon/
 │   ├── image/
@@ -31,6 +32,7 @@ Personal-Habit-Tracker/
 │       ├── certificate.js       # Certificate gallery, CRUD, WebP upload
 │       ├── settings.js          # Profile, theme, data export/import, FAQ
 │       ├── login.js             # Login page logic
+│       ├── onboarding.js        # 3-step onboarding flow (Google users)
 │       ├── data.js              # COURSES = [] (user-generated)
 │       ├── data-study.js        # STUDY_COURSES = [] (user-generated)
 │       ├── study-db.js          # IndexedDB wrapper (Journal images)
@@ -48,8 +50,9 @@ Personal-Habit-Tracker/
 │   ├── middleware/
 │   │   └── auth.js             # Bearer token validation
 │   └── routes/
-│       ├── auth.js             # POST /api/login, /api/logout, DELETE /api/account
-│       └── data.js             # GET/POST/DELETE /api/data/:feature
+│       ├── auth.js             # POST /api/login, /api/login/google, /api/logout, DELETE /api/account
+│       ├── data.js             # GET/POST/DELETE /api/data/:feature
+│       └── oauth.js            # GET /auth/google, /auth/google/callback
 │
 ├── docs/                       # Documentation
 │   ├── ARCHITECTURE.md
@@ -94,23 +97,26 @@ Logout → syncToServer() → clear localStorage → redirect login
 
 ## API Routes
 
-| Method | Route                     | Auth | Description                         |
-| ------ | ------------------------- | ---- | ----------------------------------- |
-| POST   | `/api/login`              | ❌   | Login with username + developer key |
-| POST   | `/api/logout`             | ✅   | Invalidate session token            |
-| DELETE | `/api/account`            | ✅   | Delete account + all data           |
-| GET    | `/api/data`               | ✅   | Get all user data                   |
-| GET    | `/api/data/:feature`      | ✅   | Get one feature                     |
-| POST   | `/api/data`               | ✅   | Save all data                       |
-| POST   | `/api/data/:feature`      | ✅   | Save one feature                    |
-| DELETE | `/api/data/:feature/:key` | ✅   | Delete one key                      |
+| Method | Route | Auth | Description |
+| ------ | ----- | ---- | ----------- |
+| POST | `/api/login` | ❌ | Login with username + developer key |
+| POST | `/api/login/google` | ❌ | Complete Google onboarding with username + key |
+| POST | `/api/logout` | ✅ | Invalidate session token |
+| DELETE | `/api/account` | ✅ | Delete account + all data |
+| GET | `/api/data` | ✅ | Get all user data |
+| GET | `/api/data/:feature` | ✅ | Get one feature |
+| POST | `/api/data` | ✅ | Save all data |
+| POST | `/api/data/:feature` | ✅ | Save one feature |
+| DELETE | `/api/data/:feature/:key` | ✅ | Delete one key |
+| GET | `/auth/google` | ❌ | Start Google OAuth flow |
+| GET | `/auth/google/callback` | ❌ | Google OAuth callback handler |
 
 ---
 
 ## database.js — NeonDB Schema
 
 ```sql
-app_users (id SERIAL, username TEXT UNIQUE, developer_key TEXT, created_at TIMESTAMPTZ)
+app_users (id SERIAL, username TEXT UNIQUE, developer_key TEXT, google_id TEXT UNIQUE, email TEXT, avatar_url TEXT, created_at TIMESTAMPTZ)
 app_data (id SERIAL, user_id INTEGER, feature TEXT, data_key TEXT, data_value TEXT)
 app_sessions (id SERIAL, user_id INTEGER, token TEXT UNIQUE, created_at TIMESTAMPTZ)
 ```
@@ -171,7 +177,7 @@ Lucide icons
 
 ```
 global.css (design tokens, reset, typography, layout)
-    + components.css (36 sections — badges, cards, table, modal, editor, login split, etc.)
+    + components.css (37 sections — badges, cards, table, modal, editor, login split, onboarding, etc.)
     + responsive.css (mobile overrides, bottom nav, full-screen modal)
 ```
 

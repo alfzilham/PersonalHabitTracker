@@ -70,7 +70,7 @@ Anthropic's earthy design language — warm, minimal, trustworthy. Clean layouts
 
 ---
 
-## components.css — Section Map (36 sections)
+## components.css — Section Map (37 sections)
 
 | #     | Section             | Covers                              |
 | ----- | ------------------- | ----------------------------------- |
@@ -99,9 +99,10 @@ Anthropic's earthy design language — warm, minimal, trustworthy. Clean layouts
 | 31    | Finance Inputs      | Currency select, spinner hide       |
 | 32    | Login Page          | Login card, form, error             |
 | 33    | Danger Card         | Settings danger zone                |
-| 34    | Key Input           | Masked slot input                   |
+| 34    | Key Input           | Masked slot input (legacy)          |
 | 35    | Course Editor       | Markdown editor styles              |
 | 36    | Login Split         | Split page layout                   |
+| 37    | Onboarding          | Dusty blue, 3-step flow             |
 
 ---
 
