@@ -199,9 +199,11 @@ function importAllData(file) {
         try {
             var data = JSON.parse(e.target.result);
             Object.keys(data).forEach(function (k) { localStorage.setItem(k, JSON.stringify(data[k])); });
-            alert('Data imported successfully. Refreshing...');
-            window.location.reload();
-        } catch (err) { alert('Invalid file format.'); }
+            showAlert('Data berhasil diimport. Memuat ulang...');
+            syncToServer().then(function () {
+                window.location.reload();
+            });
+        } catch (err) { showAlert('Format file tidak valid.'); }
     };
     reader.readAsText(file);
 }

@@ -97,19 +97,19 @@ Logout → syncToServer() → clear localStorage → redirect login
 
 ## API Routes
 
-| Method | Route | Auth | Description |
-| ------ | ----- | ---- | ----------- |
-| POST | `/api/login` | ❌ | Login with username + developer key |
-| POST | `/api/login/google` | ❌ | Complete Google onboarding with username + key |
-| POST | `/api/logout` | ✅ | Invalidate session token |
-| DELETE | `/api/account` | ✅ | Delete account + all data |
-| GET | `/api/data` | ✅ | Get all user data |
-| GET | `/api/data/:feature` | ✅ | Get one feature |
-| POST | `/api/data` | ✅ | Save all data |
-| POST | `/api/data/:feature` | ✅ | Save one feature |
-| DELETE | `/api/data/:feature/:key` | ✅ | Delete one key |
-| GET | `/auth/google` | ❌ | Start Google OAuth flow |
-| GET | `/auth/google/callback` | ❌ | Google OAuth callback handler |
+| Method | Route                     | Auth | Description                                    |
+| ------ | ------------------------- | ---- | ---------------------------------------------- |
+| POST   | `/api/login`              | ❌   | Login with username + developer key            |
+| POST   | `/api/login/google`       | ❌   | Complete Google onboarding with username + key |
+| POST   | `/api/logout`             | ✅   | Invalidate session token                       |
+| DELETE | `/api/account`            | ✅   | Delete account + all data                      |
+| GET    | `/api/data`               | ✅   | Get all user data                              |
+| GET    | `/api/data/:feature`      | ✅   | Get one feature                                |
+| POST   | `/api/data`               | ✅   | Save all data                                  |
+| POST   | `/api/data/:feature`      | ✅   | Save one feature                               |
+| DELETE | `/api/data/:feature/:key` | ✅   | Delete one key                                 |
+| GET    | `/auth/google`            | ❌   | Start Google OAuth flow                        |
+| GET    | `/auth/google/callback`   | ❌   | Google OAuth callback handler                  |
 
 ---
 

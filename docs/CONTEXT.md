@@ -26,16 +26,16 @@ A single personal dashboard as a productivity hub with 8 tabs:
 
 ## Key Architecture Decisions
 
-| Decision | Reason |
-|----------|--------|
-| **Vanilla JS** | No frameworks, ever |
-| **NeonDB (PostgreSQL)** | True multi-user, cloud persistence |
-| **Express backend** | Same JS ecosystem, simple REST API |
-| **Developer key login** | Offline-first auth, no email/password |
-| **Google OAuth** | Optional — auto-fill email, avatar |
-| **Onboarding flow** | 3 steps: username → role dropdown (20 options) → dev key |
-| **localStorage cache** | Offline fallback + fast reads |
-| **Sync on tab switch** | Periodic save without blocking UX |
+| Decision                | Reason                                                   |
+| ----------------------- | -------------------------------------------------------- |
+| **Vanilla JS**          | No frameworks, ever                                      |
+| **NeonDB (PostgreSQL)** | True multi-user, cloud persistence                       |
+| **Express backend**     | Same JS ecosystem, simple REST API                       |
+| **Developer key login** | Offline-first auth, no email/password                    |
+| **Google OAuth**        | Optional — auto-fill email, avatar                       |
+| **Onboarding flow**     | 3 steps: username → role dropdown (20 options) → dev key |
+| **localStorage cache**  | Offline fallback + fast reads                            |
+| **Sync on tab switch**  | Periodic save without blocking UX                        |
 
 ---
 
