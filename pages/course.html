@@ -1,112 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Notes — Personal Habit Tracker</title>
 
     <link rel="icon" type="image/x-icon" href="../assets/favicon/favicon.ico">
-
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css">
     <link rel="stylesheet" href="../assets/css/global.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
 </head>
-
 <body>
 
     <div class="course-page" id="course-root">
 
         <!-- Back button -->
         <nav class="course-nav">
-            <a href="../index.html" class="btn-back">
-                <i data-lucide="arrow-left"></i>
-                Back to Dashboard
-            </a>
+            <a href="../index.html" class="btn-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
         </nav>
 
-        <!-- Course info — editable -->
+        <!-- Course info -->
         <div class="card mb-6">
             <div class="editor-field">
                 <label class="modal__label">Course Title</label>
-                <input class="modal__input" type="text" id="editor-title" placeholder="Nama course"
-                    autocomplete="off">
+                <input class="modal__input" type="text" id="editor-title" placeholder="Nama course" autocomplete="off">
             </div>
             <div class="editor-badges">
                 <div class="editor-field">
                     <label class="modal__label">Role</label>
-                    <input class="modal__input" type="text" id="editor-role" placeholder="e.g. AI Engineer"
-                        autocomplete="off">
+                    <input class="modal__input" type="text" id="editor-role" placeholder="e.g. AI Engineer" autocomplete="off">
                 </div>
                 <div class="editor-field">
                     <label class="modal__label">Category</label>
-                    <input class="modal__input" type="text" id="editor-category" placeholder="e.g. Machine Learning"
-                        autocomplete="off">
+                    <input class="modal__input" type="text" id="editor-category" placeholder="e.g. Machine Learning" autocomplete="off">
                 </div>
                 <div class="editor-field">
                     <label class="modal__label">Company</label>
-                    <input class="modal__input" type="text" id="editor-company" placeholder="e.g. Anthropic"
-                        autocomplete="off">
+                    <input class="modal__input" type="text" id="editor-company" placeholder="e.g. Anthropic" autocomplete="off">
                 </div>
             </div>
         </div>
 
-        <!-- Notes editor -->
+        <!-- Quill Editor -->
         <div class="card">
             <h2 class="text-xl font-bold text-primary font-serif mb-4">Course Notes</h2>
-
-            <!-- Markdown toolbar -->
-            <div class="editor-toolbar" id="editor-toolbar">
-                <button type="button" class="editor-toolbar__btn" data-md="bold" title="Bold">
-                    <i data-lucide="bold"></i>
-                </button>
-                <button type="button" class="editor-toolbar__btn" data-md="italic" title="Italic">
-                    <i data-lucide="italic"></i>
-                </button>
-                <button type="button" class="editor-toolbar__btn" data-md="heading" title="Heading">
-                    <i data-lucide="heading"></i>
-                </button>
-                <button type="button" class="editor-toolbar__btn" data-md="list" title="Bulleted list">
-                    <i data-lucide="list"></i>
-                </button>
-                <button type="button" class="editor-toolbar__btn" data-md="link" title="Link">
-                    <i data-lucide="link"></i>
-                </button>
-                <span class="editor-toolbar__sep"></span>
-                <button type="button" class="editor-toolbar__btn editor-toolbar__btn--preview" id="editor-preview-toggle" title="Toggle preview">
-                    <i data-lucide="eye"></i>
-                </button>
-            </div>
-
-            <!-- Textarea -->
-            <textarea class="editor-textarea" id="editor-content"
-                placeholder="Tulis catatan course Anda di sini...&#10;&#10;Mendukung format Markdown:&#10;**bold** _italic_ ### Heading&#10;- list item&#10;[link text](url)"
-                rows="15"></textarea>
-
-            <!-- Preview area (hidden by default) -->
-            <div class="editor-preview hidden" id="editor-preview"></div>
-
-            <!-- Actions -->
+            <div id="editor-container" style="min-height:300px;"></div>
             <div class="editor-actions">
                 <span class="editor-status" id="editor-status"></span>
                 <div class="editor-actions__right">
-                    <button class="btn btn-ghost" id="editor-delete-btn">
-                        <i data-lucide="trash-2"></i> Hapus
-                    </button>
-                    <button class="btn btn-primary" id="editor-save-btn">
-                        <i data-lucide="check"></i> Simpan
-                    </button>
+                    <button class="btn btn-ghost" id="editor-delete-btn"><i data-lucide="trash-2"></i> Hapus</button>
+                    <button class="btn btn-primary" id="editor-save-btn"><i data-lucide="check"></i> Simpan</button>
                 </div>
             </div>
         </div>
 
     </div>
 
+    <!-- Mermaid Modal -->
+    <div class="modal-overlay" id="mermaid-modal">
+        <div class="modal" style="max-width:600px;">
+            <h3 class="modal__title">Tambah Diagram Mermaid</h3>
+            <div class="modal__form">
+                <div class="modal__field">
+                    <label class="modal__label">Kode Mermaid</label>
+                    <textarea class="modal__input" id="mermaid-code" rows="8"
+                        placeholder="graph TD;&#10;  A[Start] --> B[End]"
+                        style="font-family:var(--font-mono);font-size:var(--text-sm);resize:vertical;"></textarea>
+                </div>
+                <div class="modal__field">
+                    <label class="modal__label">Preview</label>
+                    <div id="mermaid-preview" class="ql-mermaid-preview"></div>
+                </div>
+                <div class="modal__actions">
+                    <button class="btn btn-ghost" id="mermaid-cancel">Batal</button>
+                    <button class="btn btn-secondary" id="mermaid-preview-btn"><i data-lucide="eye"></i> Preview</button>
+                    <button class="btn btn-primary" id="mermaid-insert"><i data-lucide="plus"></i> Insert</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: false, theme: 'neutral' });</script>
 
     <script src="../assets/js/data.js"></script>
     <script src="../assets/js/data-study.js"></script>
@@ -118,33 +99,40 @@
         (function () {
             var params = new URLSearchParams(window.location.search);
             var courseId = params.get('id');
+            var saveTimer = null;
+            var statusEl = document.getElementById('editor-status');
+            var mermaidCode = '';
+            var mermaidInsertIndex = null;
 
             if (!courseId) {
                 document.getElementById('course-root').innerHTML =
                     '<nav class="course-nav"><a href="../index.html" class="btn-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a></nav>' +
-                    '<div class="card" style="padding:var(--space-10);text-align:center;margin-top:var(--space-8);">' +
-                    '<p class="text-muted">Course not found.</p></div>';
+                    '<div class="card" style="padding:var(--space-10);text-align:center;margin-top:var(--space-8);"><p class="text-muted">Course not found.</p></div>';
                 if (window.lucide) lucide.createIcons();
                 return;
             }
 
-            /* Elements */
-            var titleInput = document.getElementById('editor-title');
-            var roleInput = document.getElementById('editor-role');
-            var catInput = document.getElementById('editor-category');
-            var companyInput = document.getElementById('editor-company');
-            var contentArea = document.getElementById('editor-content');
-            var previewArea = document.getElementById('editor-preview');
-            var previewToggle = document.getElementById('editor-preview-toggle');
-            var saveBtn = document.getElementById('editor-save-btn');
-            var deleteBtn = document.getElementById('editor-delete-btn');
-            var statusEl = document.getElementById('editor-status');
-            var toolbar = document.getElementById('editor-toolbar');
+            /* Init Quill */
+            var quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: {
+                        container: [
+                            ['bold', 'italic', 'underline'],
+                            [{ 'header': [1, 2, false] }],
+                            [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+                            ['link', 'code-block'],
+                            ['mermaid']
+                        ],
+                        handlers: {
+                            mermaid: openMermaidModal
+                        }
+                    }
+                },
+                placeholder: 'Tulis catatan course Anda di sini...'
+            });
 
-            var previewVisible = false;
-            var saveTimer = null;
-
-            /* Load existing course info from custom_courses */
+            /* Load existing course info & notes */
             function loadCourseInfo() {
                 try {
                     var raw = localStorage.getItem('custom_courses');
@@ -152,57 +140,37 @@
                         var list = JSON.parse(raw);
                         var course = list.find(function (c) { return c.id === courseId; });
                         if (course) {
-                            titleInput.value = course.title || '';
-                            roleInput.value = course.role || '';
-                            catInput.value = course.subCategory || '';
-                            companyInput.value = course.company || '';
-                            return true;
+                            document.getElementById('editor-title').value = course.title || '';
+                            document.getElementById('editor-role').value = course.role || '';
+                            document.getElementById('editor-category').value = course.subCategory || '';
+                            document.getElementById('editor-company').value = course.company || '';
                         }
                     }
                 } catch (e) {}
-                return false;
             }
 
-            /* Load notes from course_notes */
             function loadNotes() {
                 var allNotes = loadCourseNotes();
                 var note = allNotes[courseId];
                 if (note) {
-                    if (note.title) titleInput.value = note.title;
+                    if (note.title) document.getElementById('editor-title').value = note.title;
                     if (note.badges) {
-                        if (note.badges.role) roleInput.value = note.badges.role;
-                        if (note.badges.subCategory) catInput.value = note.badges.subCategory;
-                        if (note.badges.company) companyInput.value = note.badges.company;
+                        if (note.badges.role) document.getElementById('editor-role').value = note.badges.role;
+                        if (note.badges.subCategory) document.getElementById('editor-category').value = note.badges.subCategory;
+                        if (note.badges.company) document.getElementById('editor-company').value = note.badges.company;
                     }
-                    contentArea.value = note.content || '';
-                    renderPreview(contentArea.value);
+                    if (note.content) {
+                        quill.root.innerHTML = note.content;
+                    }
                 }
+                updateTitle();
             }
 
-            /* Render markdown preview */
-            function renderPreview(src) {
-                if (!src) { previewArea.innerHTML = '<p class="text-muted">Preview akan muncul di sini...</p>'; return; }
-                previewArea.innerHTML = renderMarkdown(src);
+            function updateTitle() {
+                var t = document.getElementById('editor-title').value.trim();
+                document.title = (t || 'Course Notes') + ' \u2014 Personal Habit Tracker';
             }
 
-            /* Toggle preview */
-            function togglePreview() {
-                previewVisible = !previewVisible;
-                contentArea.classList.toggle('hidden', previewVisible);
-                previewArea.classList.toggle('hidden', !previewVisible);
-                var icon = previewToggle.querySelector('i');
-                if (previewVisible) {
-                    renderPreview(contentArea.value);
-                    previewToggle.classList.add('is-active');
-                    if (icon) icon.setAttribute('data-lucide', 'file-text');
-                } else {
-                    previewToggle.classList.remove('is-active');
-                    if (icon) icon.setAttribute('data-lucide', 'eye');
-                }
-                if (window.lucide) lucide.createIcons();
-            }
-
-            /* Set status message */
             function setStatus(msg, isError) {
                 statusEl.textContent = msg;
                 statusEl.style.color = isError ? 'var(--color-danger)' : 'var(--color-sage)';
@@ -210,25 +178,24 @@
                 statusEl._timer = setTimeout(function () { statusEl.textContent = ''; }, 3000);
             }
 
-            /* Save notes */
+            /* Save */
             function saveNotes() {
                 var allNotes = loadCourseNotes();
                 allNotes[courseId] = {
-                    title: titleInput.value.trim(),
+                    title: document.getElementById('editor-title').value.trim(),
                     badges: {
-                        role: roleInput.value.trim(),
-                        subCategory: catInput.value.trim(),
-                        company: companyInput.value.trim(),
+                        role: document.getElementById('editor-role').value.trim(),
+                        subCategory: document.getElementById('editor-category').value.trim(),
+                        company: document.getElementById('editor-company').value.trim(),
                     },
-                    content: contentArea.value,
+                    content: quill.root.innerHTML,
                     updatedAt: new Date().toISOString(),
                 };
                 saveCourseNotes(allNotes);
-                document.title = (titleInput.value.trim() || 'Course Notes') + ' \u2014 Personal Habit Tracker';
+                updateTitle();
                 setStatus('Tersimpan.');
             }
 
-            /* Auto-save on input */
             function autoSave() {
                 clearTimeout(saveTimer);
                 saveTimer = setTimeout(saveNotes, 800);
@@ -240,53 +207,104 @@
                     var allNotes = loadCourseNotes();
                     delete allNotes[courseId];
                     saveCourseNotes(allNotes);
-                    contentArea.value = '';
-                    previewArea.innerHTML = '<p class="text-muted">Preview akan muncul di sini...</p>';
+                    quill.setText('');
                     setStatus('Catatan dihapus.');
                 });
+            }
+
+            /* ======== MERMAID ======== */
+
+            function openMermaidModal() {
+                var range = quill.getSelection(true);
+                mermaidInsertIndex = range ? range.index : quill.getLength();
+                document.getElementById('mermaid-code').value = '';
+                document.getElementById('mermaid-preview').innerHTML = '';
+                document.getElementById('mermaid-modal').classList.add('is-open');
+                reinitLucide();
+            }
+
+            function renderMermaidPreview() {
+                var code = document.getElementById('mermaid-code').value.trim();
+                if (!code) return;
+                var container = document.getElementById('mermaid-preview');
+                container.innerHTML = '<div class="mermaid">' + code.replace(/</g, '&lt;') + '</div>';
+                try {
+                    mermaid.run({ nodes: [container.querySelector('.mermaid')] });
+                } catch (e) {
+                    container.innerHTML = '<p class="text-muted" style="color:var(--color-danger);">Error: ' + e.message + '</p>';
+                }
+            }
+
+            function insertMermaid() {
+                var code = document.getElementById('mermaid-code').value.trim();
+                if (!code) return;
+
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = '<div class="mermaid">' + code.replace(/</g, '&lt;') + '</div>';
+                var svgContainer = document.createElement('div');
+
+                mermaid.run({ nodes: [tempDiv.querySelector('.mermaid')] }).then(function () {
+                    var svg = tempDiv.querySelector('svg');
+                    var html;
+                    if (svg) {
+                        html = '<div class="ql-mermaid" data-mermaid-code="' + escapeHtml(code) + '">' + svg.outerHTML + '</div>';
+                    } else {
+                        html = '<pre><code>' + escapeHtml(code) + '</code></pre>';
+                    }
+                    quill.clipboard.dangerouslyPasteHTML(mermaidInsertIndex, html, 'silent');
+                    document.getElementById('mermaid-modal').classList.remove('is-open');
+                    autoSave();
+                }).catch(function () {
+                    html = '<pre><code>' + escapeHtml(code) + '</code></pre>';
+                    quill.clipboard.dangerouslyPasteHTML(mermaidInsertIndex, html, 'silent');
+                    document.getElementById('mermaid-modal').classList.remove('is-open');
+                });
+            }
+
+            /* Click Mermaid block to re-edit */
+            quill.root.addEventListener('dblclick', function (e) {
+                var mermaidBlock = e.target.closest('.ql-mermaid');
+                if (!mermaidBlock) return;
+                var code = mermaidBlock.dataset.mermaidCode;
+                if (!code) return;
+                mermaidInsertIndex = getCaretIndex(mermaidBlock);
+                document.getElementById('mermaid-code').value = code;
+                renderMermaidPreview();
+                document.getElementById('mermaid-modal').classList.add('is-open');
+                reinitLucide();
+            });
+
+            function getCaretIndex(target) {
+                var children = quill.root.children;
+                for (var i = 0; i < children.length; i++) {
+                    if (children[i].contains(target)) return quill.getIndex(children[i]);
+                }
+                return quill.getLength();
             }
 
             /* Init */
             loadCourseInfo();
             loadNotes();
 
-            if (!titleInput.value) {
-                document.title = 'Course Notes \u2014 Personal Habit Tracker';
-            } else {
-                document.title = titleInput.value + ' \u2014 Personal Habit Tracker';
-            }
-
             /* Event listeners */
-            [titleInput, roleInput, catInput, companyInput].forEach(function (el) {
-                el.addEventListener('input', autoSave);
+            ['editor-title', 'editor-role', 'editor-category', 'editor-company'].forEach(function (id) {
+                document.getElementById(id).addEventListener('input', autoSave);
             });
 
-            contentArea.addEventListener('input', function () {
-                autoSave();
-                if (previewVisible) renderPreview(contentArea.value);
+            quill.on('text-change', autoSave);
+            document.getElementById('editor-save-btn').addEventListener('click', saveNotes);
+            document.getElementById('editor-delete-btn').addEventListener('click', deleteNotes);
+
+            /* Mermaid modal */
+            document.getElementById('mermaid-preview-btn').addEventListener('click', renderMermaidPreview);
+            document.getElementById('mermaid-insert').addEventListener('click', insertMermaid);
+            document.getElementById('mermaid-cancel').addEventListener('click', function () {
+                document.getElementById('mermaid-modal').classList.remove('is-open');
             });
-
-            previewToggle.addEventListener('click', togglePreview);
-
-            saveBtn.addEventListener('click', saveNotes);
-            deleteBtn.addEventListener('click', deleteNotes);
-
-            /* Markdown toolbar */
-            if (toolbar) {
-                toolbar.addEventListener('click', function (e) {
-                    var btn = e.target.closest('.editor-toolbar__btn');
-                    if (!btn || btn.classList.contains('editor-toolbar__btn--preview')) return;
-                    insertMarkdownSyntax(contentArea, btn.dataset.md);
-                    contentArea.focus();
-                    if (previewVisible) renderPreview(contentArea.value);
-                });
-            }
 
             if (window.lucide) lucide.createIcons();
 
         })();
     </script>
-
 </body>
-
 </html>

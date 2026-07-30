@@ -4150,3 +4150,169 @@
         font-size: var(--text-xl);
     }
 }
+
+
+/* ==========================================================================
+     38. QUILL EDITOR — Rich text + Mermaid
+    ========================================================================== */
+
+/* Match Quill to Anthropic theme */
+.ql-toolbar.ql-snow {
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+    background: var(--color-bg-sidebar);
+    font-family: var(--font-sans);
+}
+
+.ql-container.ql-snow {
+    border: 1px solid var(--color-border) !important;
+    border-top: none !important;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-loose);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    min-height: 300px;
+}
+
+.ql-editor {
+    padding: var(--space-5);
+    min-height: 280px;
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--color-text-muted) !important;
+    font-style: normal !important;
+    left: var(--space-5) !important;
+}
+
+/* Toolbar buttons */
+.ql-snow .ql-stroke {
+    stroke: var(--color-text-secondary) !important;
+}
+
+.ql-snow .ql-fill {
+    fill: var(--color-text-secondary) !important;
+}
+
+.ql-snow .ql-picker {
+    color: var(--color-text-secondary) !important;
+}
+
+.ql-snow .ql-toolbar button:hover .ql-stroke,
+.ql-snow .ql-toolbar button.ql-active .ql-stroke {
+    stroke: var(--color-sage) !important;
+}
+
+.ql-snow .ql-toolbar button:hover .ql-fill,
+.ql-snow .ql-toolbar button.ql-active .ql-fill {
+    fill: var(--color-sage) !important;
+}
+
+.ql-snow .ql-toolbar button:hover,
+.ql-snow .ql-toolbar button.ql-active {
+    color: var(--color-sage) !important;
+}
+
+.ql-snow .ql-picker-options {
+    background: var(--color-bg-card) !important;
+    border-color: var(--color-border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.ql-snow .ql-picker-item:hover {
+    background: var(--color-sage-bg) !important;
+    color: var(--color-sage) !important;
+}
+
+.ql-snow .ql-picker-label {
+    border-color: var(--color-border) !important;
+}
+
+/* Custom Mermaid toolbar button */
+.ql-toolbar .ql-mermaid::before {
+    content: '\1F9D0';
+    font-size: 16px;
+    line-height: 1;
+}
+
+.ql-toolbar .ql-mermaid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 24px;
+    padding: 3px 5px;
+}
+
+/* Mermaid block in editor */
+.ql-mermaid {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin: var(--space-4) 0;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+    overflow-x: auto;
+}
+
+.ql-mermaid:hover {
+    border-color: var(--color-blue);
+}
+
+.ql-mermaid svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Mermaid preview in modal */
+.ql-mermaid-preview {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    min-height: 80px;
+    overflow-x: auto;
+}
+
+.ql-mermaid-preview svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Quill code block */
+.ql-editor pre.ql-syntax {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+    overflow-x: auto;
+}
+
+/* Quill link */
+.ql-editor a {
+    color: var(--color-blue);
+    text-decoration: underline;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .ql-toolbar.ql-snow {
+        flex-wrap: wrap;
+    }
+    .ql-editor {
+        padding: var(--space-3);
+        min-height: 200px;
+    }
+    .ql-container.ql-snow {
+        min-height: 200px;
+    }
+}
