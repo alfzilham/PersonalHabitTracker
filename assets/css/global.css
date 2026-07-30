@@ -1146,6 +1146,7 @@ html, body {
 }
 
 /* Override dashboard shell for course pages — allow normal scrolling */
+html:has(.course-page),
 body:has(.course-page) {
     overflow: auto;
     height: auto;
