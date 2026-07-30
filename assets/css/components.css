@@ -4223,6 +4223,10 @@
         flex-wrap: wrap;
     }
 
+    .ql-toolbar.ql-snow .ql-formats {
+        flex-wrap: wrap;
+    }
+
     .ql-editor {
         padding: var(--space-3);
         min-height: 200px;
