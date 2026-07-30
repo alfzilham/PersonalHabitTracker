@@ -4107,10 +4107,28 @@
     margin-top: var(--space-6);
 }
 
+/* Onboarding buttons — dusty blue only */
+.onb-btn.btn-primary {
+    background-color: var(--color-blue);
+    border-color: var(--color-blue);
+}
+
+.onb-btn.btn-primary:hover {
+    background-color: var(--color-blue-light);
+    border-color: var(--color-blue-light);
+}
+
+.onb-btn.btn-primary:active {
+    background-color: #4a6a8e;
+    border-color: #4a6a8e;
+}
+
 /* Responsive — stack vertikal */
 @media (max-width: 768px) {
     .onb-split {
         flex-direction: column;
+        overflow: auto;
+        min-height: 100vh;
     }
     .onb-visual {
         display: none;
@@ -4118,6 +4136,16 @@
     .onb-panel {
         padding: var(--space-4);
         align-items: flex-start;
+        min-height: 100vh;
         padding-top: var(--space-6);
+    }
+    .onb-card {
+        padding: var(--space-4);
+    }
+    .onb-steps__line {
+        width: 24px;
+    }
+    .onb-step__title {
+        font-size: var(--text-xl);
     }
 }
