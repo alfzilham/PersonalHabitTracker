@@ -6,14 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — Personal Habit Tracker</title>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/favicon/favicon.ico">
-
-    <!-- Anthropic Fonts -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
-
-    <!-- Styles -->
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -21,9 +16,6 @@
 
 <body>
 
-    <!-- =====================================================================
-    LOGIN PAGE — Split layout
-  ====================================================================== -->
     <div class="login-split">
 
         <!-- LEFT: Visual Panel -->
@@ -54,52 +46,58 @@
         <div class="login-panel">
             <div class="login-card">
                 <div class="login-card__header">
-                    <h1 class="login-card__title">Masuk</h1>
-                    <p class="login-card__subtitle">Masukkan username dan key Anda</p>
+                    <h1 class="login-card__title" id="login-form-title">Masuk</h1>
+                    <p class="login-card__subtitle" id="login-form-subtitle">Masukkan username dan key Anda</p>
                 </div>
 
+                <!-- Google Login Button -->
+                <button class="btn btn-secondary login-btn mb-6" id="google-login-btn"
+                    style="gap:var(--space-3);font-size:var(--text-base);padding:var(--space-4);">
+                    <svg width="20" height="20" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 0 0 0 24c0 3.77.87 7.35 2.56 10.56l7.97-5.97z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.97C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    <span>Login dengan Google</span>
+                </button>
+
+                <div class="login-divider" id="login-divider"><span style="font-size:var(--text-xs);color:var(--color-text-muted);">atau</span></div>
+
                 <form id="login-form" class="login-form">
+                    <!-- Google onboarding hidden fields -->
+                    <input type="hidden" id="login-google-id" value="">
+                    <input type="hidden" id="login-google-avatar" value="">
+
                     <!-- Username -->
                     <div class="modal__field">
                         <label class="modal__label" for="login-username">Username</label>
-                    <input class="modal__input" type="text" id="login-username" placeholder="Buat username Anda"
-                        autocomplete="username" required style="text-align:center;">
-                        <span class="login-hint">Buat username baru untuk login pertama, atau pakai username yang sudah
-                            ada.</span>
+                        <input class="modal__input" type="text" id="login-username" placeholder="Buat username Anda"
+                            autocomplete="username" required style="text-align:center;">
+                        <span class="login-hint">Buat username baru untuk login pertama, atau pakai username yang sudah ada.</span>
                     </div>
 
-                <!-- Developer Key — input biasa, center -->
-                <div class="modal__field">
-                    <label class="modal__label">Developer Key</label>
-                    <input class="modal__input" type="text" id="login-key" maxlength="7"
-                        placeholder="XXX XXX" autocomplete="off" required
-                        style="text-align:center;letter-spacing:0.2em;font-family:var(--font-mono);text-transform:uppercase;">
-                    <span class="login-hint">Masukkan 6 huruf kapital. Contoh: XRD HTJ</span>
-                </div>
+                    <!-- Developer Key -->
+                    <div class="modal__field">
+                        <label class="modal__label">Developer Key</label>
+                        <input class="modal__input" type="text" id="login-key" maxlength="7"
+                            placeholder="XXX XXX" autocomplete="off" required
+                            style="text-align:center;letter-spacing:0.2em;font-family:var(--font-mono);text-transform:uppercase;">
+                        <span class="login-hint">Masukkan 6 huruf kapital. Contoh: XRD HTJ</span>
+                    </div>
 
-                    <!-- Error message -->
                     <div id="login-error" class="login-error hidden"></div>
 
-                    <!-- Submit -->
                     <button type="submit" class="btn btn-primary login-btn" id="login-submit">
                         <i data-lucide="log-in"></i>
                         <span>Login</span>
                     </button>
                 </form>
-
-                <div class="login-divider"></div>
-
-                <div class="login-footer">
-                    <p>Belum punya key?</p>
-                    <a href="https://wa.me/6285213896460" target="_blank" rel="noopener"
-                       class="login-wa-link">Hubungi developer via WhatsApp</a>
-                </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <script>lucide.createIcons();</script>
     <script src="assets/js/login.js"></script>

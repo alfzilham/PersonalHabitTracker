@@ -24,7 +24,6 @@ router.post('/login', async (req, res) => {
 
   const normalizedKey = developerKey.toUpperCase().trim();
 
-  /* Cek apakah key valid (ada di .env) */
   const keyIsValid = DEV_KEYS.includes(normalizedKey);
   if (!keyIsValid) {
     return res.status(401).json({ error: 'Developer Key tidak valid.' });
@@ -33,20 +32,17 @@ router.post('/login', async (req, res) => {
   const existingUser = await db.findUserByUsername(username.trim());
 
   if (!existingUser) {
-    /* Cek apakah developer key sudah dipakai user lain */
     const userWithSameKey = await db.findUserByKey(normalizedKey);
     if (userWithSameKey) {
       return res.status(401).json({ error: 'Developer Key sudah dipakai oleh user lain.' });
     }
 
-    /* Login pertama — simpan user baru */
     const userId = await db.createUser(username.trim(), normalizedKey);
     const token = uuidv4();
     await db.createSession(userId, token);
     return res.json({ token, username: username.trim(), isNewUser: true });
   }
 
-  /* User sudah ada — cocokkan key */
   if (existingUser.developer_key !== normalizedKey) {
     return res.status(401).json({
       error: 'Developer Key tidak sesuai dengan data yang tersimpan. Gunakan key yang sama saat pendaftaran.',
@@ -58,7 +54,38 @@ router.post('/login', async (req, res) => {
   res.json({ token, username: existingUser.username, isNewUser: false });
 });
 
-/* POST /api/logout — hapus session */
+/* POST /api/login/google — menyelesaikan onboarding Google */
+router.post('/login/google', async (req, res) => {
+  const { googleId, email, avatarUrl, username, developerKey } = req.body;
+
+  if (!googleId) return res.status(400).json({ error: 'Google ID diperlukan.' });
+  if (!username || !username.trim()) return res.status(400).json({ error: 'Username wajib diisi.' });
+  if (!developerKey || !developerKey.trim()) return res.status(400).json({ error: 'Developer Key wajib diisi.' });
+
+  const normalizedKey = developerKey.toUpperCase().trim();
+
+  const keyIsValid = DEV_KEYS.includes(normalizedKey);
+  if (!keyIsValid) return res.status(401).json({ error: 'Developer Key tidak valid.' });
+
+  const existingKey = await db.findUserByKey(normalizedKey);
+  if (existingKey) return res.status(401).json({ error: 'Developer Key sudah dipakai oleh user lain.' });
+
+  const userId = await db.createGoogleUser(username.trim(), normalizedKey, googleId, email || '', avatarUrl || '');
+  const token = uuidv4();
+  await db.createSession(userId, token);
+
+  /* Simpan data Google ke settings_profile */
+  try {
+    await db.upsertUserData(userId, 'settings', 'settings_profile', JSON.stringify({
+      name: username.trim(), email: email || '', avatar: avatarUrl || '',
+      theme: 'light', notifTodo: true, language: 'en',
+    }));
+  } catch (e) {}
+
+  res.json({ token, username: username.trim(), isNewUser: true });
+});
+
+/* POST /api/logout */
 router.post('/logout', async (req, res) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -68,7 +95,7 @@ router.post('/logout', async (req, res) => {
   res.json({ ok: true });
 });
 
-/* DELETE /api/account — hapus akun + semua data user */
+/* DELETE /api/account */
 router.delete('/account', requireAuth, async (req, res) => {
   await db.deleteUserById(req.user.id);
   res.json({ ok: true, message: 'Akun berhasil dihapus.' });

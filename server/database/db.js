@@ -16,6 +16,9 @@ async function initSchema() {
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     developer_key TEXT NOT NULL,
+    google_id TEXT UNIQUE,
+    email TEXT,
+    avatar_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
   )`;
   await s`CREATE TABLE IF NOT EXISTS app_data (
@@ -53,6 +56,27 @@ async function createUser(username, developerKey) {
     RETURNING id
   `;
   return rows[0].id;
+}
+
+async function findUserByGoogleId(googleId) {
+  const rows = await getSql()`SELECT * FROM app_users WHERE google_id = ${googleId}`;
+  return rows[0] || null;
+}
+
+async function createGoogleUser(username, developerKey, googleId, email, avatarUrl) {
+  const rows = await getSql()`
+    INSERT INTO app_users (username, developer_key, google_id, email, avatar_url)
+    VALUES (${username}, ${developerKey}, ${googleId}, ${email}, ${avatarUrl})
+    RETURNING id
+  `;
+  return rows[0].id;
+}
+
+async function updateUserGoogleInfo(userId, googleId, email, avatarUrl) {
+  await getSql()`
+    UPDATE app_users SET google_id = ${googleId}, email = ${email}, avatar_url = ${avatarUrl}
+    WHERE id = ${userId}
+  `;
 }
 
 /* ============ SESSIONS ============ */
@@ -118,7 +142,10 @@ module.exports = {
   initDb,
   findUserByKey,
   findUserByUsername,
+  findUserByGoogleId,
   createUser,
+  createGoogleUser,
+  updateUserGoogleInfo,
   createSession,
   findSessionByToken,
   deleteSessionByToken,
