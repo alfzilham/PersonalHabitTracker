@@ -4135,7 +4135,8 @@
     }
     .onb-panel {
         padding: var(--space-4);
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
         min-height: 100vh;
         padding-top: var(--space-6);
     }

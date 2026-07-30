@@ -1382,5 +1382,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('dashboard-core.js: COURSES tidak ditemukan. Pastikan data.js dimuat.');
         return;
     }
+    /* Cegah init() jalan di halaman onboarding yang tidak perlu dashboard penuh */
+    if (window.location.pathname.indexOf('onboarding') !== -1) return;
     init();
 });

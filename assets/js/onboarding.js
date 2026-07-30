@@ -31,7 +31,7 @@
     document.getElementById('onb-avatar').value = avatar || '';
 
     /* Init role dropdown */
-    createViewDropdown('onb-role-container', ROLE_OPTIONS, 'Software Engineer');
+    createViewDropdown('onb-role-container', ROLE_OPTIONS, 'Software Engineer', null, true);
 
     function showStep(step) {
         /* Hide all steps */
