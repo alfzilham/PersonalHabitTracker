@@ -25,27 +25,12 @@
         </nav>
 
         <!-- Course info -->
-        <div class="card mb-6">
-            <div class="editor-field">
-                <label class="modal__label">Course Title</label>
-                <input class="modal__input" type="text" id="editor-title" placeholder="Nama course" autocomplete="off">
-            </div>
-            <div class="editor-badges">
-                <div class="editor-field">
-                    <label class="modal__label">Role</label>
-                    <input class="modal__input" type="text" id="editor-role" placeholder="e.g. AI Engineer"
-                        autocomplete="off">
-                </div>
-                <div class="editor-field">
-                    <label class="modal__label">Category</label>
-                    <input class="modal__input" type="text" id="editor-category" placeholder="e.g. Machine Learning"
-                        autocomplete="off">
-                </div>
-                <div class="editor-field">
-                    <label class="modal__label">Company</label>
-                    <input class="modal__input" type="text" id="editor-company" placeholder="e.g. Anthropic"
-                        autocomplete="off">
-                </div>
+        <div class="course-header">
+            <input class="course-header__title" type="text" id="editor-title" placeholder="Nama course" autocomplete="off">
+            <div class="course-header__badges">
+                <input class="badge-input" type="text" id="editor-role" placeholder="Role" autocomplete="off">
+                <input class="badge-input" type="text" id="editor-category" placeholder="Category" autocomplete="off">
+                <input class="badge-input" type="text" id="editor-company" placeholder="Company" autocomplete="off">
             </div>
         </div>
 

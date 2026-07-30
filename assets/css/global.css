@@ -1145,6 +1145,12 @@ html, body {
     padding: var(--space-8) var(--space-6);
 }
 
+/* Override dashboard shell for course pages — allow normal scrolling */
+body:has(.course-page) {
+    overflow: auto;
+    height: auto;
+}
+
 /* --- Back nav bar --- */
 .course-nav {
     display: flex;
@@ -1155,23 +1161,35 @@ html, body {
 
 /* --- Course header (title + badges) --- */
 .course-header {
-    margin-bottom: var(--space-10);
-}
-
-.course-header__badges {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding: var(--space-8) 0;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .course-header__title {
     font-family: var(--font-serif);
-    font-size: var(--text-4xl);
+    font-size: var(--text-3xl);
     font-weight: var(--weight-bold);
     color: var(--color-text-primary);
     line-height: var(--leading-tight);
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 0;
     margin-bottom: var(--space-4);
+    display: block;
+}
+
+.course-header__title::placeholder {
+    color: var(--color-text-muted);
+}
+
+.course-header__badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
 }
 
 /* --- Section headings inside course pages --- */

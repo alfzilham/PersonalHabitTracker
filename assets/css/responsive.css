@@ -759,8 +759,12 @@
        2q. Course Editor mobile
        ============================================ */
 
-    .editor-badges {
-        grid-template-columns: 1fr;
+    .course-header__title {
+        font-size: var(--text-2xl);
+    }
+
+    .course-header {
+        padding: var(--space-6) 0;
     }
 
     .editor-header {
