@@ -1252,8 +1252,13 @@
                 </div>
 
                 <div class="modal__field">
-                    <label class="modal__label" for="study-edit-paket">Paket</label>
-                    <input class="modal__input" type="text" id="study-edit-paket" autocomplete="off">
+                    <label class="modal__label">Paket</label>
+                    <div id="study-edit-paket-container" class="view-dropdown" style="min-width:100%;"></div>
+                </div>
+
+                <div class="modal__field hidden" id="study-edit-paket-other-wrap">
+                    <label class="modal__label" for="study-edit-paket-other">Nama Paket</label>
+                    <input class="modal__input" type="text" id="study-edit-paket-other" autocomplete="off">
                 </div>
 
                 <div class="modal__actions">
@@ -1315,9 +1320,14 @@
                 </div>
 
                 <div class="modal__field">
-                    <label class="modal__label" for="study-add-paket">Paket</label>
-                    <input class="modal__input" type="text" id="study-add-paket" autocomplete="off"
-                        placeholder="Jurusan atau MKU">
+                    <label class="modal__label">Paket</label>
+                    <div id="study-add-paket-container" class="view-dropdown" style="min-width:100%;"></div>
+                </div>
+
+                <div class="modal__field hidden" id="study-add-paket-other-wrap">
+                    <label class="modal__label" for="study-add-paket-other">Nama Paket</label>
+                    <input class="modal__input" type="text" id="study-add-paket-other"
+                        placeholder="e.g. Wajib Prodi" autocomplete="off">
                 </div>
 
                 <div class="modal__actions">

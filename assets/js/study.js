@@ -352,6 +352,28 @@ var STUDY_HARI_OPTIONS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 
 function dotToColon(t) { return (t || '').replace(/\./g, ':'); }
 function colonToDot(t) { return (t || '').replace(/:/g, '.'); }
 
+/* Paket dropdown options + reveal input untuk 'Others' */
+var STUDY_PAKET_OPTIONS = ['Paket Jurusan', 'MKU', 'Others'];
+
+function toggleAddPaketOther(val) {
+    var w = document.getElementById('study-add-paket-other-wrap');
+    if (w) w.classList.toggle('hidden', val !== 'Others');
+}
+function toggleEditPaketOther(val) {
+    var w = document.getElementById('study-edit-paket-other-wrap');
+    if (w) w.classList.toggle('hidden', val !== 'Others');
+}
+function readPaketValue(containerId, otherId) {
+    var val = getViewDropdownValue(containerId);
+    if (val === 'Others') {
+        val = document.getElementById(otherId).value.trim();
+        if (!val) val = '-';
+    } else if (val === 'Paket Jurusan') {
+        val = 'Jurusan';
+    }
+    return val;
+}
+
 function openStudyEditModal(key) {
     studyEditKey = key;
     var mk = getAllStudyCourses().find(function (m) { return getStudyKey(m) === key; });
@@ -370,7 +392,11 @@ function openStudyEditModal(key) {
 
     document.getElementById('study-edit-kelas').value = mk.kelas || '';
     document.getElementById('study-edit-ruang').value = mk.ruang || '';
-    document.getElementById('study-edit-paket').value = mk.paket || '';
+    var rawPaket = mk.paket || 'Jurusan';
+    var paketLabel = rawPaket === 'Jurusan' ? 'Paket Jurusan' : (STUDY_PAKET_OPTIONS.indexOf(rawPaket) !== -1 ? rawPaket : 'Others');
+    createViewDropdown('study-edit-paket-container', STUDY_PAKET_OPTIONS, paketLabel, toggleEditPaketOther);
+    document.getElementById('study-edit-paket-other').value = STUDY_PAKET_OPTIONS.indexOf(rawPaket) !== -1 ? '' : rawPaket;
+    toggleEditPaketOther(paketLabel);
     document.getElementById('study-edit-modal').querySelector('.modal').classList.add('modal--edit-mode');
     document.getElementById('study-edit-modal').classList.add('is-open');
 }
@@ -386,7 +412,7 @@ function saveStudyEdit() {
         jam: formatJamRange(colonToDot(document.getElementById('study-edit-jam-mulai').value) || '08.00', colonToDot(document.getElementById('study-edit-jam-selesai').value) || '09.30'),
         kelas: document.getElementById('study-edit-kelas').value.trim(),
         ruang: document.getElementById('study-edit-ruang').value.trim(),
-        paket: document.getElementById('study-edit-paket').value.trim(),
+        paket: readPaketValue('study-edit-paket-container', 'study-edit-paket-other'),
     };
     saveStudyEdits(edits);
     document.getElementById('study-edit-modal').classList.remove('is-open');
@@ -398,12 +424,15 @@ function closeStudyEditModal() {
 }
 
 function openStudyAddModal() {
-    ['study-add-kode', 'study-add-nama', 'study-add-kelas', 'study-add-ruang', 'study-add-paket'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    ['study-add-kode', 'study-add-nama', 'study-add-kelas', 'study-add-ruang', 'study-add-paket-other'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
 
     createViewDropdown('study-add-hari-container', STUDY_HARI_OPTIONS, 'Senin');
 
     document.getElementById('study-add-jam-mulai').value = '08:00';
     document.getElementById('study-add-jam-selesai').value = '09:30';
+
+    createViewDropdown('study-add-paket-container', STUDY_PAKET_OPTIONS, 'Paket Jurusan', toggleAddPaketOther);
+    toggleAddPaketOther('Paket Jurusan');
 
     document.getElementById('study-add-modal').classList.add('is-open');
 }
@@ -421,7 +450,7 @@ function saveStudyAdd() {
         jam: formatJamRange(colonToDot(document.getElementById('study-add-jam-mulai').value) || '08.00', colonToDot(document.getElementById('study-add-jam-selesai').value) || '09.30'),
         kelas: document.getElementById('study-add-kelas').value.trim(),
         ruang: document.getElementById('study-add-ruang').value.trim(),
-        paket: document.getElementById('study-add-paket').value.trim() || 'Jurusan',
+        paket: readPaketValue('study-add-paket-container', 'study-add-paket-other'),
     });
     saveCustomSubjects(subjects);
     document.getElementById('study-add-modal').classList.remove('is-open');
