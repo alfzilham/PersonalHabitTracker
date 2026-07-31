@@ -432,27 +432,6 @@ function getUniqueValues(field) {
     4. STUDY HELPERS — Time, week, and course utilities
    ========================================================================== */
 
-function generateTimeSlots() {
-  var slots = [];
-  for (var h = 6; h <= 21; h++) {
-    for (var m = 0; m < 60; m += 30) {
-      slots.push((h < 10 ? "0" + h : h) + "." + (m === 0 ? "00" : m));
-    }
-  }
-  return slots;
-}
-
-function populateTimeSelect(selectEl) {
-  if (!selectEl || selectEl.dataset.populated) return;
-  var slots = generateTimeSlots();
-  selectEl.innerHTML = slots
-    .map(function (t) {
-      return '<option value="' + t + '">' + t + "</option>";
-    })
-    .join("");
-  selectEl.dataset.populated = "true";
-}
-
 function parseJamRange(jamStr) {
   if (!jamStr || jamStr === "\u2013" || jamStr === "-")
     return { mulai: "08.00", selesai: "09.30" };

@@ -1521,6 +1521,19 @@
     min-width: 0;
 }
 
+/* Sembunyikan spinner & ikon jam bawaan browser pada input time di modal */
+.modal__time-range input[type="time"]::-webkit-inner-spin-button,
+.modal__time-range input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.modal__time-range input[type="time"] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: none;
+}
+
 .modal__time-range__sep {
     color: var(--color-text-muted);
     font-size: var(--text-sm);

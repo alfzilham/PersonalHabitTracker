@@ -347,6 +347,10 @@ function openJournalEditModal(entry) {
 var studyEditKey = '';
 var STUDY_HARI_OPTIONS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu', '\u2013'];
 
+/* Konversi format jam: storage "10.45" <-> input type="time" "10:45" */
+function dotToColon(t) { return (t || '').replace(/\./g, ':'); }
+function colonToDot(t) { return (t || '').replace(/:/g, '.'); }
+
 function openStudyEditModal(key) {
     studyEditKey = key;
     var mk = getAllStudyCourses().find(function (m) { return getStudyKey(m) === key; });
@@ -354,15 +358,14 @@ function openStudyEditModal(key) {
     var edits = loadStudyEdits();
     if (edits[key]) mk = Object.assign({}, mk, edits[key]);
     var jamParsed = parseJamRange(mk.jam);
-    var timeSlots = generateTimeSlots();
 
     document.getElementById('study-edit-kode').value = mk.kode || '';
     document.getElementById('study-edit-nama').value = mk.nama || '';
 
     createViewDropdown('study-edit-hari-container', STUDY_HARI_OPTIONS, mk.hari || 'Senin');
 
-    createViewDropdown('study-edit-jam-mulai-container', timeSlots, jamParsed.mulai, null, true);
-    createViewDropdown('study-edit-jam-selesai-container', timeSlots, jamParsed.selesai, null, true);
+    document.getElementById('study-edit-jam-mulai').value = dotToColon(jamParsed.mulai);
+    document.getElementById('study-edit-jam-selesai').value = dotToColon(jamParsed.selesai);
 
     document.getElementById('study-edit-ruang').value = mk.ruang || '';
     document.getElementById('study-edit-paket').value = mk.paket || '';
@@ -378,7 +381,7 @@ function saveStudyEdit() {
     edits[studyEditKey] = {
         kode: kode, nama: nama,
         hari: getViewDropdownValue('study-edit-hari-container'),
-        jam: formatJamRange(getViewDropdownValue('study-edit-jam-mulai-container'), getViewDropdownValue('study-edit-jam-selesai-container')),
+        jam: formatJamRange(colonToDot(document.getElementById('study-edit-jam-mulai').value) || '08.00', colonToDot(document.getElementById('study-edit-jam-selesai').value) || '09.30'),
         ruang: document.getElementById('study-edit-ruang').value.trim(),
         paket: document.getElementById('study-edit-paket').value.trim(),
     };
@@ -393,12 +396,11 @@ function closeStudyEditModal() {
 
 function openStudyAddModal() {
     ['study-add-kode', 'study-add-nama', 'study-add-ruang', 'study-add-paket'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
-    var timeSlots = generateTimeSlots();
 
     createViewDropdown('study-add-hari-container', STUDY_HARI_OPTIONS, 'Senin');
 
-    createViewDropdown('study-add-jam-mulai-container', timeSlots, '08.00', null, true);
-    createViewDropdown('study-add-jam-selesai-container', timeSlots, '09.30', null, true);
+    document.getElementById('study-add-jam-mulai').value = '08:00';
+    document.getElementById('study-add-jam-selesai').value = '09:30';
 
     document.getElementById('study-add-modal').classList.add('is-open');
 }
@@ -413,7 +415,7 @@ function saveStudyAdd() {
     subjects.push({
         kode: kode, nama: nama,
         hari: getViewDropdownValue('study-add-hari-container'),
-        jam: formatJamRange(getViewDropdownValue('study-add-jam-mulai-container'), getViewDropdownValue('study-add-jam-selesai-container')),
+        jam: formatJamRange(colonToDot(document.getElementById('study-add-jam-mulai').value) || '08.00', colonToDot(document.getElementById('study-add-jam-selesai').value) || '09.30'),
         ruang: document.getElementById('study-add-ruang').value.trim(),
         paket: document.getElementById('study-add-paket').value.trim() || 'Jurusan',
     });
