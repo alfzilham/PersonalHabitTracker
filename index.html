@@ -573,6 +573,7 @@
                                     <th scope="col" class="col-name">Mata Kuliah</th>
                                     <th scope="col" class="col-center">Hari</th>
                                     <th scope="col" class="col-center">Jam</th>
+                                    <th scope="col" class="col-center" data-i18n="th-class">Kelas</th>
                                     <th scope="col" class="col-center">Ruang</th>
                                     <th scope="col">Paket</th>
                                     <th scope="col" style="width:32px;"><i data-lucide="settings"></i></th>
@@ -1241,6 +1242,11 @@
                 </div>
 
                 <div class="modal__field">
+                    <label class="modal__label" data-i18n="study-kelas">Kelas</label>
+                    <input class="modal__input" type="text" id="study-edit-kelas" autocomplete="off">
+                </div>
+
+                <div class="modal__field">
                     <label class="modal__label" for="study-edit-ruang">Ruang</label>
                     <input class="modal__input" type="text" id="study-edit-ruang" autocomplete="off">
                 </div>
@@ -1294,6 +1300,12 @@
                         <span class="modal__time-range__sep">–</span>
                         <input class="modal__input" type="time" id="study-add-jam-selesai" value="09:30">
                     </div>
+                </div>
+
+                <div class="modal__field">
+                    <label class="modal__label" data-i18n="study-kelas">Kelas</label>
+                    <input class="modal__input" type="text" id="study-add-kelas" autocomplete="off"
+                        placeholder="e.g. A1, 01, B">
                 </div>
 
                 <div class="modal__field">

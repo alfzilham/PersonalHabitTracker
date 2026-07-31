@@ -73,11 +73,13 @@ var DASHBOARD_LANG = (function () {
             'study-title': 'Minggu Ini',
             'study-week': 'Minggu',
             'study-progress-label': 'Progress Minggu Ini',
+            'study-kelas': 'Class',
             'th-code': 'Kode',
             'th-subject': 'Mata Kuliah',
             'th-day': 'Hari',
             'th-time': 'Jam',
             'th-room': 'Ruang',
+            'th-class': 'Class',
             'th-package': 'Paket',
 
             /* Journal panel */
@@ -396,11 +398,13 @@ var DASHBOARD_LANG = (function () {
             'study-title': 'Minggu Ini',
             'study-week': 'Minggu',
             'study-progress-label': 'Progres Minggu Ini',
+            'study-kelas': 'Kelas',
             'th-code': 'Kode',
             'th-subject': 'Mata Kuliah',
             'th-day': 'Hari',
             'th-time': 'Jam',
             'th-room': 'Ruang',
+            'th-class': 'Kelas',
             'th-package': 'Paket',
 
             /* Journal panel */

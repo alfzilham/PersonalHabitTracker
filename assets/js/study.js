@@ -40,6 +40,7 @@ function renderStudyTable() {
             '<td class="col-name">' + mk.nama + '</td>' +
             '<td class="col-center"><span class="text-sm text-muted">' + mk.hari + '</span></td>' +
             '<td class="col-center"><span class="text-sm text-muted">' + mk.jam + '</span></td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + (mk.kelas || '') + '</span></td>' +
             '<td class="col-center"><span class="text-sm text-muted">' + mk.ruang + '</span></td>' +
             '<td><span class="badge badge--' + (mk.paket === 'MKU' ? 'optional' : 'required') + '" style="font-size:var(--text-xs);">' + mk.paket + '</span></td>' +
             '<td style="width:32px;"><div class="course-dot-wrap">' +
@@ -367,6 +368,7 @@ function openStudyEditModal(key) {
     document.getElementById('study-edit-jam-mulai').value = dotToColon(jamParsed.mulai);
     document.getElementById('study-edit-jam-selesai').value = dotToColon(jamParsed.selesai);
 
+    document.getElementById('study-edit-kelas').value = mk.kelas || '';
     document.getElementById('study-edit-ruang').value = mk.ruang || '';
     document.getElementById('study-edit-paket').value = mk.paket || '';
     document.getElementById('study-edit-modal').querySelector('.modal').classList.add('modal--edit-mode');
@@ -382,6 +384,7 @@ function saveStudyEdit() {
         kode: kode, nama: nama,
         hari: getViewDropdownValue('study-edit-hari-container'),
         jam: formatJamRange(colonToDot(document.getElementById('study-edit-jam-mulai').value) || '08.00', colonToDot(document.getElementById('study-edit-jam-selesai').value) || '09.30'),
+        kelas: document.getElementById('study-edit-kelas').value.trim(),
         ruang: document.getElementById('study-edit-ruang').value.trim(),
         paket: document.getElementById('study-edit-paket').value.trim(),
     };
@@ -395,7 +398,7 @@ function closeStudyEditModal() {
 }
 
 function openStudyAddModal() {
-    ['study-add-kode', 'study-add-nama', 'study-add-ruang', 'study-add-paket'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
+    ['study-add-kode', 'study-add-nama', 'study-add-kelas', 'study-add-ruang', 'study-add-paket'].forEach(function (id) { var el = document.getElementById(id); if (el) el.value = ''; });
 
     createViewDropdown('study-add-hari-container', STUDY_HARI_OPTIONS, 'Senin');
 
@@ -416,6 +419,7 @@ function saveStudyAdd() {
         kode: kode, nama: nama,
         hari: getViewDropdownValue('study-add-hari-container'),
         jam: formatJamRange(colonToDot(document.getElementById('study-add-jam-mulai').value) || '08.00', colonToDot(document.getElementById('study-add-jam-selesai').value) || '09.30'),
+        kelas: document.getElementById('study-add-kelas').value.trim(),
         ruang: document.getElementById('study-add-ruang').value.trim(),
         paket: document.getElementById('study-add-paket').value.trim() || 'Jurusan',
     });
