@@ -616,10 +616,16 @@
 
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-2xl font-bold text-primary font-serif">To-do List</h2>
-                        <button class="btn btn-primary" id="todo-add-btn">
-                            <i data-lucide="plus"></i>
-                            Add Task
-                        </button>
+                        <div class="flex items-center gap-3">
+                            <button class="btn btn-secondary" id="todo-add-daily-btn">
+                                <i data-lucide="refresh-cw"></i>
+                                Add Daily Task
+                            </button>
+                            <button class="btn btn-primary" id="todo-add-btn">
+                                <i data-lucide="plus"></i>
+                                Add Task
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Filters -->
@@ -1320,6 +1326,9 @@
     <div class="modal-overlay" id="todo-modal">
         <div class="modal">
             <h3 class="modal__title" id="todo-modal-title">Add Task</h3>
+            <p class="text-sm text-muted hidden mb-4" id="todo-modal-daily-hint">
+                Tugas harian ini akan muncul otomatis setiap hari tanpa perlu ditambahkan ulang.
+            </p>
 
             <div class="modal__form">
                 <!-- Title -->

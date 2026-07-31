@@ -55,17 +55,19 @@ function buildTodoItem(t) {
         dueHtml = '<span class="' + dueCls + '">' + t.dueDate + '</span>';
     }
     var catHtml = t.category ? '<span class="todo-cat">' + escapeHtml(t.category) + '</span>' : '';
+    var dailyHtml = t.isDaily ? '<span class="todo-daily-badge"><i data-lucide="refresh-cw" style="width:11px;height:11px;"></i> ' + (__('todo-daily-badge') || 'Daily') + '</span>' : '';
     return '<div class="' + cls + '" data-todo-id="' + t.id + '">' +
         '<label class="checkbox-wrapper" style="margin:0;"><input type="checkbox" data-todo-id="' + t.id + '" ' + checked + '><span class="checkbox-custom"><i data-lucide="check"></i></span></label>' +
         '<div class="todo-item__body">' +
         '<div class="todo-item__title">' + escapeHtml(t.title) + '</div>' +
         (t.description ? '<div class="todo-item__desc">' + escapeHtml(t.description) + '</div>' : '') +
-        '<div class="todo-item__meta">' + catHtml + ' <span class="' + prioClass + '">' + prioLabel + '</span> ' + dueHtml + '</div>' +
+        '<div class="todo-item__meta">' + dailyHtml + ' ' + catHtml + ' <span class="' + prioClass + '">' + prioLabel + '</span> ' + dueHtml + '</div>' +
         '</div>' +
         '<button class="btn btn-ghost btn-sm todo-del" data-todo-id="' + t.id + '" title="Delete" style="flex-shrink:0;"><i data-lucide="trash-2" style="width:14px;height:14px;color:var(--color-text-muted);"></i></button></div>';
 }
 
 function renderTodos() {
+    ensureDailyTasksForToday();
     var list = loadTodos();
     var container = document.getElementById('todo-list');
     if (!container) return;
@@ -105,6 +107,50 @@ function renderTodos() {
     if (label) label.textContent = done + ' / ' + total;
     renderTodoCharts(list);
     refreshTodoDueReminders();
+}
+
+
+/* ==========================================================================
+    1b. DAILY TASKS — auto re-spawn recurring todos each day
+   ========================================================================== */
+
+function ensureDailyTasksForToday() {
+    var today = getTodayDateStr();
+    var templates = loadDailyTasks();
+    if (!templates.length) return;
+    var list = loadTodos();
+    var changed = false;
+    templates.forEach(function (tmpl) {
+        var instances = list.filter(function (t) {
+            return t.isDaily && t.dailyTemplateId === tmpl.id;
+        });
+        instances.sort(function (a, b) {
+            return String(a.dayKey || '').localeCompare(String(b.dayKey || ''));
+        });
+        var cur = instances.length ? instances[instances.length - 1] : null;
+        if (cur && cur.dayKey === today) return;
+        if (cur && !cur.completed) {
+            cur.dayKey = today;
+            cur.createdAt = new Date().toISOString();
+            changed = true;
+        } else {
+            list.push({
+                id: 'todo_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                title: tmpl.title,
+                description: tmpl.description || '',
+                category: tmpl.category || '',
+                priority: tmpl.priority || 'medium',
+                dueDate: '',
+                completed: false,
+                createdAt: new Date().toISOString(),
+                isDaily: true,
+                dailyTemplateId: tmpl.id,
+                dayKey: today,
+            });
+            changed = true;
+        }
+    });
+    if (changed) saveTodos(list);
 }
 
 
@@ -154,9 +200,21 @@ function attachTodoListeners(container) {
     3. MODAL — Add/Edit
    ========================================================================== */
 
+var todoModalMode = 'add';
+
 function openTodoModal(mode, todo) {
     todoEditId = (mode === 'edit' && todo) ? todo.id : null;
-    document.getElementById('todo-modal-title').textContent = todoEditId ? 'Edit Task' : 'Add Task';
+    todoModalMode = mode;
+    var isDaily = mode === 'daily' || (todo && todo.isDaily);
+    var title = 'Add Task';
+    if (todoEditId) title = 'Edit Task';
+    else if (isDaily) title = __('todo-daily-add') || 'Add Daily Task';
+    document.getElementById('todo-modal-title').textContent = title;
+    var hint = document.getElementById('todo-modal-daily-hint');
+    if (hint) {
+        hint.textContent = __('todo-daily-hint') || 'This daily task will automatically reappear every day.';
+        hint.classList.toggle('hidden', !isDaily);
+    }
     document.getElementById('todo-input-title').value = todo ? todo.title : '';
     document.getElementById('todo-input-desc').value = todo ? (todo.description || '') : '';
     document.getElementById('todo-input-category').value = todo ? (todo.category || '') : '';
@@ -182,9 +240,29 @@ function saveTodoFromModal() {
     if (!title) { alert('Task title is required.'); return; }
     var list = loadTodos();
     if (todoEditId) {
+        var edited = null;
         for (var i = 0; i < list.length; i++) {
-            if (list[i].id === todoEditId) { list[i].title = title; list[i].description = desc; list[i].category = category; list[i].priority = priority; list[i].dueDate = dueDate; break; }
+            if (list[i].id === todoEditId) {
+                list[i].title = title; list[i].description = desc; list[i].category = category; list[i].priority = priority; list[i].dueDate = dueDate;
+                edited = list[i];
+                break;
+            }
         }
+        if (edited && edited.isDaily) {
+            var templates = loadDailyTasks();
+            templates.forEach(function (tmpl) {
+                if (tmpl.id === edited.dailyTemplateId) {
+                    tmpl.title = title; tmpl.description = desc; tmpl.category = category; tmpl.priority = priority;
+                }
+            });
+            saveDailyTasks(templates);
+        }
+    } else if (todoModalMode === 'daily') {
+        var dailyId = 'daily_' + Date.now();
+        var templates = loadDailyTasks();
+        templates.push({ id: dailyId, title: title, description: desc, category: category, priority: priority, createdAt: new Date().toISOString() });
+        saveDailyTasks(templates);
+        list.push({ id: 'todo_' + Date.now(), title: title, description: desc, category: category, priority: priority, dueDate: dueDate, completed: false, createdAt: new Date().toISOString(), isDaily: true, dailyTemplateId: dailyId, dayKey: getTodayDateStr() });
     } else {
         list.push({ id: 'todo_' + Date.now(), title: title, description: desc, category: category, priority: priority, dueDate: dueDate, completed: false, createdAt: new Date().toISOString() });
     }

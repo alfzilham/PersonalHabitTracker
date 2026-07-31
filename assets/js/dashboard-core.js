@@ -24,6 +24,7 @@ const STUDY_EDIT_KEY = "study_edits";
 const CUSTOM_SUBJECT_KEY = "custom_subjects";
 const TODO_STORAGE_KEY = "todos";
 const TODO_BANNER_DISMISS_KEY = "todo_due_banner_dismissed";
+const DAILY_TASKS_KEY = "daily_tasks";
 const FINANCE_STORAGE_KEY = "finance_records";
 const CERT_STORAGE_KEY = "certificates";
 const CUSTOM_STORAGE_KEY = "custom_courses";
@@ -229,6 +230,20 @@ function loadTodos() {
 function saveTodos(list) {
   try {
     localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(list));
+  } catch (e) {}
+}
+
+/* --- Daily task templates (recurring todos) --- */
+function loadDailyTasks() {
+  try {
+    return JSON.parse(localStorage.getItem(DAILY_TASKS_KEY)) || [];
+  } catch (e) {
+    return [];
+  }
+}
+function saveDailyTasks(list) {
+  try {
+    localStorage.setItem(DAILY_TASKS_KEY, JSON.stringify(list));
   } catch (e) {}
 }
 
@@ -716,6 +731,7 @@ async function syncToServer() {
   data.study[STUDY_EDIT_KEY] = loadStudyEdits();
   data.study[CUSTOM_SUBJECT_KEY] = loadCustomSubjects();
   data.todos[TODO_STORAGE_KEY] = loadTodos();
+  data.todos[DAILY_TASKS_KEY] = loadDailyTasks();
   data.finance[FINANCE_STORAGE_KEY] = loadFinanceRecords();
   data.certificates[CERT_STORAGE_KEY] = loadCertificates();
   data.settings[SETTINGS_KEY] = loadSettings();
@@ -1674,6 +1690,11 @@ function init() {
     todoAddBtn.addEventListener("click", function () {
       openTodoModal("add");
     });
+  var todoAddDailyBtn = document.getElementById("todo-add-daily-btn");
+  if (todoAddDailyBtn)
+    todoAddDailyBtn.addEventListener("click", function () {
+      openTodoModal("daily");
+    });
   var todoSave = document.getElementById("todo-modal-save");
   if (todoSave) todoSave.addEventListener("click", saveTodoFromModal);
   var todoCancel = document.getElementById("todo-modal-cancel");
@@ -1689,9 +1710,23 @@ function init() {
       var id = todoDelConfirm.dataset.targetId;
       if (id) {
         var list = loadTodos();
-        list = list.filter(function (t) {
-          return t.id !== id;
+        var target = list.find(function (t) {
+          return t.id === id;
         });
+        if (target && target.isDaily) {
+          var templates = loadDailyTasks();
+          templates = templates.filter(function (tmpl) {
+            return tmpl.id !== target.dailyTemplateId;
+          });
+          saveDailyTasks(templates);
+          list = list.filter(function (t) {
+            return !(t.isDaily && t.dailyTemplateId === target.dailyTemplateId);
+          });
+        } else {
+          list = list.filter(function (t) {
+            return t.id !== id;
+          });
+        }
         saveTodos(list);
         renderTodos();
       }
@@ -1718,6 +1753,22 @@ function init() {
       btn.classList.add("btn-group__item--active");
       document.getElementById("todo-input-priority").value = btn.dataset.value;
     });
+
+  /* --- Daily task rollover: auto re-spawn at midnight while page is open --- */
+  setInterval(function () {
+    if (typeof ensureDailyTasksForToday === "function") {
+      ensureDailyTasksForToday();
+      var todoTab = document.querySelector('.tab[data-tab="todo"]');
+      if (todoTab && todoTab.classList.contains("active")) renderTodos();
+    }
+  }, 60000);
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible" && typeof ensureDailyTasksForToday === "function") {
+      ensureDailyTasksForToday();
+      var todoTab = document.querySelector('.tab[data-tab="todo"]');
+      if (todoTab && todoTab.classList.contains("active")) renderTodos();
+    }
+  });
 
   /* --- Finance tab --- */
   var FinanceAddBtn = document.getElementById("finance-add-btn");

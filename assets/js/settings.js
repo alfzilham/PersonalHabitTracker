@@ -174,11 +174,11 @@ function toggleFaqItem(trigger) {
 
 function exportScopedData(scope) {
     var scopeKeys = {
-        all: ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'finance_records', 'settings_profile'],
+        all: ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records', 'settings_profile'],
         courses: ['course_completion', 'custom_courses', 'archived_courses'],
         study: ['study_completion', 'study_minggu_terakhir', 'custom_subjects', 'study_edits'],
         journal: ['study_log'],
-        todo: ['todos'],
+        todo: ['todos', 'daily_tasks'],
         finance: ['finance_records'],
     };
     var scopeFilenames = { all: 'license-courses-tracker-backup', courses: 'online-courses-backup', study: 'study-backup', journal: 'journal-backup', todo: 'todo-backup', finance: 'finance-backup' };
@@ -210,7 +210,7 @@ function importAllData(file) {
 
 function resetAllData() {
     showConfirm('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', function () {
-        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'finance_records'];
+        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records'];
         keys.forEach(function (k) { localStorage.removeItem(k); });
         syncToServer().then(function () {
             window.location.reload();
@@ -227,7 +227,7 @@ function deleteAccount() {
 
         var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates',
             'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits',
-            'todos', 'finance_records', 'settings_profile'
+            'todos', 'daily_tasks', 'finance_records', 'settings_profile'
         ];
         keys.forEach(function (k) { localStorage.removeItem(k); });
 
@@ -241,7 +241,7 @@ function logoutDemo() {
         syncToServer().then(function () {
             var keys = ['course_completion', 'custom_courses', 'archived_courses',
                 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir',
-                'custom_subjects', 'study_edits', 'todos', 'finance_records',
+                'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records',
                 'settings_profile', 'course_notes', 'course_edits'
             ];
             keys.forEach(function (k) { localStorage.removeItem(k); });

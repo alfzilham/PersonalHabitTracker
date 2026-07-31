@@ -308,6 +308,9 @@ var DASHBOARD_LANG = (function () {
             'study-empty-log': 'Belum ada catatan. Centang mata kuliah di tab <strong>Minggu Ini</strong> untuk memulai.',
             'study-empty-week': 'Belum ada catatan di minggu ini.',
             'todo-empty': 'No tasks yet. Click <strong>Add Task</strong> to get started.',
+            'todo-daily-badge': 'Daily',
+            'todo-daily-add': 'Add Daily Task',
+            'todo-daily-hint': 'This daily task will automatically reappear every day without re-adding it.',
             'finance-empty-week': 'Data belum tersedia untuk Minggu ini.',
 
             /* Header counter dynamic labels */
@@ -628,6 +631,9 @@ var DASHBOARD_LANG = (function () {
             'study-empty-log': 'Belum ada catatan. Centang mata kuliah di tab <strong>Minggu Ini</strong> untuk memulai.',
             'study-empty-week': 'Belum ada catatan di minggu ini.',
             'todo-empty': 'Belum ada tugas. Klik <strong>Tambah Tugas</strong> untuk memulai.',
+            'todo-daily-badge': 'Harian',
+            'todo-daily-add': 'Tambah Tugas Harian',
+            'todo-daily-hint': 'Tugas harian ini akan muncul otomatis setiap hari tanpa perlu ditambahkan ulang.',
             'finance-empty-week': 'Data belum tersedia untuk Minggu ini.',
 
             /* Header counter dynamic labels */
