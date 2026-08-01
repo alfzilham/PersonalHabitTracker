@@ -1248,6 +1248,49 @@ function updateLightThemeVisibility(theme) {
   wrap.classList.toggle("hidden", isDark);
 }
 
+/* Baca warna accent aktif dari CSS vars — dipakai chart agar ikut tema */
+function themeColors() {
+  var cs = getComputedStyle(document.documentElement);
+  function v(name) {
+    return (cs.getPropertyValue(name) || "").trim();
+  }
+  return {
+    sage: v("--color-sage") || "#6B7F5E",
+    sageLight: v("--color-sage-light") || "#8FA882",
+    sageBg: v("--color-sage-bg") || "#DCE8D4",
+    blue: v("--color-blue") || "#5B7A9E",
+    blueLight: v("--color-blue-light") || "#7A9ABE",
+    blueBg: v("--color-blue-bg") || "#D4E0EC",
+    bg: v("--color-bg") || "#F5F0E8",
+    bgCard: v("--color-bg-card") || "#EDE8DC",
+    border: v("--color-border") || "#D4CBBB",
+    textPrimary: v("--color-text-primary") || "#1A1915",
+    textSecondary: v("--color-text-secondary") || "#4A4740",
+    textMuted: v("--color-text-muted") || "#8A8478",
+  };
+}
+
+/* Render ulang panel tab aktif — dipakai saat ganti tema agar chart langsung update */
+/* Konversi hex -> rgba — dipakai untuk fill chart */
+function hexToRgba(hex, alpha) {
+  var h = (hex || "#000000").replace("#", "");
+  if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+  var n = parseInt(h, 16);
+  return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + alpha + ")";
+}
+
+/* Render ulang panel tab aktif — dipakai saat ganti tema agar chart langsung update */
+function rerenderActiveTab() {
+  var tab = getCurrentActiveTab();
+  if (tab === "todo" && typeof renderTodos === "function") renderTodos();
+  else if (tab === "finance" && typeof renderFinance === "function") renderFinance();
+  else if (tab === "analytics" && typeof renderAnalytics === "function") renderAnalytics();
+  else if (tab === "study" && typeof renderStudy === "function") renderStudy();
+  else if (tab === "journal" && typeof renderStudyLog === "function") renderStudyLog();
+  else if (tab === "certificate" && typeof renderCertificateGallery === "function") renderCertificateGallery();
+  else if (typeof renderTable === "function") renderTable();
+}
+
 function initProfile() {
   var settings = loadSettings();
   var sessionUser = sessionStorage.getItem("session_user");

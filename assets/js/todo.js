@@ -308,9 +308,10 @@ function renderTodoPriorityChart(list) {
     var med = list.filter(function (t) { return t.priority === 'medium' && !t.completed; }).length;
     var low = list.filter(function (t) { return t.priority === 'low' && !t.completed; }).length;
     var done = list.filter(function (t) { return t.completed; }).length;
+    var tc = themeColors();
     chartTodoPrio = new Chart(canvas, {
-        type: 'doughnut', data: { labels: ['High', 'Medium', 'Low', 'Done'], datasets: [{ data: [high, med, low, done], backgroundColor: ['#C85050', '#D4A85A', '#8A8478', '#6B7F5E'], borderColor: '#F5F0E8', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+        type: 'doughnut', data: { labels: ['High', 'Medium', 'Low', 'Done'], datasets: [{ data: [high, med, low, done], backgroundColor: ['#C85050', '#D4A85A', tc.textMuted, tc.sage], borderColor: tc.bg, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
     });
 }
 
@@ -326,8 +327,9 @@ function renderTodoCategoryChart(list) {
         if (t.completed) cats[c].done++;
     });
     var labels = Object.keys(cats);
+    var tc = themeColors();
     chartTodoCat = new Chart(canvas, {
-        type: 'bar', data: { labels: labels, datasets: [{ label: 'Done', data: labels.map(function (l) { return cats[l].done; }), backgroundColor: '#6B7F5E', borderRadius: 4, borderSkipped: false }, { label: 'Left', data: labels.map(function (l) { return cats[l].total - cats[l].done; }), backgroundColor: '#DCE8D4', borderRadius: 4, borderSkipped: false }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, indexAxis: 'y', scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478' }, border: { color: '#D4CBBB' } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#4A4740' }, grid: { display: false }, border: { color: '#D4CBBB' } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+        type: 'bar', data: { labels: labels, datasets: [{ label: 'Done', data: labels.map(function (l) { return cats[l].done; }), backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }, { label: 'Left', data: labels.map(function (l) { return cats[l].total - cats[l].done; }), backgroundColor: tc.sageBg, borderRadius: 4, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, indexAxis: 'y', scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, border: { color: tc.border } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textSecondary }, grid: { display: false }, border: { color: tc.border } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
     });
 }

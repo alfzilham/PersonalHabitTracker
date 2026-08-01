@@ -62,6 +62,7 @@ function autoSaveSettings() {
         updateSidebarProfile(data);
         if (typeof DASHBOARD_LANG !== 'undefined') DASHBOARD_LANG.setLang(data.language);
         refreshTodoDueReminders();
+        if (typeof rerenderActiveTab === 'function') rerenderActiveTab();
         showToast();
     }, 500);
 }

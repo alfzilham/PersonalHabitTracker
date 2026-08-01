@@ -261,8 +261,8 @@
 }
 
 .btn-primary:active {
-    background-color: #5A6E4E;
-    border-color: #5A6E4E;
+    background-color: var(--color-sage-dark);
+    border-color: var(--color-sage-dark);
 }
 
 /* --- Secondary — transparent bg, sage border --- */
@@ -2759,8 +2759,8 @@
 }
 
 .finance-top--3 {
-    background: #DCE8D4;
-    color: #6B7F5E;
+    background: var(--color-sage-bg);
+    color: var(--color-sage);
 }
 
 .finance-empty {

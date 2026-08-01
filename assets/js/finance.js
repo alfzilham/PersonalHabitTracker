@@ -161,9 +161,10 @@ function renderFinanceBarChart(weekRecords) {
     var days = getWeekDays(weekNum);
     var dailyTotals = {};
     weekRecords.forEach(function (r) { if (!dailyTotals[r.date]) dailyTotals[r.date] = 0; dailyTotals[r.date] += r.amount || 0; });
+    var tc = themeColors();
     chartFinanceBar = new Chart(canvas, {
-        type: 'bar', data: { labels: days.map(function (d) { return d.name; }), datasets: [{ label: 'Spending', data: days.map(function (d) { return dailyTotals[d.dateStr] || 0; }), backgroundColor: '#6B7F5E', borderRadius: 4, borderSkipped: false }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478' }, border: { color: '#D4CBBB' } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478' }, grid: { color: '#EDE8DC' }, border: { color: '#D4CBBB' } } }, plugins: { legend: { display: false } } },
+        type: 'bar', data: { labels: days.map(function (d) { return d.name; }), datasets: [{ label: 'Spending', data: days.map(function (d) { return dailyTotals[d.dateStr] || 0; }), backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, border: { color: tc.border } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, grid: { color: tc.bgCard }, border: { color: tc.border } } }, plugins: { legend: { display: false } } },
     });
 }
 
@@ -174,10 +175,11 @@ function renderFinancePieChart(weekRecords) {
     var cats = {};
     weekRecords.forEach(function (r) { var c = r.category || 'Uncategorized'; if (!cats[c]) cats[c] = 0; cats[c] += r.amount || 0; });
     var labels = Object.keys(cats);
-    var colors = ['#6B7F5E', '#5B7A9E', '#C87A5E', '#D4A85A', '#8FA882', '#7A9ABE', '#B88A30', '#8A8478'];
+    var tc = themeColors();
+    var colors = [tc.sage, tc.blue, '#C87A5E', '#D4A85A', tc.sageLight, tc.blueLight, '#B88A30', tc.textMuted];
     chartFinancePie = new Chart(canvas, {
-        type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(function (l) { return cats[l]; }), backgroundColor: colors.slice(0, labels.length), borderColor: '#F5F0E8', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+        type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(function (l) { return cats[l]; }), backgroundColor: colors.slice(0, labels.length), borderColor: tc.bg, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
     });
 }
 

@@ -25,9 +25,10 @@ function renderPieChart(courses) {
     if (pieChart) { pieChart.destroy(); pieChart = null; }
     var done = courses.filter(function (c) { return c.completed; }).length;
     var left = courses.filter(function (c) { return !c.completed; }).length;
+    var tc = themeColors();
     pieChart = new Chart(canvas, {
-        type: 'doughnut', data: { labels: ['Completed', 'Remaining'], datasets: [{ data: [done, left], backgroundColor: ['#6B7F5E', '#EDE8DC'], borderColor: '#F5F0E8', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } }, tooltip: { callbacks: { label: function (ctx) { return ' ' + ctx.label + ': ' + ctx.parsed; } } } } },
+        type: 'doughnut', data: { labels: ['Completed', 'Remaining'], datasets: [{ data: [done, left], backgroundColor: [tc.sage, tc.bgCard], borderColor: tc.bg, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } }, tooltip: { callbacks: { label: function (ctx) { return ' ' + ctx.label + ': ' + ctx.parsed; } } } } },
     });
 }
 
@@ -38,9 +39,10 @@ function renderBarChart(courses) {
     var companies = getUniqueValues('company');
     var doneCounts = companies.map(function (co) { return courses.filter(function (c) { return c.company === co && c.completed; }).length; });
     var totalCounts = companies.map(function (co) { return COURSES.filter(function (c) { return c.company === co; }).length; });
+    var tc = themeColors();
     barChart = new Chart(canvas, {
-        type: 'bar', data: { labels: companies, datasets: [{ label: 'Completed', data: doneCounts, backgroundColor: '#6B7F5E', borderRadius: 4, borderSkipped: false }, { label: 'Remaining', data: totalCounts.map(function (t, i) { return t - doneCounts[i]; }), backgroundColor: '#DCE8D4', borderRadius: 4, borderSkipped: false }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, indexAxis: 'y', scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478' }, border: { color: '#D4CBBB' } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#4A4740' }, grid: { display: false }, border: { color: '#D4CBBB' } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } }, tooltip: { callbacks: { label: function (ctx) { return ' ' + ctx.dataset.label + ': ' + ctx.parsed.x; } } } } },
+        type: 'bar', data: { labels: companies, datasets: [{ label: 'Completed', data: doneCounts, backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }, { label: 'Remaining', data: totalCounts.map(function (t, i) { return t - doneCounts[i]; }), backgroundColor: tc.sageBg, borderRadius: 4, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, indexAxis: 'y', scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, border: { color: tc.border } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textSecondary }, grid: { display: false }, border: { color: tc.border } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } }, tooltip: { callbacks: { label: function (ctx) { return ' ' + ctx.dataset.label + ': ' + ctx.parsed.x; } } } } },
     });
 }
 
@@ -78,9 +80,10 @@ function renderStudyPieChart(jurusanDone, mkuDone, jurusanTotal, mkuTotal) {
     if (chartStudyPie) { chartStudyPie.destroy(); chartStudyPie = null; }
     var jurusanLeft = jurusanTotal - jurusanDone;
     var mkuLeft = mkuTotal - mkuDone;
+    var tc = themeColors();
     chartStudyPie = new Chart(canvas, {
-        type: 'doughnut', data: { labels: ['Jurusan Done', 'Jurusan Left', 'MKU Done', 'MKU Left'], datasets: [{ data: [jurusanDone, jurusanLeft, mkuDone, mkuLeft], backgroundColor: ['#6B7F5E', '#DCE8D4', '#5B7A9E', '#D4E0EC'], borderColor: '#F5F0E8', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+        type: 'doughnut', data: { labels: ['Jurusan Done', 'Jurusan Left', 'MKU Done', 'MKU Left'], datasets: [{ data: [jurusanDone, jurusanLeft, mkuDone, mkuLeft], backgroundColor: [tc.sage, tc.sageBg, tc.blue, tc.blueBg], borderColor: tc.bg, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
     });
 }
 
@@ -95,9 +98,10 @@ function renderStudyLineChart() {
     var counts = weeks.map(function (w) { return weekCounts[w]; });
     if (!weeks.length) { weeks = ['Minggu ' + getWeekNumber(new Date())]; counts = [0]; }
     else { weeks = weeks.map(function (w) { return 'Minggu ' + w; }); }
+    var tc = themeColors();
     chartStudyLine = new Chart(canvas, {
-        type: 'bar', data: { labels: weeks, datasets: [{ label: 'Entries', data: counts, backgroundColor: '#6B7F5E', borderRadius: 4, borderSkipped: false }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478' }, border: { color: '#D4CBBB' } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478', stepSize: 1 }, grid: { color: '#EDE8DC' }, border: { color: '#D4CBBB' } } }, plugins: { legend: { display: false } } },
+        type: 'bar', data: { labels: weeks, datasets: [{ label: 'Entries', data: counts, backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, border: { color: tc.border } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted, stepSize: 1 }, grid: { color: tc.bgCard }, border: { color: tc.border } } }, plugins: { legend: { display: false } } },
     });
 }
 
@@ -129,9 +133,10 @@ function renderAnalyticsTodoCharts(list) {
         var med = list.filter(function (t) { return t.priority === 'medium' && !t.completed; }).length;
         var low = list.filter(function (t) { return t.priority === 'low' && !t.completed; }).length;
         var done = list.filter(function (t) { return t.completed; }).length;
+        var tc = themeColors();
         chartAnalyticsTodoPrio = new Chart(canvasPrio, {
-            type: 'doughnut', data: { labels: ['High', 'Medium', 'Low', 'Done'], datasets: [{ data: [high, med, low, done], backgroundColor: ['#C85050', '#D4A85A', '#8A8478', '#6B7F5E'], borderColor: '#F5F0E8', borderWidth: 2 }] },
-            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+            type: 'doughnut', data: { labels: ['High', 'Medium', 'Low', 'Done'], datasets: [{ data: [high, med, low, done], backgroundColor: ['#C85050', '#D4A85A', tc.textMuted, tc.sage], borderColor: tc.bg, borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
         });
     }
     var canvasCat = document.getElementById('chart-analytics-todo-category');
@@ -141,8 +146,8 @@ function renderAnalyticsTodoCharts(list) {
         list.forEach(function (t) { var c = t.category || 'Uncategorized'; if (!cats[c]) cats[c] = { total: 0, done: 0 }; cats[c].total++; if (t.completed) cats[c].done++; });
         var labels = Object.keys(cats);
         chartAnalyticsTodoCat = new Chart(canvasCat, {
-            type: 'bar', data: { labels: labels, datasets: [{ label: 'Done', data: labels.map(function (l) { return cats[l].done; }), backgroundColor: '#6B7F5E', borderRadius: 4, borderSkipped: false }, { label: 'Left', data: labels.map(function (l) { return cats[l].total - cats[l].done; }), backgroundColor: '#DCE8D4', borderRadius: 4, borderSkipped: false }] },
-            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, indexAxis: 'y', scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#8A8478' }, border: { color: '#D4CBBB' } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: '#4A4740' }, grid: { display: false }, border: { color: '#D4CBBB' } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+            type: 'bar', data: { labels: labels, datasets: [{ label: 'Done', data: labels.map(function (l) { return cats[l].done; }), backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }, { label: 'Left', data: labels.map(function (l) { return cats[l].total - cats[l].done; }), backgroundColor: tc.sageBg, borderRadius: 4, borderSkipped: false }] },
+            options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, indexAxis: 'y', scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, border: { color: tc.border } }, y: { stacked: true, beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textSecondary }, grid: { display: false }, border: { color: tc.border } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
         });
     }
 }
@@ -179,9 +184,10 @@ function renderAnalyticsFinanceLineChart(records) {
         var ds = y + '-' + m + '-' + dd;
         labels.push(dd + '/' + m); data.push(daily[ds] || 0);
     }
+    var tc = themeColors();
     chartAnalyticsFinanceLine = new Chart(canvas, {
-        type: 'line', data: { labels: labels, datasets: [{ label: 'Spending', data: data, borderColor: '#6B7F5E', backgroundColor: 'rgba(107,127,94,0.1)', fill: true, tension: 0.3, pointRadius: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: '#8A8478', maxTicksLimit: 10 }, border: { color: '#D4CBBB' } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: '#8A8478', callback: function (val) { return 'Rp ' + formatRupiah(val); } }, grid: { color: '#EDE8DC' }, border: { color: '#D4CBBB' } } }, plugins: { legend: { display: false } } },
+        type: 'line', data: { labels: labels, datasets: [{ label: 'Spending', data: data, borderColor: tc.sage, backgroundColor: hexToRgba(tc.sage, 0.1), fill: true, tension: 0.3, pointRadius: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: tc.textMuted, maxTicksLimit: 10 }, border: { color: tc.border } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: tc.textMuted, callback: function (val) { return 'Rp ' + formatRupiah(val); } }, grid: { color: tc.bgCard }, border: { color: tc.border } } }, plugins: { legend: { display: false } } },
     });
 }
 
@@ -192,9 +198,10 @@ function renderAnalyticsFinanceCatChart(records) {
     var cats = {};
     records.forEach(function (r) { var c = r.category || 'Uncategorized'; if (!cats[c]) cats[c] = 0; cats[c] += r.amount || 0; });
     var labels = Object.keys(cats);
-    var colors = ['#6B7F5E', '#5B7A9E', '#C87A5E', '#D4A85A', '#8FA882', '#7A9ABE', '#B88A30', '#8A8478', '#C85050'];
+    var tc = themeColors();
+    var colors = [tc.sage, tc.blue, '#C87A5E', '#D4A85A', tc.sageLight, tc.blueLight, '#B88A30', tc.textMuted, '#C85050'];
     chartAnalyticsFinanceCat = new Chart(canvas, {
-        type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(function (l) { return cats[l]; }), backgroundColor: colors.slice(0, labels.length), borderColor: '#F5F0E8', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: '#4A4740', padding: 12, boxWidth: 12, boxHeight: 12 } } } },
+        type: 'doughnut', data: { labels: labels, datasets: [{ data: labels.map(function (l) { return cats[l]; }), backgroundColor: colors.slice(0, labels.length), borderColor: tc.bg, borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600, easing: 'easeOutQuart' }, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 12 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
     });
 }
