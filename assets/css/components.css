@@ -3006,6 +3006,59 @@
     box-shadow: 0 0 0 2px var(--color-sage-bg);
 }
 
+/* Light Color swatches (multi-theme) */
+.theme-swatches {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.theme-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-border);
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.theme-swatch:hover {
+    transform: scale(1.08);
+}
+
+.theme-swatch.is-active {
+    border-color: var(--color-text-primary);
+}
+
+.theme-swatch--cream {
+    background: linear-gradient(135deg, #F5F0E8 50%, #E8E0D0 50%);
+}
+
+.theme-swatch--sage {
+    background: linear-gradient(135deg, #EFF2E8 50%, #5E7A4E 50%);
+}
+
+.theme-swatch--blue {
+    background: linear-gradient(135deg, #EAEFF4 50%, #4A6E8E 50%);
+}
+
+.theme-swatch__check {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.theme-swatch.is-active .theme-swatch__check {
+    opacity: 1;
+}
+
 /* Avatar */
 .settings-avatar {
     display: flex;

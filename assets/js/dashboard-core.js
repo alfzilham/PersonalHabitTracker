@@ -309,6 +309,7 @@ function getDefaultSettings() {
     email: "",
     role: "",
     theme: "light",
+    lightTheme: "cream",
     notifTodo: true,
     language: "en",
   };
@@ -1221,16 +1222,30 @@ function refreshTodoDueReminders() {
     10. SETTINGS HELPERS — Theme and profile
    ========================================================================== */
 
-function applyTheme(theme) {
+function applyTheme(theme, lightTheme) {
+  var lt = lightTheme || "cream";
+  var setLight = function () {
+    if (lt === "cream") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", lt);
+  };
   if (theme === "dark")
     document.documentElement.setAttribute("data-theme", "dark");
-  else if (theme === "light")
-    document.documentElement.removeAttribute("data-theme");
+  else if (theme === "light") setLight();
   else {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches)
       document.documentElement.setAttribute("data-theme", "dark");
-    else document.documentElement.removeAttribute("data-theme");
+    else setLight();
   }
+}
+
+function updateLightThemeVisibility(theme) {
+  var wrap = document.getElementById("settings-light-theme-wrap");
+  if (!wrap) return;
+  var isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  wrap.classList.toggle("hidden", isDark);
 }
 
 function initProfile() {
@@ -1243,7 +1258,7 @@ function initProfile() {
     saveSettings(settings);
   }
 
-  if (settings.theme) applyTheme(settings.theme);
+  if (settings.theme) applyTheme(settings.theme, settings.lightTheme);
   updateSidebarProfile(Object.assign(getDefaultSettings(), settings));
 }
 
@@ -1975,6 +1990,22 @@ function init() {
         });
       btn.classList.add("btn-group__item--active");
       document.getElementById("settings-theme").value = btn.dataset.value;
+      updateLightThemeVisibility(btn.dataset.value);
+      autoSaveSettings();
+    });
+  var settingsLightThemeGroup = document.getElementById("settings-light-theme-group");
+  if (settingsLightThemeGroup)
+    settingsLightThemeGroup.addEventListener("click", function (e) {
+      var sw = e.target.closest(".theme-swatch");
+      if (!sw) return;
+      settingsLightThemeGroup
+        .querySelectorAll(".theme-swatch")
+        .forEach(function (s) {
+          s.classList.remove("is-active");
+        });
+      sw.classList.add("is-active");
+      document.getElementById("settings-light-theme").value = sw.dataset.value;
+      reinitLucide();
       autoSaveSettings();
     });
   var settingsLangGroup = document.getElementById("settings-lang-group");

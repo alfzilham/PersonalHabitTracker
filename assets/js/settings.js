@@ -18,6 +18,10 @@ function openSettings() {
     var theme = settings.theme || 'light';
     document.getElementById('settings-theme').value = theme;
     document.querySelectorAll('#settings-theme-group .btn-group__item').forEach(function (btn) { btn.classList.toggle('btn-group__item--active', btn.dataset.value === theme); });
+    var lightTheme = settings.lightTheme || 'cream';
+    document.getElementById('settings-light-theme').value = lightTheme;
+    document.querySelectorAll('#settings-light-theme-group .theme-swatch').forEach(function (sw) { sw.classList.toggle('is-active', sw.dataset.value === lightTheme); });
+    if (typeof updateLightThemeVisibility === 'function') updateLightThemeVisibility(theme);
     var lang = settings.language || 'en';
     document.getElementById('settings-lang').value = lang;
     document.querySelectorAll('#settings-lang-group .btn-group__item').forEach(function (btn) { btn.classList.toggle('btn-group__item--active', btn.dataset.value === lang); });
@@ -48,12 +52,13 @@ function autoSaveSettings() {
             email: document.getElementById('settings-email').value.trim(),
             role: document.getElementById('settings-role').value.trim(),
             theme: document.getElementById('settings-theme').value,
+            lightTheme: document.getElementById('settings-light-theme').value || 'cream',
             language: document.getElementById('settings-lang').value,
             avatar: avatarSrc.indexOf('emptyProfile') !== -1 ? null : avatarSrc,
             notifTodo: document.getElementById('settings-notif-todo').checked,
         };
         saveSettings(data);
-        applyTheme(data.theme);
+        applyTheme(data.theme, data.lightTheme);
         updateSidebarProfile(data);
         if (typeof DASHBOARD_LANG !== 'undefined') DASHBOARD_LANG.setLang(data.language);
         refreshTodoDueReminders();
