@@ -151,6 +151,20 @@ function ensureDailyTasksForToday() {
         }
     });
     if (changed) saveTodos(list);
+    if (changed) scheduleTodoSync();
+}
+
+
+/* ==========================================================================
+    1c. SYNC — Debounced push of todo/daily changes to server
+   ========================================================================== */
+
+var todoSyncTimer = null;
+
+function scheduleTodoSync() {
+    if (typeof syncToServer !== 'function') return;
+    clearTimeout(todoSyncTimer);
+    todoSyncTimer = setTimeout(function () { syncToServer(); }, 600);
 }
 
 
@@ -168,6 +182,7 @@ function attachTodoListeners(container) {
             }
             saveTodos(list);
             renderTodos();
+            scheduleTodoSync();
         });
     });
     container.querySelectorAll('.todo-del').forEach(function (btn) {
@@ -269,6 +284,7 @@ function saveTodoFromModal() {
     saveTodos(list);
     closeTodoModal();
     renderTodos();
+    scheduleTodoSync();
 }
 
 

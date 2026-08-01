@@ -729,7 +729,10 @@ async function loadFromServer() {
     Object.keys(data).forEach(function (feature) {
       Object.keys(data[feature]).forEach(function (key) {
         try {
-          localStorage.setItem(key, JSON.stringify(data[feature][key]));
+          /* Merge: isi hanya key yang belum ada di localStorage agar data lokal (yang lebih baru) tidak ditimpa */
+          if (localStorage.getItem(key) === null) {
+            localStorage.setItem(key, JSON.stringify(data[feature][key]));
+          }
         } catch (e) {}
       });
     });
@@ -1708,6 +1711,7 @@ function init() {
         }
         saveTodos(list);
         renderTodos();
+        if (typeof scheduleTodoSync === "function") scheduleTodoSync();
       }
       document.getElementById("todo-delete-modal").classList.remove("is-open");
     });
