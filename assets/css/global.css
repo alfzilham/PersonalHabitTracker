@@ -197,6 +197,48 @@
     --color-optional: #78858F;
 }
 
+/* --- Pure White light theme --- */
+[data-theme="white"] {
+    --color-bg: #FFFFFF;
+    --color-bg-card: #F5F5F5;
+    --color-bg-sidebar: #EFEFEF;
+    --color-text-primary: #111111;
+    --color-text-secondary: #444444;
+    --color-text-muted: #8C8C8C;
+    --color-sage: #6B7F5E;
+    --color-sage-light: #8FA882;
+    --color-sage-bg: #E6EDE2;
+    --color-blue: #5B7A9E;
+    --color-blue-light: #7A9ABE;
+    --color-blue-bg: #E0E8F0;
+    --color-border: #DDDDDD;
+    --color-border-light: #ECECEC;
+    --color-completed: #6B7F5E;
+    --color-required: #5B7A9E;
+    --color-optional: #8C8C8C;
+}
+
+/* --- Gray Charcoal (light gray) theme --- */
+[data-theme="charcoal"] {
+    --color-bg: #D6D6D6;
+    --color-bg-card: #DEDEDE;
+    --color-bg-sidebar: #CACACA;
+    --color-text-primary: #1F1F1F;
+    --color-text-secondary: #3C3C3C;
+    --color-text-muted: #6E6E6E;
+    --color-sage: #5E7A4E;
+    --color-sage-light: #7A9668;
+    --color-sage-bg: #C9D6C0;
+    --color-blue: #4A6E8E;
+    --color-blue-light: #6E90B0;
+    --color-blue-bg: #C3D1DE;
+    --color-border: #B8B8B8;
+    --color-border-light: #C6C6C6;
+    --color-completed: #5E7A4E;
+    --color-required: #4A6E8E;
+    --color-optional: #6E6E6E;
+}
+
 
 /* ==========================================================================
      2. RESET — Modern CSS reset

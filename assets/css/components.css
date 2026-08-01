@@ -3044,6 +3044,14 @@
     background: linear-gradient(135deg, #EAEFF4 50%, #4A6E8E 50%);
 }
 
+.theme-swatch--white {
+    background: linear-gradient(135deg, #FFFFFF 50%, #EFEFEF 50%);
+}
+
+.theme-swatch--charcoal {
+    background: linear-gradient(135deg, #D6D6D6 50%, #5E7A4E 50%);
+}
+
 .theme-swatch__check {
     position: absolute;
     inset: 0;
