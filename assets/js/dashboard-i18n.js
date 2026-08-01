@@ -673,10 +673,13 @@ var DASHBOARD_LANG = (function () {
     function setDashboardLang(lang) {
         currentLang = lang;
 
-        /* Save to settings_profile */
-        var s = getSettings();
-        s.language = lang;
-        saveSettings(s);
+        /* Save to settings_profile — hanya jika sudah ada; jangan buat objek minimal
+           yang bisa menghalangi loadFromServer mengisi profil penuh (name/email/avatar). */
+        if (localStorage.getItem(STORAGE_KEY) !== null) {
+            var s = getSettings();
+            s.language = lang;
+            saveSettings(s);
+        }
 
         if (!TRANSLATIONS[lang]) return;
 

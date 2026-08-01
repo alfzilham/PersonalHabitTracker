@@ -1243,10 +1243,6 @@ function initProfile() {
     saveSettings(settings);
   }
 
-  if (settings.avatar && settings.avatar.indexOf("data:image") === 0) {
-    settings.avatar = null;
-    saveSettings(settings);
-  }
   if (settings.theme) applyTheme(settings.theme);
   updateSidebarProfile(Object.assign(getDefaultSettings(), settings));
 }
@@ -1323,6 +1319,11 @@ function init() {
     loadFromServer().then(function (loaded) {
       if (!loaded) syncToServer();
       initProfile();
+      /* Terapkan bahasa dari settings yang baru dimuat dari server */
+      var s = loadSettings();
+      if (s && s.language && typeof DASHBOARD_LANG !== "undefined" && DASHBOARD_LANG.setLang) {
+        DASHBOARD_LANG.setLang(s.language);
+      }
       renderTable();
       refreshCompletionUI();
       updateTodoDueBadge();
