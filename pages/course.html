@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="../assets/css/global.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
@@ -111,6 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/turndown@7/dist/turndown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/common.min.js"></script>
     <script>mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });</script>
 
     <script src="../assets/js/data.js"></script>
@@ -164,6 +166,50 @@
                 },
                 placeholder: 'Tulis catatan course Anda di sini...'
             });
+
+            /* Konfigurasi marked — KaTeX + syntax highlight untuk preview markdown */
+            if (typeof marked !== 'undefined') {
+                marked.setOptions({ gfm: true, breaks: true });
+                if (typeof katex !== 'undefined') {
+                    marked.use({
+                        extensions: [
+                            {
+                                name: 'inlineMath', level: 'inline',
+                                start: function (src) { return src.match(/\$/) ? src.match(/\$/).index : undefined; },
+                                tokenizer: function (src) {
+                                    var m = src.match(/^\$([^$\n]+?)\$/);
+                                    return m ? { type: 'inlineMath', raw: m[0], text: m[1] } : undefined;
+                                },
+                                renderer: function (t) {
+                                    return '<span class="md-inline-math">' + katex.renderToString(t.text, { throwOnError: false }) + '</span>';
+                                }
+                            },
+                            {
+                                name: 'blockMath', level: 'block',
+                                start: function (src) { return src.match(/\$\$/) ? src.match(/\$\$/).index : undefined; },
+                                tokenizer: function (src) {
+                                    var m = src.match(/^\$\$([\s\S]+?)\$\$/);
+                                    return m ? { type: 'blockMath', raw: m[0], text: m[1].trim() } : undefined;
+                                },
+                                renderer: function (t) {
+                                    return '<div class="md-math">' + katex.renderToString(t.text, { displayMode: true, throwOnError: false }) + '</div>';
+                                }
+                            }
+                        ]
+                    });
+                }
+                if (typeof hljs !== 'undefined') {
+                    marked.use({
+                        renderer: {
+                            code: function (code, lang) {
+                                var valid = lang && hljs.getLanguage(lang);
+                                var hl = valid ? hljs.highlight(code, { language: lang }).value : hljs.highlightAuto(code).value;
+                                return '<pre><code class="hljs language-' + (lang || 'plaintext') + '">' + hl + '</code></pre>';
+                            }
+                        }
+                    });
+                }
+            }
 
             /* Load existing course info & notes */
             function loadCourseInfo() {
@@ -297,11 +343,38 @@
                 mdWrap.classList.toggle('hidden', mode !== 'md');
             }
 
-            function updateMdPreview() {
+            var previewTimer = null;
+
+            async function updateMdPreview() {
                 var md = mdEditor.value;
-                var html = (typeof marked !== 'undefined') ? marked.parse(md || '') : '<pre>' + escapeHtml(md) + '</pre>';
-                mdPreview.innerHTML = html;
-                if (typeof reinitLucide === 'function') reinitLucide();
+                if (typeof marked === 'undefined') {
+                    mdPreview.innerHTML = '<pre>' + escapeHtml(md) + '</pre>';
+                    return;
+                }
+                var re = /```mermaid\s*([\s\S]*?)```/g;
+                var segs = [], last = 0, m;
+                while ((m = re.exec(md))) {
+                    segs.push({ type: 'md', text: md.slice(last, m.index) });
+                    segs.push({ type: 'mermaid', code: m[1].trim() });
+                    last = m.index + m[0].length;
+                }
+                segs.push({ type: 'md', text: md.slice(last) });
+                var out = '';
+                for (var i = 0; i < segs.length; i++) {
+                    var seg = segs[i];
+                    if (seg.type === 'md') {
+                        out += marked.parse(seg.text || '', { gfm: true, breaks: true });
+                    } else {
+                        try {
+                            var id = 'pv-' + Date.now() + '-' + i;
+                            var r = await mermaid.render(id, seg.code);
+                            out += '<div class="md-mermaid">' + r.svg + '</div>';
+                        } catch (e) {
+                            out += '<div class="md-mermaid-error">Mermaid error: ' + escapeHtml(e.message || String(e)) + '</div>';
+                        }
+                    }
+                }
+                mdPreview.innerHTML = out;
             }
 
             function quillHtmlToMarkdown(html) {
@@ -375,7 +448,8 @@
             }
             if (mdEditor) {
                 mdEditor.addEventListener('input', function () {
-                    updateMdPreview();
+                    clearTimeout(previewTimer);
+                    previewTimer = setTimeout(updateMdPreview, 300);
                     autoSave();
                 });
             }
