@@ -134,6 +134,13 @@
                         <span data-i18n="tab-finance">Finance</span>
                     </button>
 
+                    <!-- Notes tab -->
+                    <button class="tab" id="tab-notes" role="tab" aria-selected="false" aria-controls="panel-notes"
+                        data-tab="notes">
+                        <i data-lucide="sticky-note"></i>
+                        <span data-i18n="tab-notes">Notes</span>
+                    </button>
+
                     <!-- Archived tab -->
                     <button class="tab" id="tab-archived" role="tab" aria-selected="false"
                         aria-controls="panel-archived" data-tab="archived">
@@ -777,6 +784,69 @@
                 </section>
 
 
+                <!-- ==============================================================
+             PANEL: NOTES
+        =============================================================== -->
+                <section id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" class="hidden">
+
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-primary font-serif" data-i18n="tab-notes">Notes</h2>
+                        <div class="filter-search" style="max-width:200px;">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="notes-search" data-i18n="notes-search" placeholder="Cari catatan…"
+                                autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- Composer (Google Keep style) -->
+                    <div class="notes-composer" id="notes-composer">
+                        <div class="notes-composer__collapsed" id="notes-composer-collapsed">
+                            <span data-i18n="notes-take">Take a note...</span>
+                        </div>
+                        <div class="notes-composer__form hidden" id="notes-composer-form">
+                            <input class="notes-composer__input" type="text" id="notes-input-title"
+                                data-i18n="notes-title" placeholder="Title" autocomplete="off">
+                            <textarea class="notes-composer__input" id="notes-input-content" rows="3"
+                                data-i18n="notes-content" placeholder="Take a note..." style="resize:vertical;"></textarea>
+                            <div class="notes-composer__tools">
+                                <div class="notes-color-palette" id="notes-color-palette">
+                                    <button type="button" class="notes-color-swatch is-active" data-color="yellow"
+                                        title="Yellow" style="background:#FFE08A;"></button>
+                                    <button type="button" class="notes-color-swatch" data-color="green" title="Green"
+                                        style="background:#C5E1A5;"></button>
+                                    <button type="button" class="notes-color-swatch" data-color="blue" title="Blue"
+                                        style="background:#A5D6F0;"></button>
+                                    <button type="button" class="notes-color-swatch" data-color="pink" title="Pink"
+                                        style="background:#F3B8CE;"></button>
+                                    <button type="button" class="notes-color-swatch" data-color="purple" title="Purple"
+                                        style="background:#D5C0EC;"></button>
+                                    <button type="button" class="notes-color-swatch" data-color="gray" title="Gray"
+                                        style="background:#C9C9C9;"></button>
+                                </div>
+                                <div class="notes-composer__actions">
+                                    <button type="button" class="btn btn-ghost btn-sm notes-composer__pinbtn"
+                                        id="notes-pin-toggle" title="Pin"><i data-lucide="pin"></i></button>
+                                    <button type="button" class="btn btn-ghost btn-sm" id="notes-cancel-btn"
+                                        data-i18n="notes-close">Close</button>
+                                    <button type="button" class="btn btn-primary btn-sm" id="notes-save-btn"><i
+                                            data-lucide="check"></i> <span data-i18n="notes-save">Save</span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes grid — rendered by JS -->
+                    <div id="notes-grid" class="masonry-grid"></div>
+
+                    <!-- Empty state -->
+                    <div id="notes-empty" class="notes-empty hidden">
+                        <i data-lucide="sticky-note"></i>
+                        <p data-i18n="notes-empty">Belum ada catatan.</p>
+                    </div>
+
+                </section>
+
+
             </main>
             <!-- end .app-panel -->
 
@@ -839,6 +909,9 @@
         <button class="bottom-sheet__item" data-tab="archived">
             <i data-lucide="archive"></i> Archived
         </button>
+        <button class="bottom-sheet__item" data-tab="notes">
+            <i data-lucide="sticky-note"></i> Notes
+        </button>
 
         <div class="bottom-sheet__divider"></div>
 
@@ -889,6 +962,7 @@
     <script src="assets/js/courses.js"></script>
     <script src="assets/js/study.js"></script>
     <script src="assets/js/todo.js"></script>
+    <script src="assets/js/notes.js"></script>
     <script src="assets/js/finance.js"></script>
     <script src="assets/js/analytics.js"></script>
     <script src="assets/js/certificate.js"></script>

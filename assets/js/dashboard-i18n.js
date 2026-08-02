@@ -23,6 +23,7 @@ var DASHBOARD_LANG = (function () {
             'tab-todo': 'To-do',
             'tab-finance': 'Finance',
             'tab-archived': 'Archived',
+            'tab-notes': 'Notes',
 
             /* Courses panel */
             'courses-title': 'Online Courses',
@@ -86,6 +87,22 @@ var DASHBOARD_LANG = (function () {
             'journal-title': 'Journal',
             'journal-mode-rich': 'Rich Text',
             'journal-mode-md': 'Markdown',
+
+            /* Notes panel */
+            'notes-take': 'Take a note...',
+            'notes-title': 'Title',
+            'notes-content': 'Take a note...',
+            'notes-save': 'Save',
+            'notes-close': 'Close',
+            'notes-pin': 'Pin',
+            'notes-delete': 'Delete',
+            'notes-delete-confirm': 'Delete this note?',
+            'notes-empty': 'No notes yet. Tap \u201cTake a note...\u201d above to create one.',
+            'notes-no-result': 'No notes match your search.',
+            'notes-search': 'Search notes\u2026',
+            'notes-required': 'The note is empty.',
+            'head-notes': 'Notes',
+            'head-pinned': 'Pinned',
 
             /* To-do panel */
             'todo-title': 'To-do List',
@@ -357,6 +374,7 @@ var DASHBOARD_LANG = (function () {
             'tab-todo': 'Tugas',
             'tab-finance': 'Keuangan',
             'tab-archived': 'Arsip',
+            'tab-notes': 'Catatan',
 
             /* Courses panel */
             'courses-title': 'Semua Kursus',
@@ -420,6 +438,22 @@ var DASHBOARD_LANG = (function () {
             'journal-title': 'Jurnal',
             'journal-mode-rich': 'Teks Kaya',
             'journal-mode-md': 'Markdown',
+
+            /* Notes panel */
+            'notes-take': 'Ambil catatan...',
+            'notes-title': 'Judul',
+            'notes-content': 'Ambil catatan...',
+            'notes-save': 'Simpan',
+            'notes-close': 'Tutup',
+            'notes-pin': 'Semat',
+            'notes-delete': 'Hapus',
+            'notes-delete-confirm': 'Hapus catatan ini?',
+            'notes-empty': 'Belum ada catatan. Ketuk \u201cAmbil catatan...\u201d di atas untuk membuat.',
+            'notes-no-result': 'Tidak ada catatan yang cocok dengan pencarian.',
+            'notes-search': 'Cari catatan\u2026',
+            'notes-required': 'Catatan kosong.',
+            'head-notes': 'Catatan',
+            'head-pinned': 'Disemat',
 
             /* To-do panel */
             'todo-title': 'Daftar Tugas',

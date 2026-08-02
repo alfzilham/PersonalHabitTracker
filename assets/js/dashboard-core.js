@@ -30,6 +30,7 @@ const CERT_STORAGE_KEY = "certificates";
 const CUSTOM_STORAGE_KEY = "custom_courses";
 const ARCHIVED_STORAGE_KEY = "archived_courses";
 const COURSE_NOTES_KEY = "course_notes";
+const PERSONAL_NOTES_KEY = "personal_notes";
 const SETTINGS_KEY = "settings_profile";
 
 /* Role totals */
@@ -704,6 +705,7 @@ async function syncToServer() {
     todos: {},
     finance: {},
     certificates: {},
+    notes: {},
     settings: {},
   };
   data.courses[STORAGE_KEY] = loadCompletion();
@@ -720,6 +722,7 @@ async function syncToServer() {
   data.todos[DAILY_TASKS_KEY] = loadDailyTasks();
   data.finance[FINANCE_STORAGE_KEY] = loadFinanceRecords();
   data.certificates[CERT_STORAGE_KEY] = loadCertificates();
+  data.notes[PERSONAL_NOTES_KEY] = loadNotes();
   data.settings[SETTINGS_KEY] = loadSettings();
   try {
     await apiFetch("/data", { method: "POST", body: JSON.stringify(data) });
@@ -902,6 +905,9 @@ function switchTab(tabName) {
   document
     .getElementById("panel-finance")
     .classList.toggle("hidden", tabName !== "finance");
+  document
+    .getElementById("panel-notes")
+    .classList.toggle("hidden", tabName !== "notes");
   var headerCounter = document.getElementById("header-counter");
   if (headerCounter)
     headerCounter.classList.toggle("hidden", tabName === "analytics");
@@ -929,6 +935,9 @@ function switchTab(tabName) {
       break;
     case "finance":
       renderFinance();
+      break;
+    case "notes":
+      renderNotes();
       break;
   }
 }
@@ -1051,6 +1060,17 @@ function updateHeaderCounter(tabName) {
       valueLeft.textContent = "Rp " + formatRupiah(financeTotal);
       labelRight.textContent = __("head-transactions");
       valueRight.textContent = financeRecords.length;
+      break;
+    }
+    case "notes": {
+      var notes = loadNotes();
+      var pinnedNotes = notes.filter(function (n) {
+        return n.pinned;
+      }).length;
+      labelLeft.textContent = __("head-notes");
+      valueLeft.textContent = notes.length;
+      labelRight.textContent = __("head-pinned");
+      valueRight.textContent = pinnedNotes;
       break;
     }
   }
@@ -2173,6 +2193,9 @@ function init() {
         courseDelModal.classList.remove("is-open");
       }
     });
+
+  /* --- Notes tab --- */
+  if (typeof initNotes === "function") initNotes();
 }
 
 /* ==========================================================================
