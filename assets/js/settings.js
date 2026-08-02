@@ -233,7 +233,7 @@ function deleteAccount() {
 
         var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates',
             'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits',
-            'todos', 'daily_tasks', 'finance_records', 'settings_profile'
+            'todos', 'daily_tasks', 'finance_records', 'settings_profile', 'course_notes_view'
         ];
         keys.forEach(function (k) { localStorage.removeItem(k); });
 
@@ -248,7 +248,7 @@ function logoutDemo() {
             var keys = ['course_completion', 'custom_courses', 'archived_courses',
                 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir',
                 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records',
-                'settings_profile', 'course_notes', 'course_edits'
+                'settings_profile', 'course_notes', 'course_edits', 'course_notes_view'
             ];
             keys.forEach(function (k) { localStorage.removeItem(k); });
             clearAuthSession();

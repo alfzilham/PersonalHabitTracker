@@ -50,6 +50,11 @@
                     </div>
                 </div>
             </div>
+            <div id="view-bar" class="hidden">
+                <button type="button" class="btn btn-ghost btn-sm" id="edit-btn">
+                    <i data-lucide="pencil"></i> Edit
+                </button>
+            </div>
             <div id="rich-editor-wrap">
                 <div id="editor-container"></div>
             </div>
@@ -130,6 +135,8 @@
             var mermaidInsertIndex = null;
             var confirmCallback = null;
             var noteMode = 'rich';
+            var viewMode = false;
+            var VIEW_KEY = 'course_notes_view';
             var mdEditor = document.getElementById('md-editor');
             var mdPreview = document.getElementById('md-preview');
             var mdWrap = document.getElementById('md-editor-wrap');
@@ -269,6 +276,55 @@
                 statusEl._timer = setTimeout(function () { statusEl.textContent = ''; }, 3000);
             }
 
+            /* ======== VIEW MODE — tampilan preview setelah Simpan (persisten per course) ======== */
+            function loadCourseViewState() {
+                try { return JSON.parse(localStorage.getItem(VIEW_KEY)) || {}; } catch (e) { return {}; }
+            }
+            function saveCourseViewState(s) { localStorage.setItem(VIEW_KEY, JSON.stringify(s)); }
+            function setCourseViewed(id, val) {
+                var s = loadCourseViewState();
+                if (val) s[id] = true; else delete s[id];
+                saveCourseViewState(s);
+            }
+            function isCourseViewed(id) { return !!loadCourseViewState()[id]; }
+
+            function enterViewMode() {
+                viewMode = true;
+                if (noteMode === 'md') updateMdPreview();
+                document.getElementById('view-bar').classList.remove('hidden');
+                document.getElementById('mermaid-open-btn').classList.add('hidden');
+                modeToggle.classList.add('hidden');
+                document.getElementById('editor-save-btn').classList.add('hidden');
+                document.getElementById('editor-delete-btn').classList.add('hidden');
+                ['editor-title', 'editor-role', 'editor-category', 'editor-company'].forEach(function (id) {
+                    document.getElementById(id).readOnly = true;
+                });
+                if (noteMode === 'md') {
+                    mdEditor.classList.add('hidden');
+                } else {
+                    richWrap.classList.add('view-mode');
+                    quill.enable(false);
+                }
+            }
+
+            function exitViewMode() {
+                viewMode = false;
+                document.getElementById('view-bar').classList.add('hidden');
+                modeToggle.classList.remove('hidden');
+                document.getElementById('editor-save-btn').classList.remove('hidden');
+                document.getElementById('editor-delete-btn').classList.remove('hidden');
+                document.getElementById('mermaid-open-btn').classList.toggle('hidden', noteMode !== 'rich');
+                ['editor-title', 'editor-role', 'editor-category', 'editor-company'].forEach(function (id) {
+                    document.getElementById(id).readOnly = false;
+                });
+                if (noteMode === 'md') {
+                    mdEditor.classList.remove('hidden');
+                } else {
+                    richWrap.classList.remove('view-mode');
+                    quill.enable(true);
+                }
+            }
+
             /* Save — localStorage dulu (instant), lalu sync ke server di background.
                syncToServer() & apiFetch() berasal dari dashboard-core.js. */
             function saveNotes() {
@@ -308,6 +364,8 @@
                     saveCourseNotes(allNotes);
                     quill.setText('');
                     mdEditor.value = '';
+                    setCourseViewed(courseId, false);
+                    exitViewMode();
                     setStatus('Catatan dihapus.');
                     if (typeof syncToServer === 'function') syncToServer().catch(function () { });
                 });
@@ -526,6 +584,7 @@
             /* Init */
             loadCourseInfo();
             loadNotes();
+            if (isCourseViewed(courseId)) enterViewMode();
 
             /* Event listeners */
             ['editor-title', 'editor-role', 'editor-category', 'editor-company'].forEach(function (id) {
@@ -535,8 +594,16 @@
             quill.on('text-change', function (delta, oldDelta, source) {
                 if (source === 'user') autoSave();
             });
-            document.getElementById('editor-save-btn').addEventListener('click', saveNotes);
+            document.getElementById('editor-save-btn').addEventListener('click', function () {
+                saveNotes();
+                setCourseViewed(courseId, true);
+                enterViewMode();
+            });
             document.getElementById('editor-delete-btn').addEventListener('click', deleteNotes);
+            document.getElementById('edit-btn').addEventListener('click', function () {
+                setCourseViewed(courseId, false);
+                exitViewMode();
+            });
 
             /* Mermaid modal */
             document.getElementById('mermaid-open-btn').addEventListener('click', openMermaidModal);
