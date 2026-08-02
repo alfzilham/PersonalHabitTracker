@@ -139,8 +139,8 @@
             if (!res.ok) { showError(data.error || 'Gagal mendaftar.'); submitBtn.disabled = false; submitBtn.innerHTML = 'Selesai <i data-lucide="check"></i>'; if (window.lucide) lucide.createIcons(); return; }
 
             sessionStorage.removeItem('onb_username');
-            sessionStorage.setItem('session_token', data.token);
-            sessionStorage.setItem('session_user', data.username);
+            localStorage.setItem('session_token', data.token);
+            localStorage.setItem('session_user', data.username);
 
             submitBtn.innerHTML = '<i data-lucide="check-circle"></i> Berhasil!';
             if (window.lucide) lucide.createIcons();

@@ -8,7 +8,7 @@
 
     <!-- Session check — redirect to login if not authenticated -->
     <script>
-        if (!sessionStorage.getItem('session_token') || !sessionStorage.getItem('session_user')) {
+        if (!localStorage.getItem('session_token') || !localStorage.getItem('session_user')) {
             window.location.href = 'login.html';
         }
     </script>

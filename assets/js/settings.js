@@ -228,7 +228,7 @@ function deleteAccount() {
     showConfirm('Hapus Akun', 'Yakin ingin menghapus AKUN DAN SEMUA DATA? Tindakan ini tidak dapat dibatalkan.', function () {
         fetch('/api/account', {
             method: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('session_token') },
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('session_token') },
         }).catch(function () {});
 
         var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates',
@@ -237,7 +237,7 @@ function deleteAccount() {
         ];
         keys.forEach(function (k) { localStorage.removeItem(k); });
 
-        sessionStorage.clear();
+        clearAuthSession();
         window.location.href = 'login.html';
     });
 }
@@ -251,7 +251,7 @@ function logoutDemo() {
                 'settings_profile', 'course_notes', 'course_edits'
             ];
             keys.forEach(function (k) { localStorage.removeItem(k); });
-            sessionStorage.clear();
+            clearAuthSession();
             window.location.href = 'login.html';
         });
     });

@@ -661,8 +661,14 @@ function insertMarkdownSyntax(textarea, type) {
 
 const API_BASE = "/api";
 
+/* Hapus sesi login dari localStorage — data cache tetap aman */
+function clearAuthSession() {
+  localStorage.removeItem("session_token");
+  localStorage.removeItem("session_user");
+}
+
 async function apiFetch(path, options) {
-  var token = sessionStorage.getItem("session_token");
+  var token = localStorage.getItem("session_token");
   try {
     var res = await fetch(
       API_BASE + path,
@@ -679,7 +685,7 @@ async function apiFetch(path, options) {
       ),
     );
     if (res.status === 401) {
-      sessionStorage.clear();
+      clearAuthSession();
       window.location.href = "login.html";
       return null;
     }
@@ -690,7 +696,7 @@ async function apiFetch(path, options) {
 }
 
 async function syncToServer() {
-  var token = sessionStorage.getItem("session_token");
+  var token = localStorage.getItem("session_token");
   if (!token) return;
   var data = {
     courses: {},
@@ -721,7 +727,7 @@ async function syncToServer() {
 }
 
 async function loadFromServer() {
-  var token = sessionStorage.getItem("session_token");
+  var token = localStorage.getItem("session_token");
   if (!token) return false;
   try {
     var res = await apiFetch("/data");
@@ -1293,7 +1299,7 @@ function rerenderActiveTab() {
 
 function initProfile() {
   var settings = loadSettings();
-  var sessionUser = sessionStorage.getItem("session_user");
+  var sessionUser = localStorage.getItem("session_user");
 
   /* Jika belum ada nama profil, pakai username dari login */
   if (!settings.name && sessionUser) {
@@ -1372,7 +1378,7 @@ function init() {
     });
 
   /* Load data dari server jika ada session */
-  var hasSession = !!sessionStorage.getItem("session_token");
+  var hasSession = !!localStorage.getItem("session_token");
   if (hasSession) {
     loadFromServer().then(function (loaded) {
       if (!loaded) syncToServer();

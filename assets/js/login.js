@@ -27,15 +27,15 @@
     var errorParam = params.get('error');
 
     /* Jika sudah login, redirect */
-    if (sessionStorage.getItem('session_token') && sessionStorage.getItem('session_user')) {
+    if (localStorage.getItem('session_token') && localStorage.getItem('session_user')) {
         window.location.href = 'index.html';
         return;
     }
 
     /* Jika ada token dari Google callback — simpan & redirect */
     if (tokenParam) {
-        sessionStorage.setItem('session_token', tokenParam);
-        sessionStorage.setItem('session_user', 'user');
+        localStorage.setItem('session_token', tokenParam);
+        localStorage.setItem('session_user', 'user');
         window.location.href = 'index.html';
         return;
     }
@@ -146,8 +146,8 @@
                 var data = await res.json();
                 if (!res.ok) { showError(data.error || 'Gagal mendaftar.'); return; }
 
-                sessionStorage.setItem('session_token', data.token);
-                sessionStorage.setItem('session_user', data.username);
+                localStorage.setItem('session_token', data.token);
+                localStorage.setItem('session_user', data.username);
                 submitBtn.innerHTML = '<i data-lucide="check-circle"></i><span>Berhasil!</span>';
                 if (window.lucide) lucide.createIcons();
                 setTimeout(function () { window.location.href = 'index.html'; }, 500);
@@ -176,8 +176,8 @@
                 return;
             }
 
-            sessionStorage.setItem('session_token', data.token);
-            sessionStorage.setItem('session_user', data.username);
+            localStorage.setItem('session_token', data.token);
+            localStorage.setItem('session_user', data.username);
 
             submitBtn.innerHTML = '<i data-lucide="check-circle"></i><span>Berhasil!</span>';
             if (window.lucide) lucide.createIcons();
