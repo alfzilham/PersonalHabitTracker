@@ -39,11 +39,21 @@
         <div class="card">
             <div class="editor-header">
                 <h2 class="text-xl font-bold text-primary font-serif">Course Notes</h2>
-                <button type="button" class="btn btn-secondary btn-sm" id="mermaid-open-btn">
-                    <i data-lucide="workflow"></i> Diagram
-                </button>
+                <div class="editor-header__actions">
+                    <div class="btn-group editor-mode-toggle" id="editor-mode-toggle">
+                        <button type="button" class="btn-group__item btn-group__item--active" data-mode="rich">Rich Text</button>
+                        <button type="button" class="btn-group__item" data-mode="md">Markdown</button>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" id="mermaid-open-btn">
+                        <i data-lucide="workflow"></i> Diagram
+                    </button>
+                </div>
             </div>
             <div id="editor-container"></div>
+            <div id="md-editor-wrap" class="hidden">
+                <textarea id="md-editor" placeholder="Tulis catatan dalam Markdown..."></textarea>
+                <div id="md-preview" class="md-preview"></div>
+            </div>
             <div class="editor-actions">
                 <span class="editor-status" id="editor-status"></span>
                 <div class="editor-actions__right">
@@ -97,6 +107,8 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/turndown@7/dist/turndown.js"></script>
     <script>mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });</script>
 
     <script src="../assets/js/data.js"></script>
@@ -113,6 +125,11 @@
             var statusEl = document.getElementById('editor-status');
             var mermaidInsertIndex = null;
             var confirmCallback = null;
+            var noteMode = 'rich';
+            var mdEditor = document.getElementById('md-editor');
+            var mdPreview = document.getElementById('md-preview');
+            var mdWrap = document.getElementById('md-editor-wrap');
+            var modeToggle = document.getElementById('editor-mode-toggle');
 
             if (!courseId) {
                 document.getElementById('course-root').innerHTML =
@@ -172,10 +189,21 @@
                         if (note.badges.subCategory) document.getElementById('editor-category').value = note.badges.subCategory;
                         if (note.badges.company) document.getElementById('editor-company').value = note.badges.company;
                     }
-                    if (note.content) {
-                        quill.root.innerHTML = note.content;
-                        renderAllMermaidBlocks();
+                    noteMode = note.mode === 'md' ? 'md' : 'rich';
+                    if (noteMode === 'md') {
+                        mdEditor.value = note.content || '';
+                        setEditorMode('md');
+                        updateMdPreview();
+                    } else {
+                        if (note.content) {
+                            quill.root.innerHTML = note.content;
+                            renderAllMermaidBlocks();
+                        }
+                        setEditorMode('rich');
                     }
+                } else {
+                    noteMode = 'rich';
+                    setEditorMode('rich');
                 }
                 updateTitle();
             }
@@ -203,7 +231,8 @@
                         subCategory: document.getElementById('editor-category').value.trim(),
                         company: document.getElementById('editor-company').value.trim(),
                     },
-                    content: quill.root.innerHTML,
+                    mode: noteMode,
+                    content: noteMode === 'md' ? mdEditor.value : quill.root.innerHTML,
                     updatedAt: new Date().toISOString(),
                 };
                 saveCourseNotes(allNotes);
@@ -229,6 +258,7 @@
                     delete allNotes[courseId];
                     saveCourseNotes(allNotes);
                     quill.setText('');
+                    mdEditor.value = '';
                     setStatus('Catatan dihapus.');
                     if (typeof syncToServer === 'function') syncToServer().catch(function () { });
                 });
@@ -250,6 +280,102 @@
                 document.getElementById('confirm-modal').classList.remove('is-open');
                 confirmCallback = null;
             });
+
+            /* ======== MODE SWITCH — Rich Text / Markdown ======== */
+
+            function setEditorMode(mode) {
+                noteMode = mode;
+                document.querySelectorAll('#editor-mode-toggle .btn-group__item').forEach(function (b) {
+                    b.classList.toggle('btn-group__item--active', b.dataset.mode === mode);
+                });
+                var mermaidBtn = document.getElementById('mermaid-open-btn');
+                if (mermaidBtn) mermaidBtn.classList.toggle('hidden', mode !== 'rich');
+                document.getElementById('editor-container').classList.toggle('hidden', mode !== 'rich');
+                mdWrap.classList.toggle('hidden', mode !== 'md');
+            }
+
+            function updateMdPreview() {
+                var md = mdEditor.value;
+                var html = (typeof marked !== 'undefined') ? marked.parse(md || '') : '<pre>' + escapeHtml(md) + '</pre>';
+                mdPreview.innerHTML = html;
+                if (typeof reinitLucide === 'function') reinitLucide();
+            }
+
+            function quillHtmlToMarkdown(html) {
+                if (typeof TurndownService === 'undefined') return html;
+                var td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
+                td.addRule('mermaid', {
+                    filter: function (node) {
+                        return node.classList && node.classList.contains('ql-mermaid');
+                    },
+                    replacement: function (content, node) {
+                        var code = node.getAttribute('data-mermaid-code') || '';
+                        return '\n\n```mermaid\n' + code + '\n```\n\n';
+                    }
+                });
+                return td.turndown(html);
+            }
+
+            async function mdToQuillHtml(md) {
+                if (typeof marked === 'undefined') return '<pre>' + escapeHtml(md) + '</pre>';
+                var re = /```mermaid\s*([\s\S]*?)```/g;
+                var segs = [];
+                var last = 0, m;
+                while ((m = re.exec(md))) {
+                    segs.push({ type: 'md', text: md.slice(last, m.index) });
+                    segs.push({ type: 'mermaid', code: m[1].trim() });
+                    last = m.index + m[0].length;
+                }
+                segs.push({ type: 'md', text: md.slice(last) });
+                var out = '';
+                for (var i = 0; i < segs.length; i++) {
+                    var seg = segs[i];
+                    if (seg.type === 'md') {
+                        out += marked.parse(seg.text || '');
+                    } else {
+                        try {
+                            var id = 'mm-' + Date.now() + '-' + i;
+                            var r = await mermaid.render(id, seg.code);
+                            out += '<div class="ql-mermaid" data-mermaid-code="' + escapeHtml(seg.code) + '" contenteditable="false">' + r.svg + '</div><p><br></p>';
+                        } catch (e) {
+                            out += '<pre><code>' + escapeHtml(seg.code) + '</code></pre>';
+                        }
+                    }
+                }
+                return out;
+            }
+
+            async function switchToMarkdown() {
+                var html = quill.root.innerHTML;
+                mdEditor.value = quillHtmlToMarkdown(html);
+                setEditorMode('md');
+                updateMdPreview();
+            }
+
+            async function switchToRich() {
+                var html = await mdToQuillHtml(mdEditor.value);
+                quill.clipboard.dangerouslyPasteHTML(html, 'silent');
+                setEditorMode('rich');
+                renderAllMermaidBlocks();
+            }
+
+            if (modeToggle) {
+                modeToggle.addEventListener('click', function (e) {
+                    var btn = e.target.closest('.btn-group__item');
+                    if (!btn) return;
+                    var mode = btn.dataset.mode;
+                    if (mode === noteMode) return;
+                    if (mode === 'md') switchToMarkdown();
+                    else switchToRich();
+                    autoSave();
+                });
+            }
+            if (mdEditor) {
+                mdEditor.addEventListener('input', function () {
+                    updateMdPreview();
+                    autoSave();
+                });
+            }
 
             /* ======== MERMAID ======== */
 

@@ -3682,6 +3682,99 @@
     margin-bottom: var(--space-4);
 }
 
+.editor-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+.editor-mode-toggle .btn-group__item {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-3);
+}
+
+#md-editor {
+    width: 100%;
+    min-height: 280px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    outline: none;
+    resize: vertical;
+    line-height: var(--leading-loose);
+    transition: border-color var(--transition-fast);
+}
+
+#md-editor:focus {
+    border-color: var(--color-sage);
+}
+
+.md-preview {
+    margin-top: var(--space-4);
+    min-height: 80px;
+    max-height: 400px;
+    overflow: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: var(--leading-loose);
+    color: var(--color-text-secondary);
+}
+
+.md-preview h1,
+.md-preview h2,
+.md-preview h3,
+.md-preview h4 {
+    font-family: var(--font-serif);
+    color: var(--color-text-primary);
+    font-weight: var(--weight-bold);
+    margin: var(--space-4) 0 var(--space-2);
+}
+
+.md-preview p {
+    margin-bottom: var(--space-3);
+}
+
+.md-preview ul {
+    margin: 0 0 var(--space-3);
+    padding-left: var(--space-6);
+}
+
+.md-preview a {
+    color: var(--color-blue);
+    text-decoration: underline;
+}
+
+.md-preview pre {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-3);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+}
+
+.md-preview code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    padding: 1px 4px;
+}
+
+.md-preview pre code {
+    background: transparent;
+    padding: 0;
+}
+
 .editor-actions {
     display: flex;
     align-items: center;
