@@ -2,4 +2,4 @@
 [x] buat switch mode di course note page (`course.html`). switch mode ini adalah memberikan kepada user untuk membuat note nya dalam bentuk rich text dan markdown. jadi, user bisa memilih untuk menggunakan rich text atau markdown
 [x] di markdown mode course note (`course.html`), tambahkan fitur preview yang support dengan format apapun, baik itu mermaid, tabel, code, dll.
 [x] buatkan juga switch mode yang sama seperti course note pada modal add journal ketika checkbox di salah satu tabel kuliah di centang.
-[ ] Tambahkan Fitur baru di tab panel sidebar. yaitu "Notes". ini adalah fitur untuk membuat catatan pribadi yang gunanya sama seperti Google Keep
+[x] Tambahkan Fitur baru di tab panel sidebar. yaitu "Notes". ini adalah fitur untuk membuat catatan pribadi yang gunanya sama seperti Google Keep
