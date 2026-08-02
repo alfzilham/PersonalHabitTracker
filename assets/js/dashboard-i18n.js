@@ -84,6 +84,9 @@ var DASHBOARD_LANG = (function () {
 
             /* Journal panel */
             'journal-title': 'Journal',
+            'journal-mode-rich': 'Rich Text',
+            'journal-mode-md': 'Markdown',
+            'journal-mode-hint': 'Diagrams & tables: use Markdown mode',
 
             /* To-do panel */
             'todo-title': 'To-do List',
@@ -416,6 +419,9 @@ var DASHBOARD_LANG = (function () {
 
             /* Journal panel */
             'journal-title': 'Jurnal',
+            'journal-mode-rich': 'Teks Kaya',
+            'journal-mode-md': 'Markdown',
+            'journal-mode-hint': 'Diagram & tabel: pakai mode Markdown',
 
             /* To-do panel */
             'todo-title': 'Daftar Tugas',

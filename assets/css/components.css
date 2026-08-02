@@ -1596,6 +1596,24 @@
     height: 13px;
 }
 
+.modal__label-row__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+/* Rich text editor dalam modal journal */
+#journal-rich-wrap .ql-toolbar.ql-snow {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+#journal-entry-ringkasan .ql-container.ql-snow {
+    min-height: 140px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
 .markdown-toolbar {
     display: flex;
     gap: var(--space-1);

@@ -1657,6 +1657,16 @@ function init() {
         btn.dataset.md,
       );
     });
+  var journalModeToggle = document.getElementById("journal-mode-toggle");
+  if (journalModeToggle)
+    journalModeToggle.addEventListener("click", function (e) {
+      var btn = e.target.closest(".btn-group__item");
+      if (!btn) return;
+      var mode = btn.dataset.mode;
+      if (mode === journalMode) return;
+      if (mode === "md") switchJournalToMd();
+      else switchJournalToRich();
+    });
 
   /* --- Journal detail lightbox --- */
   var journalDetailClose = document.getElementById("journal-detail-close");

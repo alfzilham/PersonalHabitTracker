@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="assets/css/global.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css">
 </head>
 
 <body>
@@ -864,6 +865,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
+    <!-- Rich text editor + markdown conversion (journal entry) -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/turndown@7/dist/turndown.js"></script>
+
     <!-- Course data -->
     <script src="assets/js/data.js"></script>
 
@@ -1090,11 +1096,23 @@
                     <div class="modal__label-row">
                         <label class="modal__label" for="study-entry-ringkasan"
                             data-i18n="modal-study-ringkasan">Ringkasan Materi</label>
-                        <span class="modal__markdown-hint" title="Mendukung format Markdown">
-                            <i data-lucide="info"></i> Markdown didukung
-                        </span>
+                        <div class="modal__label-row__right">
+                            <span class="modal__markdown-hint" title="Diagram &amp; tabel: gunakan mode Markdown">
+                                <i data-lucide="info"></i> <span
+                                    data-i18n="journal-mode-hint">Diagram &amp; tabel: pakai mode Markdown</span>
+                            </span>
+                            <div class="btn-group editor-mode-toggle" id="journal-mode-toggle">
+                                <button type="button" class="btn-group__item btn-group__item--active" data-mode="rich"
+                                    data-i18n="journal-mode-rich">Rich Text</button>
+                                <button type="button" class="btn-group__item" data-mode="md"
+                                    data-i18n="journal-mode-md">Markdown</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="markdown-toolbar" id="study-ringkasan-toolbar">
+                    <div id="journal-rich-wrap">
+                        <div id="journal-entry-ringkasan"></div>
+                    </div>
+                    <div class="markdown-toolbar hidden" id="study-ringkasan-toolbar">
                         <button type="button" class="markdown-toolbar__btn" data-md="bold" title="Bold"><i
                                 data-lucide="bold"></i></button>
                         <button type="button" class="markdown-toolbar__btn" data-md="italic" title="Italic"><i
@@ -1106,7 +1124,7 @@
                         <button type="button" class="markdown-toolbar__btn" data-md="link" title="Link"><i
                                 data-lucide="link"></i></button>
                     </div>
-                    <textarea class="modal__input" id="study-entry-ringkasan" rows="5"
+                    <textarea class="modal__input hidden" id="study-entry-ringkasan" rows="5"
                         data-i18n="modal-study-placeholder-ringkasan"
                         placeholder="Apa yang kamu pelajari? Bisa pakai **bold**, _italic_, - list, dsb."
                         style="resize:vertical;font-family:var(--font-mono);"></textarea>

@@ -137,7 +137,7 @@ function renderStudyLogCards(week) {
     }
     var ordered = entries.slice().reverse();
     container.innerHTML = ordered.map(function (entry) {
-        var previewText = stripMarkdown(entry.ringkasan || '');
+        var previewText = journalCardPreview(entry);
         return '<div class="study-card" data-entry-id="' + entry.id + '">' +
             (entry.imageKey ? '<div class="study-card__image-wrap" id="study-card-img-' + entry.id + '"></div>' : '') +
             '<div class="study-card__body">' +
@@ -173,15 +173,87 @@ function renderStudyLogCards(week) {
     3. STUDY ENTRY MODAL — Save new Journal entry
    ========================================================================== */
 
+var journalMode = 'rich';
+var journalQuill = null;
+
+function ensureJournalQuill() {
+    if (journalQuill || typeof Quill === 'undefined') return;
+    journalQuill = new Quill('#journal-entry-ringkasan', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'bullet' }, { 'list': 'ordered' }],
+                ['link', 'code-block'],
+                ['clean']
+            ]
+        },
+        placeholder: 'Apa yang kamu pelajari?'
+    });
+}
+
+function setJournalEditorMode(mode) {
+    journalMode = mode;
+    document.querySelectorAll('#journal-mode-toggle .btn-group__item').forEach(function (b) {
+        b.classList.toggle('btn-group__item--active', b.dataset.mode === mode);
+    });
+    var richWrap = document.getElementById('journal-rich-wrap');
+    var toolbar = document.getElementById('study-ringkasan-toolbar');
+    var textarea = document.getElementById('study-entry-ringkasan');
+    if (richWrap) richWrap.classList.toggle('hidden', mode !== 'rich');
+    if (toolbar) toolbar.classList.toggle('hidden', mode !== 'md');
+    if (textarea) textarea.classList.toggle('hidden', mode !== 'md');
+}
+
+function switchJournalToMd() {
+    if (!journalQuill) return;
+    var html = journalQuill.root.innerHTML;
+    var md = (html.trim() === '<p><br></p>') ? '' : html;
+    if (typeof TurndownService !== 'undefined') {
+        md = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' }).turndown(html);
+    }
+    document.getElementById('study-entry-ringkasan').value = md;
+    setJournalEditorMode('md');
+}
+
+function switchJournalToRich() {
+    ensureJournalQuill();
+    var md = document.getElementById('study-entry-ringkasan').value;
+    var html = (typeof marked !== 'undefined') ? marked.parse(md || '') : '<pre>' + escapeHtml(md) + '</pre>';
+    journalQuill.clipboard.dangerouslyPasteHTML(html, 'silent');
+    setJournalEditorMode('rich');
+}
+
+/* Mode-aware rendering untuk lightbox & card journal */
+function journalRingkasanToHtml(entry) {
+    var content = entry.ringkasan || '';
+    if (entry.mode === 'rich') return content;
+    return (typeof marked !== 'undefined') ? marked.parse(content) : renderMarkdown(content);
+}
+
+function journalCardPreview(entry) {
+    var s = entry.ringkasan || '';
+    if (entry.mode === 'rich') {
+        var d = document.createElement('div');
+        d.innerHTML = s;
+        return d.textContent || '';
+    }
+    return stripMarkdown(s);
+}
+
 function openStudyEntryModal(key) {
     studyEntryKey = key;
     journalEditingId = '';
     var mk = getAllStudyCourses().find(function (m) { return getStudyKey(m) === key; });
     if (!mk) return;
+    ensureJournalQuill();
     document.getElementById('study-entry-title').textContent = 'Catat materi hari ini menjadi sebuah Journal';
     document.getElementById('study-entry-matkul').textContent = mk.kode + ' \u2014 ' + mk.nama;
     document.getElementById('study-entry-judul').value = '';
     document.getElementById('study-entry-ringkasan').value = '';
+    if (journalQuill) journalQuill.setText('');
+    setJournalEditorMode('rich');
     document.getElementById('study-image-preview').src = '';
     document.getElementById('study-input-image').value = '';
     document.getElementById('study-drop-zone').classList.remove('has-image');
@@ -196,7 +268,9 @@ function closeStudyEntryModal() {
 
 function saveStudyEntry() {
     var judul = document.getElementById('study-entry-judul').value.trim();
-    var ringkasan = document.getElementById('study-entry-ringkasan').value.trim();
+    var ringkasan = journalMode === 'md'
+        ? document.getElementById('study-entry-ringkasan').value.trim()
+        : (journalQuill ? journalQuill.root.innerHTML : '');
     var preview = document.getElementById('study-image-preview');
     var dropZone = document.getElementById('study-drop-zone');
     if (!judul) { showAlert('Judul materi wajib diisi.'); return; }
@@ -223,6 +297,7 @@ function saveStudyEntry() {
         }
         log[idx].judul = judul;
         log[idx].ringkasan = ringkasan;
+        log[idx].mode = journalMode;
         log[idx].imageKey = imageKey;
         saveStudyLog(log);
         closeStudyEntryModal();
@@ -241,7 +316,7 @@ function saveStudyEntry() {
         saveImage(imageKey, blob);
     }
     var now = new Date();
-    log.push({ id: entryId, kode: mk.kode, nama: mk.nama, judul: judul, ringkasan: ringkasan, imageKey: imageKey, hari: getHariIni(), week: '' + getWeekNumber(now), createdAt: now.toISOString() });
+    log.push({ id: entryId, kode: mk.kode, nama: mk.nama, judul: judul, ringkasan: ringkasan, mode: journalMode, imageKey: imageKey, hari: getHariIni(), week: '' + getWeekNumber(now), createdAt: now.toISOString() });
     saveStudyLog(log);
     closeStudyEntryModal();
 }
@@ -292,7 +367,7 @@ function openJournalDetailLightbox(entry) {
     document.getElementById('journal-detail-kode').textContent = entry.kode;
     document.getElementById('journal-detail-nama').textContent = entry.nama;
     document.getElementById('journal-detail-judul').textContent = entry.judul;
-    document.getElementById('journal-detail-ringkasan').innerHTML = renderMarkdown(entry.ringkasan);
+    document.getElementById('journal-detail-ringkasan').innerHTML = journalRingkasanToHtml(entry);
     document.getElementById('journal-detail-hari').textContent = entry.hari || '';
     document.getElementById('journal-detail-modal').classList.add('is-open');
     reinitLucide();
@@ -323,10 +398,18 @@ function confirmDeleteJournalEntry() {
 function openJournalEditModal(entry) {
     studyEntryKey = getStudyKey(entry);
     journalEditingId = entry.id;
+    ensureJournalQuill();
     document.getElementById('study-entry-title').textContent = 'Edit Journal Entry';
     document.getElementById('study-entry-matkul').textContent = entry.kode + ' \u2014 ' + entry.nama;
     document.getElementById('study-entry-judul').value = entry.judul;
-    document.getElementById('study-entry-ringkasan').value = entry.ringkasan;
+    var editMode = entry.mode === 'md' ? 'md' : 'rich';
+    if (editMode === 'md') {
+        document.getElementById('study-entry-ringkasan').value = entry.ringkasan || '';
+        setJournalEditorMode('md');
+    } else {
+        if (journalQuill) journalQuill.root.innerHTML = entry.ringkasan || '';
+        setJournalEditorMode('rich');
+    }
     document.getElementById('study-input-image').value = '';
     var preview = document.getElementById('study-image-preview');
     var dropZone = document.getElementById('study-drop-zone');
