@@ -84,6 +84,7 @@ function buildNoteCard(note) {
     ? "note-card__btn is-active"
     : "note-card__btn";
   var pinTitle = __("notes-pin") || "Pin";
+  var editTitle = __("notes-edit") || "Edit";
   var delTitle = __("notes-delete") || "Delete";
   return (
     '<div class="note-card note-card--' +
@@ -108,6 +109,11 @@ function buildNoteCard(note) {
     '" title="' +
     pinTitle +
     '"><i data-lucide="pin"></i></button>' +
+    '<button type="button" class="note-card__btn" data-action="edit" data-note-id="' +
+    note.id +
+    '" title="' +
+    editTitle +
+    '"><i data-lucide="pencil"></i></button>' +
     '<button type="button" class="note-card__btn" data-action="delete" data-note-id="' +
     note.id +
     '" title="' +
@@ -287,6 +293,32 @@ function togglePinFromCard(id) {
 }
 
 /* ==========================================================================
+    3b. LIGHTBOX — lihat catatan (preview markdown read-only)
+   ========================================================================== */
+
+function openNoteLightbox(id) {
+  var note = loadNotes().find(function (n) {
+    return n.id === id;
+  });
+  if (!note) return;
+  var titleEl = document.getElementById("note-view-title");
+  var contentEl = document.getElementById("note-view-content");
+  if (titleEl) {
+    titleEl.textContent = note.title || "";
+    titleEl.style.display = note.title ? "" : "none";
+  }
+  if (contentEl) contentEl.innerHTML = renderNoteMarkdown(note.content || "");
+  var modal = document.getElementById("note-view-modal");
+  if (modal) modal.classList.add("is-open");
+  reinitLucide();
+}
+
+function closeNoteLightbox() {
+  var modal = document.getElementById("note-view-modal");
+  if (modal) modal.classList.remove("is-open");
+}
+
+/* ==========================================================================
     4. INIT — wire listeners (dipanggil dari dashboard-core init)
    ========================================================================== */
 
@@ -321,11 +353,15 @@ function initNotes() {
       if (actionBtn) {
         var id = actionBtn.dataset.noteId;
         if (actionBtn.dataset.action === "pin") togglePinFromCard(id);
+        else if (actionBtn.dataset.action === "edit") editNote(id);
         else if (actionBtn.dataset.action === "delete") deleteNote(id);
         return;
       }
-      var card = e.target.closest(".note-card");
-      if (card) editNote(card.dataset.noteId);
+      var body = e.target.closest(".note-card__body");
+      if (body) {
+        var card = body.closest(".note-card");
+        if (card) openNoteLightbox(card.dataset.noteId);
+      }
     });
   }
 
@@ -339,4 +375,12 @@ function initNotes() {
       }, 250);
     });
   }
+
+  var viewClose = document.getElementById("note-view-close");
+  if (viewClose) viewClose.addEventListener("click", closeNoteLightbox);
+  var viewModal = document.getElementById("note-view-modal");
+  if (viewModal)
+    viewModal.addEventListener("click", function (e) {
+      if (e.target === viewModal) closeNoteLightbox();
+    });
 }

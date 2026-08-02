@@ -1278,6 +1278,21 @@
     </div>
 
     <!-- =====================================================================
+       MODAL: NOTE VIEW (Lightbox preview read-only)
+   ====================================================================== -->
+    <div class="modal-overlay" id="note-view-modal">
+        <div class="lightbox">
+            <button class="lightbox__close" id="note-view-close" aria-label="Close">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="lightbox__body">
+                <h2 class="lightbox__title" id="note-view-title"></h2>
+                <div class="lightbox__content md-preview" id="note-view-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
        MODAL: DELETE JOURNAL ENTRY CONFIRM
    ====================================================================== -->
     <div class="modal-overlay" id="journal-delete-modal">

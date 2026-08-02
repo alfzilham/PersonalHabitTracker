@@ -2530,6 +2530,17 @@
     opacity: 0.5;
 }
 
+/* Konten markdown di dalam lightbox — tampil penuh tanpa kotak bawaan .md-preview */
+.lightbox__content.md-preview {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin-top: 0;
+    min-height: 0;
+    max-height: 60vh;
+    overflow: auto;
+}
+
 /* Study card */
 .study-card {
     background: var(--color-bg-card);
