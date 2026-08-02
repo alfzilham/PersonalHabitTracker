@@ -1583,19 +1583,6 @@
     gap: var(--space-3);
 }
 
-.modal__markdown-hint {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-}
-
-.modal__markdown-hint svg {
-    width: 13px;
-    height: 13px;
-}
-
 .modal__label-row__right {
     display: flex;
     align-items: center;
