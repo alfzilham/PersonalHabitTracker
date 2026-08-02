@@ -27,7 +27,7 @@ function renderStudyTable() {
     var completion = loadStudyCompletion();
     var edits = loadStudyEdits();
     var done = 0;
-    tbody.innerHTML = getAllStudyCourses().map(function (mk, i) {
+    tbody.innerHTML = getActiveStudyCourses().map(function (mk, i) {
         var key = getStudyKey(mk);
         if (edits[key]) mk = Object.assign({}, mk, edits[key]);
         var checked = !!completion[key];
@@ -47,12 +47,13 @@ function renderStudyTable() {
             '<button class="course-dot-btn" data-course-key="' + key + '" aria-label="Actions"><i data-lucide="settings"></i></button>' +
             '<div class="course-dropdown" data-dropdown-for="' + key + '">' +
             '<button class="course-dropdown__item" data-action="edit" data-key="' + key + '"><i data-lucide="pencil"></i> Edit</button>' +
+            '<button class="course-dropdown__item" data-action="archive" data-key="' + key + '"><i data-lucide="archive"></i> Archive</button>' +
             '<button class="course-dropdown__item course-dropdown__item--danger" data-action="delete" data-key="' + key + '"><i data-lucide="trash-2"></i> Delete</button>' +
             '</div></div></td></tr>';
     }).join('');
     reinitLucide();
     attachStudyDropdownListeners();
-    var total = getAllStudyCourses().length;
+    var total = getActiveStudyCourses().length;
     var pct = total > 0 ? Math.round((done / total) * 100) : 0;
     var fill = document.getElementById('study-progress-fill');
     var label = document.getElementById('study-progress-label');
@@ -87,6 +88,9 @@ function attachStudyDropdownListeners() {
     });
     document.querySelectorAll('#panel-study .course-dropdown__item[data-action="edit"]').forEach(function (btn) {
         btn.addEventListener('click', function (e) { e.stopPropagation(); var key = btn.dataset.key; closeAllCourseDropdowns(); openStudyEditModal(key); });
+    });
+    document.querySelectorAll('#panel-study .course-dropdown__item[data-action="archive"]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) { e.stopPropagation(); var key = btn.dataset.key; closeAllCourseDropdowns(); toggleStudyArchive(key); });
     });
     document.querySelectorAll('#panel-study .course-dropdown__item[data-action="delete"]').forEach(function (btn) {
         btn.addEventListener('click', function (e) {
@@ -558,4 +562,59 @@ function deleteStudySubject(key) {
     delete edits[key];
     saveStudyEdits(edits);
     renderStudy();
+}
+
+
+/* ==========================================================================
+    8. ARCHIVE STUDY SUBJECTS
+   ========================================================================== */
+
+function toggleStudyArchive(key) {
+    var archived = loadArchivedStudy();
+    var idx = archived.indexOf(key);
+    if (idx === -1) archived.push(key);
+    else archived.splice(idx, 1);
+    saveArchivedStudy(archived);
+    renderStudyTable();
+    renderArchivedStudy();
+    if (typeof updateHeaderCounter === 'function') updateHeaderCounter(getCurrentActiveTab());
+}
+
+function renderArchivedStudy() {
+    var tbody = document.getElementById('archived-study-body');
+    if (!tbody) return;
+    var archivedKeys = loadArchivedStudy();
+    var subjects = getAllStudyCourses().filter(function (m) { return archivedKeys.indexOf(getStudyKey(m)) !== -1; });
+    var empty = document.getElementById('archived-study-empty');
+    if (!subjects.length) {
+        tbody.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        reinitLucide();
+        return;
+    }
+    if (empty) empty.classList.add('hidden');
+    tbody.innerHTML = subjects.map(function (mk) {
+        var key = getStudyKey(mk);
+        return '<tr data-study-key="' + key + '">' +
+            '<td><span class="text-sm text-muted">' + mk.kode + '</span></td>' +
+            '<td class="col-name" style="text-decoration:line-through;color:var(--color-text-muted);">' + mk.nama + '</td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + mk.hari + '</span></td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + mk.jam + '</span></td>' +
+            '<td><span class="badge badge--' + (mk.paket === 'MKU' ? 'optional' : 'required') + '" style="font-size:var(--text-xs);">' + mk.paket + '</span></td>' +
+            '<td><button class="btn btn-ghost btn-sm archived-restore" data-key="' + key + '" title="Restore"><i data-lucide="rotate-ccw"></i></button>' +
+            '<button class="btn btn-ghost btn-sm archived-delete" data-key="' + key + '" title="Delete"><i data-lucide="trash-2" style="color:#C85050;"></i></button></td></tr>';
+    }).join('');
+    reinitLucide();
+    tbody.querySelectorAll('.archived-restore').forEach(function (btn) {
+        btn.addEventListener('click', function () { toggleStudyArchive(btn.dataset.key); });
+    });
+    tbody.querySelectorAll('.archived-delete').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var key = btn.dataset.key;
+            var mk = getAllStudyCourses().find(function (m) { return getStudyKey(m) === key; });
+            studyPendingDeleteKey = key;
+            document.getElementById('course-delete-body').innerHTML = 'Are you sure you want to permanently delete <strong>' + escapeHtml(mk ? mk.nama : key) + '</strong>? This cannot be undone.';
+            document.getElementById('course-delete-modal').classList.add('is-open');
+        });
+    });
 }

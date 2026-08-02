@@ -31,6 +31,7 @@ const CUSTOM_STORAGE_KEY = "custom_courses";
 const ARCHIVED_STORAGE_KEY = "archived_courses";
 const COURSE_NOTES_KEY = "course_notes";
 const PERSONAL_NOTES_KEY = "personal_notes";
+const ARCHIVED_STUDY_KEY = "archived_study";
 const SETTINGS_KEY = "settings_profile";
 
 /* Role totals */
@@ -214,6 +215,27 @@ function saveCustomSubjects(subjects) {
   try {
     localStorage.setItem(CUSTOM_SUBJECT_KEY, JSON.stringify(subjects));
   } catch (e) {}
+}
+
+function loadArchivedStudy() {
+  try {
+    return JSON.parse(localStorage.getItem(ARCHIVED_STUDY_KEY)) || [];
+  } catch (e) {
+    return [];
+  }
+}
+function saveArchivedStudy(keys) {
+  try {
+    localStorage.setItem(ARCHIVED_STUDY_KEY, JSON.stringify(keys));
+  } catch (e) {}
+}
+
+function getActiveStudyCourses() {
+  var archived = loadArchivedStudy();
+  if (!archived.length) return getAllStudyCourses();
+  return getAllStudyCourses().filter(function (m) {
+    return archived.indexOf(getStudyKey(m)) === -1;
+  });
 }
 
 function getAllStudyCourses() {
@@ -718,6 +740,7 @@ async function syncToServer() {
   data.study[STUDY_WEEK_KEY] = loadStudyWeek();
   data.study[STUDY_EDIT_KEY] = loadStudyEdits();
   data.study[CUSTOM_SUBJECT_KEY] = loadCustomSubjects();
+  data.study[ARCHIVED_STUDY_KEY] = loadArchivedStudy();
   data.todos[TODO_STORAGE_KEY] = loadTodos();
   data.todos[DAILY_TASKS_KEY] = loadDailyTasks();
   data.finance[FINANCE_STORAGE_KEY] = loadFinanceRecords();
@@ -923,6 +946,9 @@ function switchTab(tabName) {
       break;
     case "archived":
       renderArchivedTable();
+      renderArchivedStudy();
+      renderArchivedNotes();
+      switchArchivedSubTab(window._archivedSubTab || "courses");
       break;
     case "study":
       renderStudy();
@@ -971,6 +997,24 @@ function closeBottomSheet() {
   document.getElementById("bottom-sheet-overlay").classList.remove("is-open");
 }
 
+function switchArchivedSubTab(name) {
+  window._archivedSubTab = name;
+  document
+    .querySelectorAll("#archived-subtabs .btn-group__item")
+    .forEach(function (b) {
+      b.classList.toggle("btn-group__item--active", b.dataset.archivedTab === name);
+    });
+  document
+    .getElementById("archived-courses")
+    .classList.toggle("hidden", name !== "courses");
+  document
+    .getElementById("archived-study")
+    .classList.toggle("hidden", name !== "study");
+  document
+    .getElementById("archived-notes")
+    .classList.toggle("hidden", name !== "notes");
+}
+
 function toggleBottomSheet() {
   var sheet = document.getElementById("bottom-sheet");
   var overlay = document.getElementById("bottom-sheet-overlay");
@@ -1003,13 +1047,14 @@ function updateHeaderCounter(tabName) {
     }
     case "study": {
       var studyComp = loadStudyCompletion();
-      var studyDone = getAllStudyCourses().filter(function (m) {
+      var activeStudy = getActiveStudyCourses();
+      var studyDone = activeStudy.filter(function (m) {
         return !!studyComp["mk_" + m.kode];
       }).length;
       labelLeft.textContent = __("head-minggu-ini");
-      valueLeft.textContent = studyDone + " / " + getAllStudyCourses().length;
+      valueLeft.textContent = studyDone + " / " + activeStudy.length;
       labelRight.textContent = __("head-mata-kuliah");
-      valueRight.textContent = getAllStudyCourses().length;
+      valueRight.textContent = activeStudy.length;
       break;
     }
     case "journal": {
@@ -1031,13 +1076,17 @@ function updateHeaderCounter(tabName) {
     case "archived": {
       var archivedKeys = loadArchived();
       var allArch = getCoursesWithCompletion();
-      var archivedCount = allArch.filter(function (c) {
+      var archivedCourseCount = allArch.filter(function (c) {
         return archivedKeys.indexOf(getCourseKey(c)) !== -1;
       }).length;
+      var archivedStudyCount = loadArchivedStudy().length;
+      var archivedNotesCount = loadNotes().filter(function (n) {
+        return n.archived;
+      }).length;
       labelLeft.textContent = __("head-archived");
-      valueLeft.textContent = archivedCount;
-      labelRight.textContent = __("head-total-label");
-      valueRight.textContent = archivedCount;
+      valueLeft.textContent = archivedCourseCount + archivedStudyCount + archivedNotesCount;
+      labelRight.textContent = __("head-notes");
+      valueRight.textContent = archivedNotesCount;
       break;
     }
     case "todo": {
@@ -2175,9 +2224,14 @@ function init() {
       }
       if (studyPendingDeleteKey) {
         deleteStudySubject(studyPendingDeleteKey);
+        var archStudy = loadArchivedStudy().filter(function (k) {
+          return k !== studyPendingDeleteKey;
+        });
+        saveArchivedStudy(archStudy);
         studyPendingDeleteKey = "";
       }
       courseDelModal.classList.remove("is-open");
+      if (typeof renderArchivedStudy === "function") renderArchivedStudy();
     });
   if (courseDelCancel)
     courseDelCancel.addEventListener("click", function () {
@@ -2196,6 +2250,15 @@ function init() {
 
   /* --- Notes tab --- */
   if (typeof initNotes === "function") initNotes();
+
+  /* --- Archived sub-tabs --- */
+  var archivedSubtabs = document.getElementById("archived-subtabs");
+  if (archivedSubtabs)
+    archivedSubtabs.addEventListener("click", function (e) {
+      var btn = e.target.closest(".btn-group__item");
+      if (!btn) return;
+      switchArchivedSubTab(btn.dataset.archivedTab);
+    });
 }
 
 /* ==========================================================================

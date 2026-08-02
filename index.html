@@ -521,24 +521,72 @@
                             Courses</h2>
                     </div>
 
-                    <!-- Table -->
-                    <div class="table-wrapper">
-                        <table class="table" aria-label="Archived courses list">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="col-num">#</th>
-                                    <th scope="col" class="col-name">Course</th>
-                                    <th scope="col" class="col-desc">Description</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Role</th>
-                                    <th scope="col">Company</th>
-                                    <th scope="col" style="width:100px;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="archived-table-body">
-                                <!-- Rendered by JS -->
-                            </tbody>
-                        </table>
+                    <!-- Sub-tabs: Courses / Study / Notes -->
+                    <div class="btn-group" id="archived-subtabs" style="margin-bottom:var(--space-4);">
+                        <button type="button" class="btn-group__item btn-group__item--active"
+                            data-archived-tab="courses" data-i18n="archived-sub-courses">Courses</button>
+                        <button type="button" class="btn-group__item" data-archived-tab="study"
+                            data-i18n="archived-sub-study">Study</button>
+                        <button type="button" class="btn-group__item" data-archived-tab="notes"
+                            data-i18n="archived-sub-notes">Notes</button>
+                    </div>
+
+                    <!-- Archived courses -->
+                    <div id="archived-courses">
+                        <div class="table-wrapper">
+                            <table class="table" aria-label="Archived courses list">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="col-num">#</th>
+                                        <th scope="col" class="col-name">Course</th>
+                                        <th scope="col" class="col-desc">Description</th>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Company</th>
+                                        <th scope="col" style="width:100px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archived-table-body">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Archived study subjects -->
+                    <div id="archived-study" class="hidden">
+                        <div class="table-wrapper">
+                            <table class="table" aria-label="Archived study subjects list">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width:80px;">Code</th>
+                                        <th scope="col" class="col-name">Name</th>
+                                        <th scope="col" class="col-center">Day</th>
+                                        <th scope="col" class="col-center">Time</th>
+                                        <th scope="col">Package</th>
+                                        <th scope="col" style="width:110px;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archived-study-body">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="archived-study-empty" class="archived-empty hidden">
+                            <i data-lucide="archive"></i>
+                            <p data-i18n="archived-empty-study">No archived study subjects.</p>
+                        </div>
+                    </div>
+
+                    <!-- Archived notes -->
+                    <div id="archived-notes" class="hidden">
+                        <div id="archived-notes-grid" class="masonry-grid">
+                            <!-- Rendered by JS -->
+                        </div>
+                        <div id="archived-notes-empty" class="archived-empty hidden">
+                            <i data-lucide="archive"></i>
+                            <p data-i18n="archived-empty-notes">No archived notes.</p>
+                        </div>
                     </div>
 
                 </section>

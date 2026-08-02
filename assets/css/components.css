@@ -2423,6 +2423,16 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
+.note-card--archived {
+    opacity: 0.82;
+    filter: saturate(0.5);
+}
+
+.note-card--archived .note-card__title {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+}
+
 .note-card__body {
     display: flex;
     flex-direction: column;

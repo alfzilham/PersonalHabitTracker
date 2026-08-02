@@ -69,6 +69,13 @@ var DASHBOARD_LANG = (function () {
 
             /* Archived panel */
             'archived-title': 'Archived Courses',
+            'archived-sub-courses': 'Courses',
+            'archived-sub-study': 'Study',
+            'archived-sub-notes': 'Notes',
+            'archived-empty-study': 'No archived study subjects.',
+            'archived-empty-notes': 'No archived notes.',
+            'archived-restore': 'Restore',
+            'study-archive': 'Archive',
 
             /* Study panel */
             'study-title': 'Minggu Ini',
@@ -96,6 +103,8 @@ var DASHBOARD_LANG = (function () {
             'notes-close': 'Close',
             'notes-pin': 'Pin',
             'notes-edit': 'Edit',
+            'notes-archive': 'Archive',
+            'notes-restore': 'Restore',
             'notes-delete': 'Delete',
             'notes-delete-confirm': 'Delete this note?',
             'notes-empty': 'No notes yet. Tap \u201cTake a note...\u201d above to create one.',
@@ -421,6 +430,13 @@ var DASHBOARD_LANG = (function () {
 
             /* Archived panel */
             'archived-title': 'Kursus yang Diarsipkan',
+            'archived-sub-courses': 'Kursus',
+            'archived-sub-study': 'Belajar',
+            'archived-sub-notes': 'Catatan',
+            'archived-empty-study': 'Belum ada subjek yang diarsipkan.',
+            'archived-empty-notes': 'Belum ada catatan yang diarsipkan.',
+            'archived-restore': 'Kembalikan',
+            'study-archive': 'Arsipkan',
 
             /* Study panel */
             'study-title': 'Minggu Ini',
@@ -448,6 +464,8 @@ var DASHBOARD_LANG = (function () {
             'notes-close': 'Tutup',
             'notes-pin': 'Semat',
             'notes-edit': 'Ubah',
+            'notes-archive': 'Arsipkan',
+            'notes-restore': 'Kembalikan',
             'notes-delete': 'Hapus',
             'notes-delete-confirm': 'Hapus catatan ini?',
             'notes-empty': 'Belum ada catatan. Ketuk \u201cAmbil catatan...\u201d di atas untuk membuat.',

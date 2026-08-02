@@ -56,12 +56,13 @@ var chartStudyLine = null;
 
 function renderStudyAnalytics() {
     var completion = loadStudyCompletion();
-    var total = getAllStudyCourses().length;
+    var activeMk = getActiveStudyCourses();
+    var total = activeMk.length;
     var done = 0;
-    var jurusanMk = getAllStudyCourses().filter(function (m) { return m.paket === 'Jurusan'; });
-    var mkuMk = getAllStudyCourses().filter(function (m) { return m.paket === 'MKU'; });
+    var jurusanMk = activeMk.filter(function (m) { return m.paket === 'Jurusan'; });
+    var mkuMk = activeMk.filter(function (m) { return m.paket === 'MKU'; });
     var jurusanDone = 0, mkuDone = 0;
-    getAllStudyCourses().forEach(function (mk) {
+    activeMk.forEach(function (mk) {
         var key = 'mk_' + mk.kode;
         if (completion[key]) { done++; if (mk.paket === 'Jurusan') jurusanDone++; else mkuDone++; }
     });

@@ -84,6 +84,7 @@ function buildNoteCard(note) {
     ? "note-card__btn is-active"
     : "note-card__btn";
   var pinTitle = __("notes-pin") || "Pin";
+  var archiveTitle = __("notes-archive") || "Archive";
   var editTitle = __("notes-edit") || "Edit";
   var delTitle = __("notes-delete") || "Delete";
   return (
@@ -109,6 +110,11 @@ function buildNoteCard(note) {
     '" title="' +
     pinTitle +
     '"><i data-lucide="pin"></i></button>' +
+    '<button type="button" class="note-card__btn" data-action="archive" data-note-id="' +
+    note.id +
+    '" title="' +
+    archiveTitle +
+    '"><i data-lucide="archive"></i></button>' +
     '<button type="button" class="note-card__btn" data-action="edit" data-note-id="' +
     note.id +
     '" title="' +
@@ -126,7 +132,10 @@ function buildNoteCard(note) {
 }
 
 function renderNotes() {
-  var list = loadNotes();
+  var all = loadNotes();
+  var list = all.filter(function (n) {
+    return !n.archived;
+  });
   var q = (notesSearchQuery || "").trim().toLowerCase();
   if (q) {
     list = list.filter(function (n) {
@@ -149,7 +158,10 @@ function renderNotes() {
   var empty = document.getElementById("notes-empty");
   if (empty) {
     var p = empty.querySelector("p");
-    if (ordered.length === 0 && loadNotes().length === 0) {
+    var activeTotal = all.filter(function (n) {
+      return !n.archived;
+    }).length;
+    if (activeTotal === 0) {
       empty.classList.remove("hidden");
       if (p) p.textContent = __("notes-empty") || "Belum ada catatan.";
     } else if (ordered.length === 0) {
@@ -293,6 +305,94 @@ function togglePinFromCard(id) {
 }
 
 /* ==========================================================================
+    3c. ARCHIVE NOTES — arsip & kelola di tab Archived
+   ========================================================================== */
+
+function toggleNoteArchive(id) {
+  var list = loadNotes();
+  var note = list.find(function (n) {
+    return n.id === id;
+  });
+  if (!note) return;
+  note.archived = !note.archived;
+  saveNotes(list);
+  renderNotes();
+  renderArchivedNotes();
+  scheduleNotesSync();
+}
+
+function deleteArchivedNote(id) {
+  showConfirm(
+    __("notes-delete") || "Hapus",
+    __("notes-delete-confirm") || "Hapus catatan ini?",
+    function () {
+      var list = loadNotes().filter(function (n) {
+        return n.id !== id;
+      });
+      saveNotes(list);
+      if (notesEditingId === id) closeNoteComposer();
+      renderNotes();
+      renderArchivedNotes();
+      scheduleNotesSync();
+    },
+  );
+}
+
+function buildArchivedNoteCard(note) {
+  var color = NOTES_COLORS.indexOf(note.color) !== -1 ? note.color : "yellow";
+  var title = note.title
+    ? '<div class="note-card__title">' + escapeHtml(note.title) + "</div>"
+    : "";
+  var content = note.content
+    ? '<div class="note-card__content md-preview">' +
+      renderNoteMarkdown(note.content) +
+      "</div>"
+    : "";
+  var restoreTitle = __("notes-restore") || "Restore";
+  var delTitle = __("notes-delete") || "Delete";
+  return (
+    '<div class="note-card note-card--archived note-card--' +
+    color +
+    '" data-note-id="' +
+    note.id +
+    '">' +
+    '<div class="note-card__body">' +
+    title +
+    content +
+    "</div>" +
+    '<div class="note-card__footer">' +
+    '<span class="note-card__date">' +
+    formatNoteDate(note.updatedAt || note.createdAt) +
+    "</span>" +
+    '<div class="note-card__actions">' +
+    '<button type="button" class="note-card__btn" data-action="restore" data-note-id="' +
+    note.id +
+    '" title="' +
+    restoreTitle +
+    '"><i data-lucide="rotate-ccw"></i></button>' +
+    '<button type="button" class="note-card__btn" data-action="delete" data-note-id="' +
+    note.id +
+    '" title="' +
+    delTitle +
+    '"><i data-lucide="trash-2"></i></button>' +
+    "</div>" +
+    "</div>" +
+    "</div>"
+  );
+}
+
+function renderArchivedNotes() {
+  var grid = document.getElementById("archived-notes-grid");
+  var empty = document.getElementById("archived-notes-empty");
+  var list = loadNotes().filter(function (n) {
+    return n.archived;
+  });
+  if (grid) grid.innerHTML = list.map(buildArchivedNoteCard).join("");
+  if (empty) empty.classList.toggle("hidden", list.length > 0);
+  reinitLucide();
+}
+
+/* ==========================================================================
     3b. LIGHTBOX — lihat catatan (preview markdown read-only)
    ========================================================================== */
 
@@ -353,8 +453,27 @@ function initNotes() {
       if (actionBtn) {
         var id = actionBtn.dataset.noteId;
         if (actionBtn.dataset.action === "pin") togglePinFromCard(id);
+        else if (actionBtn.dataset.action === "archive") toggleNoteArchive(id);
         else if (actionBtn.dataset.action === "edit") editNote(id);
         else if (actionBtn.dataset.action === "delete") deleteNote(id);
+        return;
+      }
+      var body = e.target.closest(".note-card__body");
+      if (body) {
+        var card = body.closest(".note-card");
+        if (card) openNoteLightbox(card.dataset.noteId);
+      }
+    });
+  }
+
+  var archGrid = document.getElementById("archived-notes-grid");
+  if (archGrid) {
+    archGrid.addEventListener("click", function (e) {
+      var actionBtn = e.target.closest("[data-action]");
+      if (actionBtn) {
+        var id = actionBtn.dataset.noteId;
+        if (actionBtn.dataset.action === "restore") toggleNoteArchive(id);
+        else if (actionBtn.dataset.action === "delete") deleteArchivedNote(id);
         return;
       }
       var body = e.target.closest(".note-card__body");

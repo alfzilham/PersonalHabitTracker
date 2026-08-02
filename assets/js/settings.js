@@ -180,9 +180,9 @@ function toggleFaqItem(trigger) {
 
 function exportScopedData(scope) {
     var scopeKeys = {
-        all: ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records', 'settings_profile'],
+        all: ['course_completion', 'custom_courses', 'archived_courses', 'archived_study', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records', 'settings_profile'],
         courses: ['course_completion', 'custom_courses', 'archived_courses'],
-        study: ['study_completion', 'study_minggu_terakhir', 'custom_subjects', 'study_edits'],
+        study: ['study_completion', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'archived_study'],
         journal: ['study_log'],
         todo: ['todos', 'daily_tasks'],
         finance: ['finance_records'],
@@ -216,7 +216,7 @@ function importAllData(file) {
 
 function resetAllData() {
     showConfirm('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', function () {
-        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records'];
+        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'archived_study', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records'];
         keys.forEach(function (k) { localStorage.removeItem(k); });
         syncToServer().then(function () {
             window.location.reload();
@@ -231,7 +231,7 @@ function deleteAccount() {
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('session_token') },
         }).catch(function () {});
 
-        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'certificates',
+        var keys = ['course_completion', 'custom_courses', 'archived_courses', 'archived_study', 'certificates',
             'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits',
             'todos', 'daily_tasks', 'finance_records', 'settings_profile', 'course_notes_view',
             'personal_notes'
@@ -246,7 +246,7 @@ function deleteAccount() {
 function logoutDemo() {
     showConfirm('Logout', 'Yakin ingin keluar? Data Anda akan disimpan ke cloud dan tidak hilang.', function () {
         syncToServer().then(function () {
-            var keys = ['course_completion', 'custom_courses', 'archived_courses',
+            var keys = ['course_completion', 'custom_courses', 'archived_courses', 'archived_study',
                 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir',
                 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records',
                 'settings_profile', 'course_notes', 'course_edits', 'course_notes_view',
