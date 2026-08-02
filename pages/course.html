@@ -49,7 +49,9 @@
                     </button>
                 </div>
             </div>
-            <div id="editor-container"></div>
+            <div id="rich-editor-wrap">
+                <div id="editor-container"></div>
+            </div>
             <div id="md-editor-wrap" class="hidden">
                 <textarea id="md-editor" placeholder="Tulis catatan dalam Markdown..."></textarea>
                 <div id="md-preview" class="md-preview"></div>
@@ -129,6 +131,7 @@
             var mdEditor = document.getElementById('md-editor');
             var mdPreview = document.getElementById('md-preview');
             var mdWrap = document.getElementById('md-editor-wrap');
+            var richWrap = document.getElementById('rich-editor-wrap');
             var modeToggle = document.getElementById('editor-mode-toggle');
 
             if (!courseId) {
@@ -290,7 +293,7 @@
                 });
                 var mermaidBtn = document.getElementById('mermaid-open-btn');
                 if (mermaidBtn) mermaidBtn.classList.toggle('hidden', mode !== 'rich');
-                document.getElementById('editor-container').classList.toggle('hidden', mode !== 'rich');
+                richWrap.classList.toggle('hidden', mode !== 'rich');
                 mdWrap.classList.toggle('hidden', mode !== 'md');
             }
 
