@@ -1102,13 +1102,20 @@ function updateHeaderCounter(tabName) {
     }
     case "finance": {
       var financeRecords = loadFinanceRecords();
-      var financeTotal = financeRecords.reduce(function (sum, r) {
+      var financeExpense = financeRecords.filter(function (r) {
+        return (r.type || "expense") === "expense";
+      }).reduce(function (sum, r) {
         return sum + (r.amount || 0);
       }, 0);
-      labelLeft.textContent = __("head-total-label");
-      valueLeft.textContent = "Rp " + formatRupiah(financeTotal);
-      labelRight.textContent = __("head-transactions");
-      valueRight.textContent = financeRecords.length;
+      var financeIncome = financeRecords.filter(function (r) {
+        return r.type === "income";
+      }).reduce(function (sum, r) {
+        return sum + (r.amount || 0);
+      }, 0);
+      labelLeft.textContent = __("fin-header-expense");
+      valueLeft.textContent = "Rp " + formatRupiah(financeExpense);
+      labelRight.textContent = __("fin-header-income");
+      valueRight.textContent = "Rp " + formatRupiah(financeIncome);
       break;
     }
     case "notes": {
@@ -1900,6 +1907,14 @@ function init() {
   /* --- Finance tab --- */
   var FinanceAddBtn = document.getElementById("finance-add-btn");
   if (FinanceAddBtn) FinanceAddBtn.addEventListener("click", openFinanceModal);
+  var FinanceModeTabs = document.getElementById("finance-mode-tabs");
+  if (FinanceModeTabs)
+    FinanceModeTabs.addEventListener("click", function (e) {
+      var b = e.target.closest(".btn-group__item");
+      if (!b) return;
+      if (typeof switchFinanceMode === "function")
+        switchFinanceMode(b.dataset.financeMode);
+    });
   var FinanceCurrDD = document.getElementById("finance-currency-dropdown");
   if (FinanceCurrDD) {
     var currTrigger = FinanceCurrDD.querySelector(".view-dropdown__trigger");

@@ -166,8 +166,12 @@ function renderFinanceAnalytics() {
     var now = new Date();
     var monthStr = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2);
     var monthRecords = records.filter(function (r) { return r.date && r.date.indexOf(monthStr) === 0; });
-    var monthTotal = monthRecords.reduce(function (s, r) { return s + (r.amount || 0); }, 0);
-    document.getElementById('analytics-finance-monthly').textContent = 'Rp ' + formatRupiah(monthTotal);
+    var expTotal = monthRecords.filter(function (r) { return (r.type || 'expense') === 'expense'; }).reduce(function (s, r) { return s + (r.amount || 0); }, 0);
+    var incTotal = monthRecords.filter(function (r) { return r.type === 'income'; }).reduce(function (s, r) { return s + (r.amount || 0); }, 0);
+    var expEl = document.getElementById('analytics-finance-expense');
+    var incEl = document.getElementById('analytics-finance-income');
+    if (expEl) expEl.textContent = 'Rp ' + formatRupiah(expTotal);
+    if (incEl) incEl.textContent = 'Rp ' + formatRupiah(incTotal);
     renderAnalyticsFinanceLineChart(records);
     renderAnalyticsFinanceCatChart(records);
 }
@@ -176,19 +180,26 @@ function renderAnalyticsFinanceLineChart(records) {
     var canvas = document.getElementById('chart-analytics-finance-line');
     if (!canvas) return;
     if (chartAnalyticsFinanceLine) { chartAnalyticsFinanceLine.destroy(); chartAnalyticsFinanceLine = null; }
-    var daily = {};
-    records.forEach(function (r) { if (!daily[r.date]) daily[r.date] = 0; daily[r.date] += r.amount || 0; });
-    var labels = [], data = [];
+    var expenseDays = {}, incomeDays = {};
+    records.forEach(function (r) {
+        if (!r.date) return;
+        if (r.type === 'income') { if (!incomeDays[r.date]) incomeDays[r.date] = 0; incomeDays[r.date] += r.amount || 0; }
+        else { if (!expenseDays[r.date]) expenseDays[r.date] = 0; expenseDays[r.date] += r.amount || 0; }
+    });
+    var labels = [], expData = [], incData = [];
     for (var i = 29; i >= 0; i--) {
         var d = new Date(); d.setDate(d.getDate() - i);
         var y = d.getFullYear(), m = ('0' + (d.getMonth() + 1)).slice(-2), dd = ('0' + d.getDate()).slice(-2);
         var ds = y + '-' + m + '-' + dd;
-        labels.push(dd + '/' + m); data.push(daily[ds] || 0);
+        labels.push(dd + '/' + m); expData.push(expenseDays[ds] || 0); incData.push(incomeDays[ds] || 0);
     }
     var tc = themeColors();
     chartAnalyticsFinanceLine = new Chart(canvas, {
-        type: 'line', data: { labels: labels, datasets: [{ label: 'Spending', data: data, borderColor: tc.sage, backgroundColor: hexToRgba(tc.sage, 0.1), fill: true, tension: 0.3, pointRadius: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: tc.textMuted, maxTicksLimit: 10 }, border: { color: tc.border } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: tc.textMuted, callback: function (val) { return 'Rp ' + formatRupiah(val); } }, grid: { color: tc.bgCard }, border: { color: tc.border } } }, plugins: { legend: { display: false } } },
+        type: 'line', data: { labels: labels, datasets: [
+            { label: 'Pengeluaran', data: expData, borderColor: tc.sage, backgroundColor: hexToRgba(tc.sage, 0.1), fill: true, tension: 0.3, pointRadius: 2 },
+            { label: 'Pemasukan', data: incData, borderColor: tc.blue, backgroundColor: hexToRgba(tc.blue, 0.1), fill: true, tension: 0.3, pointRadius: 2 }
+        ] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: tc.textMuted, maxTicksLimit: 10 }, border: { color: tc.border } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 10 }, color: tc.textMuted, callback: function (val) { return 'Rp ' + formatRupiah(val); } }, grid: { color: tc.bgCard }, border: { color: tc.border } } }, plugins: { legend: { position: 'bottom', labels: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textSecondary, padding: 12, boxWidth: 12, boxHeight: 12 } } } },
     });
 }
 
@@ -196,6 +207,7 @@ function renderAnalyticsFinanceCatChart(records) {
     var canvas = document.getElementById('chart-analytics-finance-cat');
     if (!canvas) return;
     if (chartAnalyticsFinanceCat) { chartAnalyticsFinanceCat.destroy(); chartAnalyticsFinanceCat = null; }
+    records = records.filter(function (r) { return (r.type || 'expense') === 'expense'; });
     var cats = {};
     records.forEach(function (r) { var c = r.category || 'Uncategorized'; if (!cats[c]) cats[c] = 0; cats[c] += r.amount || 0; });
     var labels = Object.keys(cats);

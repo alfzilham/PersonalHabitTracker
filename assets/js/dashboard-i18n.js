@@ -123,6 +123,12 @@ var DASHBOARD_LANG = (function () {
 
             /* Finance panel */
             'finance-title': 'Finance Tracker',
+            'fin-tab-expense': 'Expense',
+            'fin-tab-income': 'Income',
+            'fin-expense-month': 'This month expenses',
+            'fin-income-month': 'This month income',
+            'fin-header-expense': 'Expense',
+            'fin-header-income': 'Income',
             'finance-search': 'Cari minggu\u2026',
             'btn-add-expense': 'Add Expense',
             'finance-week-label': 'Minggu Ini',
@@ -484,6 +490,12 @@ var DASHBOARD_LANG = (function () {
 
             /* Finance panel */
             'finance-title': 'Pelacak Keuangan',
+            'fin-tab-expense': 'Pengeluaran',
+            'fin-tab-income': 'Pemasukan',
+            'fin-expense-month': 'Pengeluaran Bulan Ini',
+            'fin-income-month': 'Pemasukan Bulan Ini',
+            'fin-header-expense': 'Pengeluaran',
+            'fin-header-income': 'Pemasukan',
             'finance-search': 'Cari minggu\u2026',
             'btn-add-expense': 'Tambah Biaya',
             'finance-week-label': 'Minggu Ini',

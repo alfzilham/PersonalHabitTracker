@@ -3,6 +3,28 @@
    Depends on: dashboard-core.js
    ========================================================================== */
 
+/* Mode aktif: 'expense' (Pengeluaran) atau 'income' (Pemasukan).
+   Kedua tab TIDAK saling sinkron — setiap mode hanya membaca record dengan
+   type-nya sendiri. */
+var financeMode = 'expense';
+
+function filterFinanceRecords(records, mode) {
+    var m = mode || financeMode;
+    return records.filter(function (r) { return (r.type || 'expense') === m; });
+}
+
+function isIncomeMode() { return financeMode === 'income'; }
+
+function switchFinanceMode(mode) {
+    financeMode = mode === 'income' ? 'income' : 'expense';
+    document.querySelectorAll('#finance-mode-tabs .btn-group__item').forEach(function (b) {
+        b.classList.toggle('btn-group__item--active', b.dataset.financeMode === financeMode);
+    });
+    var addLabel = document.getElementById('finance-add-label');
+    if (addLabel) addLabel.textContent = isIncomeMode() ? 'Add Income' : 'Add Expense';
+    renderFinance();
+}
+
 
 /* ==========================================================================
     1. RENDER — Finance view by week
@@ -34,7 +56,8 @@ function getFinanceWeek(records, weekNum) {
 
 function renderFinanceWeek(weekNum) {
     var all = loadFinanceRecords();
-    var weekRecords = getFinanceWeek(all, weekNum);
+    var modeRecords = filterFinanceRecords(all, financeMode);
+    var weekRecords = getFinanceWeek(modeRecords, weekNum);
     var content = document.getElementById('finance-week-content');
     var emptyState = document.getElementById('finance-empty-state');
     var emptyText = document.getElementById('finance-empty-text');
@@ -70,9 +93,10 @@ function renderFinanceWeek(weekNum) {
         tbody.querySelectorAll('.finance-del').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var id = btn.dataset.financeId;
-                var rec = all.find(function (r) { return r.id === id; });
+                var rec = modeRecords.find(function (r) { return r.id === id; });
                 if (rec) {
-                    document.getElementById('finance-delete-body').textContent = 'Delete expense ' + formatCurrency(rec.amount, rec.currency || 'IDR') + '?';
+                    var kind = isIncomeMode() ? 'income' : 'expense';
+                    document.getElementById('finance-delete-body').textContent = 'Delete ' + kind + ' ' + formatCurrency(rec.amount, rec.currency || 'IDR') + '?';
                     document.getElementById('finance-delete-modal').classList.add('is-open');
                     document.getElementById('finance-delete-confirm').dataset.targetId = id;
                 }
@@ -110,6 +134,8 @@ function getWeekDays(weekNum) {
    ========================================================================== */
 
 function openFinanceModal() {
+    var mt = document.getElementById('finance-modal-title');
+    if (mt) mt.textContent = isIncomeMode() ? 'Add Income' : 'Add Expense';
     document.getElementById('finance-input-amount').value = '';
     document.getElementById('finance-input-currency').value = 'IDR';
     var label = document.getElementById('finance-currency-label');
@@ -134,7 +160,7 @@ function saveFinanceFromModal() {
     if (!amount || amount <= 0) { alert('Amount must be greater than 0.'); return; }
     if (!date) { alert('Date is required.'); return; }
     var records = loadFinanceRecords();
-    records.push({ id: 'Finance_' + Date.now(), amount: amount, currency: document.getElementById('finance-input-currency').value, category: category, description: description, date: date, createdAt: new Date().toISOString() });
+    records.push({ id: 'Finance_' + Date.now(), type: financeMode, amount: amount, currency: document.getElementById('finance-input-currency').value, category: category, description: description, date: date, createdAt: new Date().toISOString() });
     saveFinanceRecords(records);
     closeFinanceModal();
     renderFinance();
@@ -162,8 +188,9 @@ function renderFinanceBarChart(weekRecords) {
     var dailyTotals = {};
     weekRecords.forEach(function (r) { if (!dailyTotals[r.date]) dailyTotals[r.date] = 0; dailyTotals[r.date] += r.amount || 0; });
     var tc = themeColors();
+    var barLabel = isIncomeMode() ? 'Income' : 'Spending';
     chartFinanceBar = new Chart(canvas, {
-        type: 'bar', data: { labels: days.map(function (d) { return d.name; }), datasets: [{ label: 'Spending', data: days.map(function (d) { return dailyTotals[d.dateStr] || 0; }), backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }] },
+        type: 'bar', data: { labels: days.map(function (d) { return d.name; }), datasets: [{ label: barLabel, data: days.map(function (d) { return dailyTotals[d.dateStr] || 0; }), backgroundColor: tc.sage, borderRadius: 4, borderSkipped: false }] },
         options: { responsive: true, maintainAspectRatio: false, animation: { duration: 600 }, scales: { x: { grid: { display: false }, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, border: { color: tc.border } }, y: { beginAtZero: true, ticks: { font: { family: "'Anthropic Sans', sans-serif", size: 11 }, color: tc.textMuted }, grid: { color: tc.bgCard }, border: { color: tc.border } } }, plugins: { legend: { display: false } } },
     });
 }
@@ -190,7 +217,7 @@ function renderFinancePieChart(weekRecords) {
 
 function exportFinanceCSV(weekNum) {
     var all = loadFinanceRecords();
-    var weekRecords = getFinanceWeek(all, weekNum);
+    var weekRecords = getFinanceWeek(filterFinanceRecords(all, financeMode), weekNum);
     if (!weekRecords.length) { alert('No data for this week.'); return; }
     var csv = 'Tanggal,Jumlah,Kategori,Catatan\n';
     weekRecords.sort(function (a, b) { return a.date.localeCompare(b.date); }).forEach(function (r) { csv += r.date + ',Rp ' + formatRupiah(r.amount) + ',"' + (r.category || '') + '","' + (r.description || '') + '"\n'; });
@@ -204,7 +231,7 @@ function exportFinanceCSV(weekNum) {
 function exportFinancePDF(weekNum) {
     if (typeof window.jspdf === 'undefined' && typeof jspdf === 'undefined') { alert('jsPDF not loaded. Please refresh and try again.'); return; }
     var all = loadFinanceRecords();
-    var weekRecords = getFinanceWeek(all, weekNum);
+    var weekRecords = getFinanceWeek(filterFinanceRecords(all, financeMode), weekNum);
     if (!weekRecords.length) { alert('No data for this week.'); return; }
     var { jsPDF } = window.jspdf;
     var doc = new jsPDF();

@@ -463,9 +463,15 @@
 
                     <div class="card mb-6">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-medium text-primary" data-i18n="finance-monthly">Total Bulan
+                            <span class="text-sm font-medium text-primary" data-i18n="fin-expense-month">Pengeluaran
+                                Bulan Ini</span>
+                            <span class="text-sm text-muted" id="analytics-finance-expense">Rp 0</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-primary" data-i18n="fin-income-month">Pemasukan Bulan
                                 Ini</span>
-                            <span class="text-sm text-muted" id="analytics-finance-monthly">Rp 0</span>
+                            <span class="text-sm text-muted" id="analytics-finance-income"
+                                style="color:var(--color-sage);">Rp 0</span>
                         </div>
                     </div>
 
@@ -744,10 +750,17 @@
                                     autocomplete="off">
                             </div>
                             <button class="btn btn-primary" id="finance-add-btn">
-                                <i data-lucide="plus"></i>
-                                Add Expense
+                                <i data-lucide="plus"></i> <span id="finance-add-label">Add Expense</span>
                             </button>
                         </div>
+                    </div>
+
+                    <!-- Mode tabs: Pengeluaran / Pemasukan (tidak saling sinkron) -->
+                    <div class="btn-group mb-4" id="finance-mode-tabs">
+                        <button type="button" class="btn-group__item btn-group__item--active"
+                            data-finance-mode="expense" data-i18n="fin-tab-expense">Pengeluaran</button>
+                        <button type="button" class="btn-group__item" data-finance-mode="income"
+                            data-i18n="fin-tab-income">Pemasukan</button>
                     </div>
 
                     <!-- Summary -->
@@ -1587,7 +1600,7 @@
   ====================================================================== -->
 <div class="modal-overlay" id="finance-modal">
     <div class="modal">
-        <h3 class="modal__title">Add Expense</h3>
+        <h3 class="modal__title" id="finance-modal-title">Add Expense</h3>
 
         <div class="modal__form">
             <!-- Amount -->
