@@ -104,6 +104,14 @@ Anthropic's earthy design language — warm, minimal, trustworthy. Clean layouts
 | 36    | Login Split         | Split page layout                   |
 | 37    | Onboarding          | Dusty blue, 3-step flow             |
 
+### Newer sections (beyond the 37 above)
+
+- **Notes (Google Keep)** — `.notes-composer` (composer inline expand), `.note-card--{yellow,green,blue,pink,purple,gray}` kartu warna masonry, `.notes-color-swatch` palette, `.note-card--archived` muted, `.notes-empty`.
+- **Archived sub-tabs** — segmented `.btn-group` (Courses / Study / Notes) dengan 3 kontainer.
+- **Finance mode tabs** — `.btn-group` Pemasukan/Pengeluaran; record punya field `type`.
+- **Course editor** — `.editor-mode-toggle`, `.editor-header__actions`, `#rich-editor-wrap`, `#md-editor` + `#md-preview`, view-bar (`#view-bar`) dengan tombol **zoom** (`--pb-zoom`) & Edit, `.md-preview`/`.lightbox__content.md-preview` (preview scroll halaman tanpa scrollbar dalam).
+- **Journal editor** — Quill toolbar + toggle Rich Text/Markdown di modal, lightbox detail.
+
 ---
 
 ## CDN Links

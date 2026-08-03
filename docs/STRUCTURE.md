@@ -3,7 +3,7 @@
 `D:\2026\Workspace\PersonalApps\AnthropicCourse`
 
 ```
-├── index.html                  # Dashboard SPA — 8 tab panels + modals
+├── index.html                  # Dashboard SPA — 9 tab panels + modals
 ├── login.html                  # Halaman login multi-user (split layout)
 ├── onboarding.html             # 3-step onboarding (Google users)
 ├── package.json                # Railway deploy config (root)
@@ -24,7 +24,8 @@
 │       ├── courses.js           # Courses table render, filter, archive
 │       ├── study.js             # Study tab + Journal render, modal, lightbox
 │       ├── todo.js              # To-do CRUD, filter, due-date chart
-│       ├── finance.js           # Finance tracker, export CSV/PDF, chart
+│       ├── notes.js             # Notes tab (Google Keep) + archive
+│       ├── finance.js           # Finance tracker (Pemasukan/Pengeluaran), export CSV/PDF, chart
 │       ├── analytics.js         # Chart analytics (courses, study, todo, finance)
 │       ├── certificate.js       # Certificate gallery, CRUD, WebP upload
 │       ├── settings.js          # Profile, theme, data export/import, FAQ
@@ -36,10 +37,10 @@
 │       └── dashboard-i18n.js    # EN/ID translator
 │
 ├── pages/
-│   └── course.html             # Course note editor (markdown + preview)
+│   └── course.html             # Course note editor (Rich Text/Markdown + preview + view-mode zoom)
 │
 ├── server/                     # Backend — Express + NeonDB
-│   ├── server.js               # Entry point, serve frontend + API
+│   ├── server.js               # Entry point, serve frontend + API (blokir file sensitif, clean-URL)
 │   ├── .env.local              # 10 developer keys + DATABASE_URL + Google OAuth
 │   ├── package.json
 │   ├── database/
@@ -56,13 +57,11 @@
 │   ├── CONTEXT.md              # Project context, workflow rules
 │   ├── DESIGN.md               # Design tokens, component map, CDN links
 │   ├── STRUCTURE.md            # This file
-│   ├── TODO_ARCHIVED.md        # Task tracker (completed)
-│   └── news/
-│       ├── COURSES_REFERENCE.md    # Backup 80 course
-│       ├── STUDY_REFERENCE.md      # Backup mata kuliah
-│       ├── KULIAH_PENDING.md       # Legacy historical record
-│       ├── NEW.md                  # Google OAuth spec
-│       └── REPORT.md
+│   └── notes/
+│       ├── NEW.md                  # Fitur baru (log)
+│       ├── REPORT.md               # Laporan
+│       ├── SQL_RESET.md            # Reset database
+│       └── TODO.md                 # Task tracker (arsip)
 │
 ├── logs/
 │   └── console.log             # Debug log
@@ -77,5 +76,8 @@
 - `server/` contains the Express + NeonDB backend.
 - Google OAuth routes are in `server/routes/oauth.js`, mounted at root level.
 - Onboarding page is only shown to first-time Google OAuth users.
-- `TODO.md` was archived to `TODO_ARCHIVED.md` after all tasks were completed.
+- `notes.js` powers the **Notes** tab (Google Keep-style) dan bagian arsip Notes di tab **Archived**.
+- Tab **Archived** kini punya sub-tab Courses / Study / Notes (`archived_study` key untuk subjek terarsip).
+- Tab **Finance** punya mode Pemasukan/Pengeluaran (field `type: income|expense`), keduanya tidak saling sinkron.
+- `course.html` mendukung tema multi-theme, view-mode persisten (preview scroll halaman, tanpa scrollbar dalam) + zoom in/out.
 - `graphify-out/` and `ruvector.db` (OpenCode tooling artifacts) are excluded from app concerns.

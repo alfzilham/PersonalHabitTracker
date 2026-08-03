@@ -11,7 +11,7 @@ A multi-tab, single-page vanilla web app with a Node.js/Express backend and Neon
 ```
 Personal-Habit-Tracker/
 │
-├── index.html                  # SPA — sidebar + bottom nav + 8 tab panels + modals
+├── index.html                  # SPA — sidebar + bottom nav + 9 tab panels + modals
 ├── login.html                  # Login page (split layout)
 ├── onboarding.html             # 3-step onboarding (Google users)
 │
@@ -27,7 +27,8 @@ Personal-Habit-Tracker/
 │       ├── courses.js           # Course table render, filter, archive
 │       ├── study.js             # Study tab + Journal render, CRUD, lightbox
 │       ├── todo.js              # To-do CRUD, filter, due-date, charts
-│       ├── finance.js           # Finance tracker, export CSV/PDF, charts
+│       ├── notes.js             # Notes tab (Google Keep) + archive
+│       ├── finance.js           # Finance tracker (Pemasukan/Pengeluaran), export CSV/PDF, charts
 │       ├── analytics.js         # All chart analytics (courses, study, todo, finance)
 │       ├── certificate.js       # Certificate gallery, CRUD, WebP upload
 │       ├── settings.js          # Profile, theme, data export/import, FAQ
@@ -42,7 +43,7 @@ Personal-Habit-Tracker/
 │   └── course.html             # Course note editor (markdown + preview)
 │
 ├── server/                     # Backend — Express + NeonDB
-│   ├── server.js               # Entry point
+│   ├── server.js               # Entry point, serve frontend + API (blokir file sensitif, clean-URL)
 │   ├── .env.local              # 10 developer keys + DATABASE_URL
 │   ├── package.json
 │   ├── database/
@@ -72,13 +73,13 @@ Personal-Habit-Tracker/
 ```
 User opens login.html
     ↓
-Enter username + developer key
+Enter username + developer key (atau Google OAuth)
     ↓
 POST /api/login → validate key → return token
     ↓
-sessionStorage.setItem('session_token', token)
+localStorage.setItem('session_token', token)
     ↓
-Redirect to index.html
+Redirect ke index.html (clean URL /)
     ↓
 init() → cek session_token → loadFromServer()
     ↓
@@ -92,6 +93,8 @@ switchTab() → syncToServer() → POST /api/data (simpan ke NeonDB)
     ↓
 Logout → syncToServer() → clear localStorage → redirect login
 ```
+
+> Bucket yang disinkronkan: `courses`, `study`, `todos`, `finance`, `certificates`, `notes`, `settings`.
 
 ---
 
@@ -150,7 +153,7 @@ app_sessions (id SERIAL, user_id INTEGER, token TEXT UNIQUE, created_at TIMESTAM
 Chart.js → jsPDF → data.js → data-study.js → study-db.js →
 dashboard-i18n.js →
 dashboard-core.js →
-courses.js → study.js → todo.js → finance.js → analytics.js → certificate.js → settings.js →
+courses.js → study.js → todo.js → notes.js → finance.js → analytics.js → certificate.js → settings.js →
 Lucide icons
 ```
 
@@ -162,14 +165,18 @@ Lucide icons
 | ------------------- | ------------ | ----------------- |
 | `course_completion` | Courses      | Server + fallback |
 | `custom_courses`    | Courses      | Server + fallback |
+| `archived_courses`  | Courses      | Server + fallback |
 | `study_completion`  | Study        | Server + fallback |
+| `archived_study`    | Study        | Server + fallback |
 | `study_log`         | Journal      | Server + fallback |
 | `todos`             | To-do        | Server + fallback |
 | `finance_records`   | Finance      | Server + fallback |
 | `certificates`      | Certificate  | Server + fallback |
 | `settings_profile`  | Settings     | Server + fallback |
 | `course_notes`      | Course notes | Server + fallback |
-| `session_token`     | Auth         | Session only      |
+| `course_notes_view` | Course notes | Local only (view-mode) |
+| `personal_notes`    | Notes        | Server + fallback |
+| `session_token`     | Auth         | Local (persisten)   |
 
 ---
 

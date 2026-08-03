@@ -11,16 +11,17 @@
 
 ## Project Goal
 
-A single personal dashboard as a productivity hub with 8 tabs:
+A single personal dashboard as a productivity hub with 9 tabs:
 
 1. **Courses** — Certification course tracking (user-added)
 2. **Analytics** — Charts and progress (Courses, Study, To-do, Finance)
 3. **Certificate** — Gallery of earned certificates
 4. **Study** — Weekly university class schedule (user-added)
-5. **Journal** — Masonry-grid log of study notes
+5. **Journal** — Masonry-grid log of study notes (Rich Text/Markdown mode)
 6. **To-do** — Task list with priority and due-date
-7. **Finance** — Weekly expense tracker
-8. **Archived** — Archived courses
+7. **Finance** — Pemasukan (income) & Pengeluaran (expense), terpisah (tidak saling sinkron)
+8. **Notes** — Catatan pribadi (Google Keep-style: composer inline, warna, pin, cari, markdown)
+9. **Archived** — Courses, Study subjects, dan Notes (3 sub-tab)
 
 ---
 
@@ -67,9 +68,9 @@ A single personal dashboard as a productivity hub with 8 tabs:
 
 ## Course Data — Current State
 
-**Courses are user-generated.** No default courses. Reference data (80 courses) is backed up at `docs/news/COURSES_REFERENCE.md` for manual re-entry.
+**Courses are user-generated.** No default courses. Reference data (80 courses) is backed up locally under `docs/` for manual re-entry.
 
-**Study subjects are user-generated.** Reference 11 MK backed up at `docs/news/STUDY_REFERENCE.md`.
+**Study subjects are user-generated.** Reference 11 MK backed up locally under `docs/`.
 
 ---
 
@@ -85,9 +86,15 @@ A single personal dashboard as a productivity hub with 8 tabs:
 
 - **Client:** Google Cloud Console OAuth 2.0
 - **Callback:** `/auth/google/callback`
-- **New users:** Redirected to `onboarding.html` (3 step: username → role → dev key)
-- **Existing users:** Auto-login, profile synced (email, avatar, google_id)
+- **Existing users:** Redirect `/login?token=...` → auto-login, profile synced (email, avatar, google_id)
+- **New users:** Redirect `/login?onboarding=google&googleId=...&email=...&avatar=...` → halaman `onboarding` (3 step: username → role → dev key)
 - **Role dropdown:** 20 selectable roles (Product Management, Engineering, etc.)
+
+## Server & URL
+
+- **File sensitif diblokir** di `server/server.js` (`/docs`, `/server`, `/logs`, `/graphify-out`, `/README.md`, `/package.json`, dotfile apa pun) → 404.
+- **Clean-URL:** `index.html` / `login.html` / `onboarding.html` di-redirect (query string **dipertahankan**) ke `/`, `/login`, `/onboarding`. URL di address bar tidak menampilkan `.html`.
+- **Login persisten:** `session_token` disimpan di `localStorage` (bukan sessionStorage), jadi login bertahan saat tab ditutup.
 
 ## Profile Fields
 
