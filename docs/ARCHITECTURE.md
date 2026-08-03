@@ -161,22 +161,22 @@ Lucide icons
 
 ## localStorage Key Reference
 
-| Key                 | Feature      | Persistence       |
-| ------------------- | ------------ | ----------------- |
-| `course_completion` | Courses      | Server + fallback |
-| `custom_courses`    | Courses      | Server + fallback |
-| `archived_courses`  | Courses      | Server + fallback |
-| `study_completion`  | Study        | Server + fallback |
-| `archived_study`    | Study        | Server + fallback |
-| `study_log`         | Journal      | Server + fallback |
-| `todos`             | To-do        | Server + fallback |
-| `finance_records`   | Finance      | Server + fallback |
-| `certificates`      | Certificate  | Server + fallback |
-| `settings_profile`  | Settings     | Server + fallback |
-| `course_notes`      | Course notes | Server + fallback |
+| Key                 | Feature      | Persistence            |
+| ------------------- | ------------ | ---------------------- |
+| `course_completion` | Courses      | Server + fallback      |
+| `custom_courses`    | Courses      | Server + fallback      |
+| `archived_courses`  | Courses      | Server + fallback      |
+| `study_completion`  | Study        | Server + fallback      |
+| `archived_study`    | Study        | Server + fallback      |
+| `study_log`         | Journal      | Server + fallback      |
+| `todos`             | To-do        | Server + fallback      |
+| `finance_records`   | Finance      | Server + fallback      |
+| `certificates`      | Certificate  | Server + fallback      |
+| `settings_profile`  | Settings     | Server + fallback      |
+| `course_notes`      | Course notes | Server + fallback      |
 | `course_notes_view` | Course notes | Local only (view-mode) |
-| `personal_notes`    | Notes        | Server + fallback |
-| `session_token`     | Auth         | Local (persisten)   |
+| `personal_notes`    | Notes        | Server + fallback      |
+| `session_token`     | Auth         | Local (persisten)      |
 
 ---
 
