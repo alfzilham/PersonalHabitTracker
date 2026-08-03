@@ -59,7 +59,7 @@ router.get('/auth/google/callback', async (req, res) => {
       await db.updateUserGoogleInfo(existingUser.id, googleId, email, avatarUrl);
       const token = uuidv4();
       await db.createSession(existingUser.id, token);
-      return res.redirect('/login.html?token=' + token);
+      return res.redirect('/login?token=' + token);
     }
 
     /* User baru — redirect ke login page dengan data Google */
@@ -69,11 +69,11 @@ router.get('/auth/google/callback', async (req, res) => {
       email,
       avatar: avatarUrl,
     });
-    res.redirect('/login.html?' + params.toString());
+    res.redirect('/login?' + params.toString());
 
   } catch (err) {
     console.error('[google] OAuth error:', err.message);
-    res.redirect('/login.html?error=google_auth_failed&msg=' + encodeURIComponent(err.message));
+    res.redirect('/login?error=google_auth_failed&msg=' + encodeURIComponent(err.message));
   }
 });
 

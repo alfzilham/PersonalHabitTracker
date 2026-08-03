@@ -48,7 +48,7 @@
 
     /* Mode onboarding Google — redirect ke halaman khusus */
     if (onboarding === 'google' && googleId) {
-        var onboardingUrl = 'onboarding.html?googleId=' + encodeURIComponent(googleId);
+        var onboardingUrl = 'onboarding?googleId=' + encodeURIComponent(googleId);
         if (googleEmail) onboardingUrl += '&email=' + encodeURIComponent(googleEmail);
         if (googleAvatar) onboardingUrl += '&avatar=' + encodeURIComponent(googleAvatar);
         window.location.href = onboardingUrl;

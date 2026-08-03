@@ -35,17 +35,23 @@ app.use('/api', authRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/', oauthRoutes);
 
-/* Redirect akses langsung ke .html supaya tidak terlihat di URL */
+/* Redirect akses langsung ke .html supaya tidak terlihat di URL
+   (query string tetap diteruskan supaya token/onboarding tidak hilang) */
+function preserveQuery(u) {
+  const i = u.originalUrl.indexOf('?');
+  return i !== -1 ? u.originalUrl.slice(i) : '';
+}
+
 app.get('/index.html', (req, res) => {
-  res.redirect(301, '/');
+  res.redirect(301, '/' + preserveQuery(req));
 });
 
 app.get('/login.html', (req, res) => {
-  res.redirect(301, '/login');
+  res.redirect(301, '/login' + preserveQuery(req));
 });
 
 app.get('/onboarding.html', (req, res) => {
-  res.redirect(301, '/onboarding');
+  res.redirect(301, '/onboarding' + preserveQuery(req));
 });
 
 /* Serve halaman clean-URL untuk login & onboarding */
