@@ -3991,6 +3991,44 @@
     border: none;
 }
 
+/* ===== Course view-mode preview: halaman yang scroll, tanpa scrollbar dalam ===== */
+body.pb-view-mode #md-editor-wrap .md-preview {
+    max-height: none;
+    height: auto;
+    overflow: visible;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+body.pb-view-mode #md-editor-wrap .md-preview::-webkit-scrollbar {
+    display: none;
+}
+
+body.pb-view-mode #rich-editor-wrap .ql-editor {
+    overflow-y: visible;
+}
+
+/* Model zoom view mode */
+body.pb-view-mode #md-editor-wrap,
+body.pb-view-mode #rich-editor-wrap {
+    zoom: var(--pb-zoom, 1);
+}
+
+/* Kontrol zoom di view bar */
+.view-bar__zoom {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-right: var(--space-2);
+}
+
+.view-bar__zoom-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    min-width: 36px;
+    text-align: center;
+}
+
 #md-editor {
     width: 100%;
     min-height: 280px;

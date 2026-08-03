@@ -51,6 +51,15 @@
                 </div>
             </div>
             <div id="view-bar" class="hidden">
+                <div class="view-bar__zoom" id="view-zoom">
+                    <button type="button" class="btn btn-ghost btn-sm" id="zoom-out" title="Zoom out">
+                        <i data-lucide="minus"></i>
+                    </button>
+                    <span class="view-bar__zoom-label" id="zoom-label">100%</span>
+                    <button type="button" class="btn btn-ghost btn-sm" id="zoom-in" title="Zoom in">
+                        <i data-lucide="plus"></i>
+                    </button>
+                </div>
                 <button type="button" class="btn btn-ghost btn-sm" id="edit-btn">
                     <i data-lucide="pencil"></i> Edit
                 </button>
@@ -137,6 +146,16 @@
             var noteMode = 'rich';
             var viewMode = false;
             var VIEW_KEY = 'course_notes_view';
+            var pbZoomMin = 0.8, pbZoomMax = 2, pbZoomStep = 0.1;
+            var pbZoom = parseFloat(localStorage.getItem('course_view_zoom')) || 1;
+            if (isNaN(pbZoom) || pbZoom < pbZoomMin || pbZoom > pbZoomMax) pbZoom = 1;
+            function setPbZoom(v) {
+                pbZoom = Math.min(pbZoomMax, Math.max(pbZoomMin, v));
+                try { localStorage.setItem('course_view_zoom', '' + pbZoom); } catch (e) {}
+                document.documentElement.style.setProperty('--pb-zoom', '' + pbZoom);
+                var lbl = document.getElementById('zoom-label');
+                if (lbl) lbl.textContent = Math.round(pbZoom * 100) + '%';
+            }
             var mdEditor = document.getElementById('md-editor');
             var mdPreview = document.getElementById('md-preview');
             var mdWrap = document.getElementById('md-editor-wrap');
@@ -150,6 +169,10 @@
                 if (window.lucide) lucide.createIcons();
                 return;
             }
+
+            /* Terapkan tema multi-theme dari settings (sama seperti dashboard) */
+            var _themeSettings = (typeof loadSettings === 'function') ? loadSettings() : null;
+            if (_themeSettings && typeof applyTheme === 'function') applyTheme(_themeSettings.theme, _themeSettings.lightTheme);
 
             /* Init Quill — toolbar tanpa custom format button (mencegah toolbar rusak/overflow).
                Mermaid diinsert lewat tombol terpisah "Diagram" di header card. */
@@ -290,6 +313,8 @@
 
             function enterViewMode() {
                 viewMode = true;
+                document.body.classList.add('pb-view-mode');
+                setPbZoom(pbZoom);
                 if (noteMode === 'md') updateMdPreview();
                 document.getElementById('view-bar').classList.remove('hidden');
                 document.getElementById('mermaid-open-btn').classList.add('hidden');
@@ -309,6 +334,7 @@
 
             function exitViewMode() {
                 viewMode = false;
+                document.body.classList.remove('pb-view-mode');
                 document.getElementById('view-bar').classList.add('hidden');
                 modeToggle.classList.remove('hidden');
                 document.getElementById('editor-save-btn').classList.remove('hidden');
@@ -584,7 +610,8 @@
             /* Init */
             loadCourseInfo();
             loadNotes();
-            if (isCourseViewed(courseId)) enterViewMode();
+            var _viewAll = loadCourseNotes();
+            if (isCourseViewed(courseId) || (_viewAll[courseId] && _viewAll[courseId].viewed)) enterViewMode();
 
             /* Event listeners */
             ['editor-title', 'editor-role', 'editor-category', 'editor-company'].forEach(function (id) {
@@ -597,13 +624,21 @@
             document.getElementById('editor-save-btn').addEventListener('click', function () {
                 saveNotes();
                 setCourseViewed(courseId, true);
+                var _nn = loadCourseNotes();
+                if (_nn[courseId]) { _nn[courseId].viewed = true; saveCourseNotes(_nn); }
                 enterViewMode();
             });
             document.getElementById('editor-delete-btn').addEventListener('click', deleteNotes);
             document.getElementById('edit-btn').addEventListener('click', function () {
                 setCourseViewed(courseId, false);
+                var _nn = loadCourseNotes();
+                if (_nn[courseId]) { _nn[courseId].viewed = false; saveCourseNotes(_nn); }
                 exitViewMode();
             });
+            var zoomIn = document.getElementById('zoom-in');
+            var zoomOut = document.getElementById('zoom-out');
+            if (zoomIn) zoomIn.addEventListener('click', function () { setPbZoom(pbZoom + pbZoomStep); });
+            if (zoomOut) zoomOut.addEventListener('click', function () { setPbZoom(pbZoom - pbZoomStep); });
 
             /* Mermaid modal */
             document.getElementById('mermaid-open-btn').addEventListener('click', openMermaidModal);
