@@ -1318,6 +1318,33 @@ function applyTheme(theme, lightTheme) {
       document.documentElement.setAttribute("data-theme", "dark");
     else setLight();
   }
+  setThemeFavicon(faviconForTheme(theme, lt));
+}
+
+/* Favicon mengikuti multi-theme. Map: cream/sage/blue/white/charcoal →
+   favicon-*.ico; dark → favicon.ico (default). */
+function faviconForTheme(theme, lightTheme) {
+  var lt = lightTheme || "cream";
+  var isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  if (isDark) return "favicon.ico";
+  var map = {
+    cream: "favicon-cream.ico",
+    sage: "favicon-sage.ico",
+    blue: "favicon-dusty.ico",
+    white: "favicon-pure.ico",
+    charcoal: "favicon-silver.ico",
+  };
+  return map[lt] || "favicon-cream.ico";
+}
+
+function setThemeFavicon(file) {
+  var link = document.getElementById("app-favicon");
+  if (!link || !file) return;
+  var dir = link.href.substring(0, link.href.lastIndexOf("/") + 1);
+  link.href = dir + file;
 }
 
 function updateLightThemeVisibility(theme) {
