@@ -1306,17 +1306,11 @@ function refreshTodoDueReminders() {
 
 function applyTheme(theme, lightTheme) {
   var lt = lightTheme || "cream";
-  var setLight = function () {
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+  } else {
     if (lt === "cream") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", lt);
-  };
-  if (theme === "dark")
-    document.documentElement.setAttribute("data-theme", "dark");
-  else if (theme === "light") setLight();
-  else {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches)
-      document.documentElement.setAttribute("data-theme", "dark");
-    else setLight();
   }
   setThemeFavicon(faviconForTheme(theme, lt));
 }
@@ -1325,11 +1319,7 @@ function applyTheme(theme, lightTheme) {
    favicon-*.ico; dark → favicon.ico (default). */
 function faviconForTheme(theme, lightTheme) {
   var lt = lightTheme || "cream";
-  var isDark =
-    theme === "dark" ||
-    (theme === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
-  if (isDark) return "favicon.ico";
+  if (theme === "dark") return "favicon.ico";
   var map = {
     cream: "favicon-cream.ico",
     sage: "favicon-sage.ico",
@@ -1350,11 +1340,7 @@ function setThemeFavicon(file) {
 function updateLightThemeVisibility(theme) {
   var wrap = document.getElementById("settings-light-theme-wrap");
   if (!wrap) return;
-  var isDark =
-    theme === "dark" ||
-    (theme === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
-  wrap.classList.toggle("hidden", isDark);
+  wrap.classList.toggle("hidden", theme === "dark");
 }
 
 /* Baca warna accent aktif dari CSS vars — dipakai chart agar ikut tema */

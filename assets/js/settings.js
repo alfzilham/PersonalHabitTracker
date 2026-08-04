@@ -15,7 +15,7 @@ function openSettings() {
     document.getElementById('settings-name').value = settings.name || '';
     document.getElementById('settings-email').value = settings.email || '';
     document.getElementById('settings-role').value = settings.role || '';
-    var theme = settings.theme || 'light';
+    var theme = settings.theme === 'system' ? 'light' : (settings.theme || 'light');
     document.getElementById('settings-theme').value = theme;
     document.querySelectorAll('#settings-theme-group .btn-group__item').forEach(function (btn) { btn.classList.toggle('btn-group__item--active', btn.dataset.value === theme); });
     var lightTheme = settings.lightTheme || 'cream';
