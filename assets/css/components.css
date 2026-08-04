@@ -330,6 +330,37 @@
     transform: translateX(-3px);
 }
 
+/* Floating Back to Dashboard — fixed bottom-right */
+.btn-back-fab {
+    position: fixed;
+    right: var(--space-6);
+    bottom: var(--space-6);
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    border-radius: 999px;
+    background: var(--color-sage);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.btn-back-fab svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-back-fab:hover {
+    transform: translateY(-2px);
+    background: var(--color-sage-light);
+}
+
 
 /* ==========================================================================
      4. SIDEBAR TABS — Left panel navigation

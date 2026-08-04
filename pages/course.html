@@ -7,6 +7,22 @@
     <title>Course Notes — Personal Habit Tracker</title>
 
     <link rel="icon" type="image/x-icon" id="app-favicon" href="../assets/favicon/favicon.ico">
+    <script>
+        (function () {
+            try {
+                var s = JSON.parse(localStorage.getItem('settings_profile') || '{}');
+                var theme = s.theme === 'dark' ? 'dark' : 'light';
+                var lt = s.lightTheme || 'cream';
+                var file = theme === 'dark' ? 'favicon.ico'
+                    : ({ cream: 'favicon-cream.ico', sage: 'favicon-sage.ico', blue: 'favicon-dusty.ico', white: 'favicon-pure.ico', charcoal: 'favicon-silver.ico' }[lt] || 'favicon-cream.ico');
+                var link = document.getElementById('app-favicon');
+                if (link) {
+                    var dir = link.getAttribute('href').substring(0, link.getAttribute('href').lastIndexOf('/') + 1);
+                    link.href = dir + file + '?v=1';
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css">
@@ -20,11 +36,6 @@
 <body>
 
     <div class="course-page" id="course-root">
-
-        <!-- Back button -->
-        <nav class="course-nav">
-            <a href="../index.html" class="btn-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
-        </nav>
 
         <!-- Course info -->
         <div class="course-header">
@@ -81,6 +92,11 @@
         </div>
 
     </div>
+
+    <!-- Floating Back to Dashboard (fixed bottom-right) -->
+    <a href="../index.html" class="btn-back-fab" aria-label="Back to Dashboard">
+        <i data-lucide="arrow-left"></i> Dashboard
+    </a>
 
     <!-- Mermaid Modal -->
     <div class="modal-overlay" id="mermaid-modal">
@@ -164,7 +180,6 @@
 
             if (!courseId) {
                 document.getElementById('course-root').innerHTML =
-                    '<nav class="course-nav"><a href="../index.html" class="btn-back"><i data-lucide="arrow-left"></i> Back to Dashboard</a></nav>' +
                     '<div class="card" style="padding:var(--space-10);text-align:center;margin-top:var(--space-8);"><p class="text-muted">Course not found.</p></div>';
                 if (window.lucide) lucide.createIcons();
                 return;

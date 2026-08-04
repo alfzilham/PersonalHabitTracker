@@ -1334,7 +1334,7 @@ function setThemeFavicon(file) {
   var link = document.getElementById("app-favicon");
   if (!link || !file) return;
   var dir = link.href.substring(0, link.href.lastIndexOf("/") + 1);
-  link.href = dir + file;
+  link.href = dir + file + "?v=" + Date.now();
 }
 
 function updateLightThemeVisibility(theme) {

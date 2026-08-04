@@ -15,6 +15,22 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" id="app-favicon" href="assets/favicon/favicon.ico">
+    <script>
+        (function () {
+            try {
+                var s = JSON.parse(localStorage.getItem('settings_profile') || '{}');
+                var theme = s.theme === 'dark' ? 'dark' : 'light';
+                var lt = s.lightTheme || 'cream';
+                var file = theme === 'dark' ? 'favicon.ico'
+                    : ({ cream: 'favicon-cream.ico', sage: 'favicon-sage.ico', blue: 'favicon-dusty.ico', white: 'favicon-pure.ico', charcoal: 'favicon-silver.ico' }[lt] || 'favicon-cream.ico');
+                var link = document.getElementById('app-favicon');
+                if (link) {
+                    var dir = link.getAttribute('href').substring(0, link.getAttribute('href').lastIndexOf('/') + 1);
+                    link.href = dir + file + '?v=1';
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Anthropic Fonts -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
