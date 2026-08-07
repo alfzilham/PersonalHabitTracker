@@ -17,7 +17,6 @@ function buildCheckbox(key, checked) {
 function buildTableRow(course, index) {
     var key = getCourseKey(course);
     var completedClass = course.completed ? 'is-completed' : '';
-    var roleLabel = course.role || '<span class="text-muted">\u2014</span>';
     var companyHtml = course.url
         ? '<a class="text-sm text-muted" href="' + course.url + '" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:2px;">' + course.company + '</a>'
         : '<span class="text-sm text-muted">' + (course.company || '\u2014') + '</span>';
@@ -26,7 +25,6 @@ function buildTableRow(course, index) {
         '<td class="col-name">' + course.title + '</td>' +
         '<td class="col-desc">' + (course.description || '') + '</td>' +
         '<td><span class="text-sm text-muted">' + (course.subCategory || '\u2014') + '</span></td>' +
-        '<td><span class="text-sm text-muted">' + roleLabel + '</span></td>' +
         '<td>' + companyHtml + '</td>' +
         '<td style="width:32px;"><div class="course-dot-wrap">' +
         '<button class="course-dot-btn" data-course-key="' + key + '" aria-label="Actions"><i data-lucide="settings"></i></button>' +
@@ -43,7 +41,6 @@ function buildSkeletonRow(index) {
         '<td class="col-num"><span class="skeleton skeleton--xs"></span></td>' +
         '<td class="col-name"><span class="skeleton skeleton--xl"></span></td>' +
         '<td class="col-desc"><span class="skeleton skeleton--full"></span></td>' +
-        '<td><span class="skeleton skeleton--md"></span></td>' +
         '<td><span class="skeleton skeleton--md"></span></td>' +
         '<td><span class="skeleton skeleton--sm"></span></td>' +
         '<td><span class="skeleton skeleton--xs"></span></td>' +
@@ -72,8 +69,8 @@ function renderTable() {
     var displayIndex = 1;
     filtered.forEach(function (course) { html += buildTableRow(course, displayIndex); displayIndex++; });
     if (!html) {
-        var hasActiveFilter = !!(searchQuery || filterRole || filterCategory || filterCompany || filterDone);
-        html = '<tr><td colspan="8" class="text-center text-muted" style="padding:var(--space-8);">' +
+        var hasActiveFilter = !!(searchQuery || filterCategory || filterCompany || filterDone);
+        html = '<tr><td colspan="7" class="text-center text-muted" style="padding:var(--space-8);">' +
             (hasActiveFilter ? 'No courses match your current filters. Try selecting <strong>All</strong> on one of the filters above to widen your search.' : 'No courses match your search.') +
             '</td></tr>';
     }
@@ -258,10 +255,8 @@ function renderArchivedTable() {
    ========================================================================== */
 
 function buildFilterDropdowns() {
-    var roles = getUniqueValues('role').filter(Boolean);
     var cats = getUniqueValues('subCategory').filter(Boolean);
     var companies = getUniqueValues('company').filter(Boolean);
-    buildSingleFilter('filter-role-container', 'Role', roles, function (val) { filterRole = val; renderTable(); }, filterRole, true);
     buildSingleFilter('filter-category-container', 'Category', cats, function (val) { filterCategory = val; renderTable(); }, filterCategory, true);
     buildSingleFilter('filter-company-container', 'Company', companies, function (val) { filterCompany = val; renderTable(); }, filterCompany, true);
     buildSingleFilter('filter-done-container', 'Status', ['Done', 'Pending'], function (val) { filterDone = val; renderTable(); }, filterDone, true);

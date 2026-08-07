@@ -47,7 +47,6 @@ let barChart = null;
 
 /* Search + filter state */
 let searchQuery = "";
-let filterRole = "";
 let filterCategory = "";
 let filterCompany = "";
 let filterDone = "";
@@ -414,10 +413,6 @@ function getFilteredCourses() {
   var courses = getCoursesWithCompletion();
   courses = applySearch(courses);
   courses = excludeArchived(courses);
-  if (filterRole)
-    courses = courses.filter(function (c) {
-      return c.role === filterRole;
-    });
   if (filterCategory)
     courses = courses.filter(function (c) {
       return c.subCategory === filterCategory;
