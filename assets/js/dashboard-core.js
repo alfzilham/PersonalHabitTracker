@@ -50,6 +50,7 @@ let searchQuery = "";
 let filterRole = "";
 let filterCategory = "";
 let filterCompany = "";
+let filterDone = "";
 
 /* Study state */
 let studyFilteredWeek = "";
@@ -424,6 +425,10 @@ function getFilteredCourses() {
   if (filterCompany)
     courses = courses.filter(function (c) {
       return c.company === filterCompany;
+    });
+  if (filterDone)
+    courses = courses.filter(function (c) {
+      return filterDone === "Done" ? c.completed : !c.completed;
     });
   return courses;
 }
@@ -1908,10 +1913,18 @@ function init() {
       var todoTab = document.querySelector('.tab[data-tab="todo"]');
       if (todoTab && todoTab.classList.contains("active")) renderTodos();
     }
+    if (typeof purgeOldCompletedTodos === "function" && purgeOldCompletedTodos()) {
+      var todoTab = document.querySelector('.tab[data-tab="todo"]');
+      if (todoTab && todoTab.classList.contains("active")) renderTodos();
+    }
   }, 60000);
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible" && typeof ensureDailyTasksForToday === "function") {
       ensureDailyTasksForToday();
+      var todoTab = document.querySelector('.tab[data-tab="todo"]');
+      if (todoTab && todoTab.classList.contains("active")) renderTodos();
+    }
+    if (document.visibilityState === "visible" && typeof purgeOldCompletedTodos === "function" && purgeOldCompletedTodos()) {
       var todoTab = document.querySelector('.tab[data-tab="todo"]');
       if (todoTab && todoTab.classList.contains("active")) renderTodos();
     }

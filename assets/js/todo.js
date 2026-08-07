@@ -68,6 +68,7 @@ function buildTodoItem(t) {
 
 function renderTodos() {
     ensureDailyTasksForToday();
+    purgeOldCompletedTodos();
     var list = loadTodos();
     var container = document.getElementById('todo-list');
     if (!container) return;
@@ -113,6 +114,21 @@ function renderTodos() {
 /* ==========================================================================
     1b. DAILY TASKS — auto re-spawn recurring todos each day
    ========================================================================== */
+
+function purgeOldCompletedTodos() {
+    var list = loadTodos();
+    var cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000; /* 2 minggu */
+    var kept = list.filter(function (t) {
+        if (t.completed && t.completedAt && new Date(t.completedAt).getTime() < cutoff) return false;
+        return true;
+    });
+    if (kept.length !== list.length) {
+        saveTodos(kept);
+        scheduleTodoSync();
+        return true;
+    }
+    return false;
+}
 
 function ensureDailyTasksForToday() {
     var today = getTodayDateStr();

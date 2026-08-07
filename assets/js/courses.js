@@ -72,7 +72,7 @@ function renderTable() {
     var displayIndex = 1;
     filtered.forEach(function (course) { html += buildTableRow(course, displayIndex); displayIndex++; });
     if (!html) {
-        var hasActiveFilter = !!(searchQuery || filterRole || filterCategory || filterCompany);
+        var hasActiveFilter = !!(searchQuery || filterRole || filterCategory || filterCompany || filterDone);
         html = '<tr><td colspan="8" class="text-center text-muted" style="padding:var(--space-8);">' +
             (hasActiveFilter ? 'No courses match your current filters. Try selecting <strong>All</strong> on one of the filters above to widen your search.' : 'No courses match your search.') +
             '</td></tr>';
@@ -264,6 +264,7 @@ function buildFilterDropdowns() {
     buildSingleFilter('filter-role-container', 'Role', roles, function (val) { filterRole = val; renderTable(); }, filterRole, true);
     buildSingleFilter('filter-category-container', 'Category', cats, function (val) { filterCategory = val; renderTable(); }, filterCategory, true);
     buildSingleFilter('filter-company-container', 'Company', companies, function (val) { filterCompany = val; renderTable(); }, filterCompany, true);
+    buildSingleFilter('filter-done-container', 'Status', ['Done', 'Pending'], function (val) { filterDone = val; renderTable(); }, filterDone, true);
 }
 
 function buildSingleFilter(containerId, label, options, onChange, defaultValue, showAll) {
@@ -273,7 +274,7 @@ function buildSingleFilter(containerId, label, options, onChange, defaultValue, 
     var selectedValue = defaultValue || '';
     var html = '<div class="view-dropdown" id="' + id + '">' +
         '<button class="view-dropdown__trigger" type="button"><span class="view-dropdown__label">' + (selectedValue || label) + '</span><i data-lucide="chevron-down"></i></button>' +
-        '<div class="view-dropdown__panel"><div class="view-dropdown__heading">' + label + '</div>';
+        '<div class="view-dropdown__panel view-dropdown__panel--filter"><div class="view-dropdown__heading">' + label + '</div>';
     if (showAll) html += '<button class="view-dropdown__item' + (selectedValue === '' ? ' is-selected' : '') + '" data-value="">All</button>';
     options.forEach(function (opt) { html += '<button class="view-dropdown__item' + (opt === selectedValue ? ' is-selected' : '') + '" data-value="' + opt.replace(/"/g, '&quot;') + '">' + opt + '</button>'; });
     html += '</div></div>';
