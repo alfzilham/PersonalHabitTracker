@@ -116,13 +116,12 @@ Anthropic's earthy design language — warm, minimal, trustworthy. Clean layouts
 
 ## CDN Links
 
+> **Font Anthropic sekarang di-self-host lokal** (`assets/fonts/` + `assets/css/fonts.css`).
+> Alasan: CSS CDN `cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/...` menulis URL font dengan cabang `@main` yang sudah 404 (repo pihak ketiga tidak lagi tersedia). File font di tag `@v1.1.0` masih valid dan telah diunduh ke repo. Lihat komentar di `assets/css/fonts.css`.
+
 ```html
-<!-- Anthropic Fonts -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" />
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0/cdn/v1/css/all.css"
-/>
+<!-- Fonts (self-hosted lokal) -->
+<link rel="stylesheet" href="assets/css/fonts.css" />
 
 <!-- Lucide Icons -->
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
