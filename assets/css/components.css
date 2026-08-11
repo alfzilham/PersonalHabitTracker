@@ -3746,6 +3746,7 @@
 }
 
 #finance-input-amount {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
