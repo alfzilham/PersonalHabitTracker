@@ -1,0 +1,49 @@
+/* ==========================================================================
+   fonts.css — Anthropic fonts (self-hosted)
+   Sumber: cdn.jsdelivr.net/gh/devchauhann/fonts@v1.1.0 (tag di-pin, cabang @main sudah 404)
+   Dipindahkan ke lokal agar tidak bergantung pada CDN pihak ketiga yang rapuh.
+   Hanya bobot yang dipakai aplikasi: Sans 400/500/600/700, Serif 700, Mono 400.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('../fonts/AnthropicSans@400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('../fonts/AnthropicSans@500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('../fonts/AnthropicSans@600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anthropic Sans';
+  src: url('../fonts/AnthropicSans@700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anthropic Serif';
+  src: url('../fonts/AnthropicSerif@700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Anthropic Mono';
+  src: url('../fonts/AnthropicMono@400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
