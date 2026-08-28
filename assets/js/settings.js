@@ -190,7 +190,7 @@ function exportScopedData(scope) {
     var scopeFilenames = { all: 'license-courses-tracker-backup', courses: 'online-courses-backup', study: 'study-backup', journal: 'journal-backup', todo: 'todo-backup', finance: 'finance-backup' };
     var keys = scopeKeys[scope] || scopeKeys.all;
     var data = {};
-    keys.forEach(function (k) { var raw = localStorage.getItem(k); if (raw) data[k] = JSON.parse(raw); });
+    keys.forEach(function (k) { var raw = appStorage.getItem(k); if (raw) data[k] = JSON.parse(raw); });
     var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     var link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
@@ -204,7 +204,7 @@ function importAllData(file) {
     reader.onload = function (e) {
         try {
             var data = JSON.parse(e.target.result);
-            Object.keys(data).forEach(function (k) { localStorage.setItem(k, JSON.stringify(data[k])); });
+            Object.keys(data).forEach(function (k) { appStorage.setItem(k, JSON.stringify(data[k])); });
             showToast();
             syncToServer().then(function () {
                 window.location.reload();
@@ -217,7 +217,7 @@ function importAllData(file) {
 function resetAllData() {
     showConfirm('Reset Data', 'Semua data akan dihapus permanen. Lanjutkan?', function () {
         var keys = ['course_completion', 'custom_courses', 'archived_courses', 'archived_study', 'certificates', 'study_completion', 'study_log', 'study_minggu_terakhir', 'custom_subjects', 'study_edits', 'todos', 'daily_tasks', 'finance_records'];
-        keys.forEach(function (k) { localStorage.removeItem(k); });
+        keys.forEach(function (k) { appStorage.removeItem(k); });
         syncToServer().then(function () {
             window.location.reload();
         });
@@ -225,6 +225,7 @@ function resetAllData() {
 }
 
 function deleteAccount() {
+    if (window.APP_MODE === 'demo') { logoutDemo(); return; }
     showConfirm('Hapus Akun', 'Yakin ingin menghapus AKUN DAN SEMUA DATA? Tindakan ini tidak dapat dibatalkan.', function () {
         fetch('/api/account', {
             method: 'DELETE',
@@ -236,7 +237,7 @@ function deleteAccount() {
             'todos', 'daily_tasks', 'finance_records', 'settings_profile', 'course_notes_view',
             'personal_notes'
         ];
-        keys.forEach(function (k) { localStorage.removeItem(k); });
+        keys.forEach(function (k) { appStorage.removeItem(k); });
 
         clearAuthSession();
         window.location.href = 'login.html';
@@ -252,7 +253,7 @@ function logoutDemo() {
                 'settings_profile', 'course_notes', 'course_edits', 'course_notes_view',
                 'personal_notes'
             ];
-            keys.forEach(function (k) { localStorage.removeItem(k); });
+            keys.forEach(function (k) { appStorage.removeItem(k); });
             clearAuthSession();
             window.location.href = 'login.html';
         });

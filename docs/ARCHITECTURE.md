@@ -111,6 +111,7 @@ Logout → syncToServer() → clear localStorage → redirect login
 | POST   | `/api/data`               | ✅   | Save all data                                  |
 | POST   | `/api/data/:feature`      | ✅   | Save one feature                               |
 | DELETE | `/api/data/:feature/:key` | ✅   | Delete one key                                 |
+| POST   | `/api/demo/exchange`      | ❌   | Activate non-persistent Demo Mode              |
 | GET    | `/auth/google`            | ❌   | Start Google OAuth flow                        |
 | GET    | `/auth/google/callback`   | ❌   | Google OAuth callback handler                  |
 
@@ -195,6 +196,7 @@ global.css (design tokens, reset, typography, layout)
 - Progress-by-Role labels in Analytics tab use dynamic counts from user data (no longer hardcoded).
 - Study weekly reset uses localStorage timestamp; Journal entries persist.
 - Developer keys are defined in `.env.local` — update requires server restart.
+- `DEMO_KEY` defaults to the public manual-login key `TRY DEM` and is never stored as a user credential.
 
 ## Security Controls
 
@@ -204,3 +206,12 @@ global.css (design tokens, reset, typography, layout)
 - Data synchronization accepts only the documented feature/key allowlist and rejects oversized individual values.
 - User-authored Markdown and rich text are sanitized before HTML rendering; image/data URLs are restricted.
 - Same-origin deployment is assumed; permissive CORS is not enabled. Security response headers are set by the Express server.
+
+## Demo Mode
+
+The public manual-login key `TRY DEM` activates a non-persistent demo flow. The
+server issues a short-lived one-time handoff only; it does not create rows in
+`app_users`, `app_sessions`, or `app_data`. The dashboard uses an in-memory
+storage adapter instead of localStorage, skips cloud synchronization, and uses
+an in-memory image store instead of IndexedDB. Reloading the page or closing the
+tab therefore discards all demo data.

@@ -32,6 +32,16 @@ cd .. && node server/server.js
 # Login with a developer key (e.g. "FHG DIA")
 ```
 
+## Demo Mode
+
+To try the platform without creating an account, use the manual login form:
+
+- Username: any value
+- Developer Key: `TRY DEM`
+
+Demo Mode does not create a database account or session. Changes are kept only
+in browser memory and disappear when the page is reloaded or the tab is closed.
+
 ## Tech Stack
 
 - **Frontend:** Vanilla HTML, CSS, JavaScript (no frameworks)

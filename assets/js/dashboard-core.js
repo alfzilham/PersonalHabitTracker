@@ -9,6 +9,26 @@
     1. CONSTANTS
    ========================================================================== */
 
+var APP_MODE = "cloud";
+var demoStore = Object.create(null);
+var nativeLocalStorage = window.localStorage;
+var localStorage = {
+  getItem: function (key) { return APP_MODE === "demo" ? Object.prototype.hasOwnProperty.call(demoStore, key) ? demoStore[key] : null : nativeLocalStorage.getItem(key); },
+  setItem: function (key, value) { if (APP_MODE === "demo") demoStore[key] = String(value); else nativeLocalStorage.setItem(key, value); },
+  removeItem: function (key) { if (APP_MODE === "demo") delete demoStore[key]; else nativeLocalStorage.removeItem(key); },
+  clear: function () { if (APP_MODE === "demo") demoStore = Object.create(null); else nativeLocalStorage.clear(); }
+};
+var appStorage = localStorage;
+window.APP_MODE = APP_MODE;
+
+function activateDemoMode() {
+  APP_MODE = "demo";
+  window.APP_MODE = APP_MODE;
+  demoStore = Object.create(null);
+  appStorage.setItem(SETTINGS_KEY, JSON.stringify({ name: "Demo User", email: "", role: "Demo Mode", theme: "light", lightTheme: "cream", notifTodo: true, language: "en" }));
+  history.replaceState({}, document.title, window.location.pathname);
+}
+
 /* Courses */
 const STORAGE_KEY = "course_completion";
 const COURSE_EDIT_KEY = "course_edits";
@@ -68,7 +88,7 @@ let todoFilterCategory = "";
 let todoFilterPriority = "";
 let todoCompletedExpanded = false;
 let todoBannerDismissedToday =
-  sessionStorage.getItem(TODO_BANNER_DISMISS_KEY) === "" + getTodayDateStr();
+  APP_MODE === "demo" ? false : sessionStorage.getItem(TODO_BANNER_DISMISS_KEY) === "" + getTodayDateStr();
 
 /* Settings */
 let settingsSaveTimer = null;
@@ -544,7 +564,7 @@ function getStudyKey(mk) {
    ========================================================================== */
 
 function navigateToCourse(key, slug) {
-  window.location.href = "pages/course.html?id=" + key;
+  window.location.href = "pages/course.html?id=" + encodeURIComponent(key) + (APP_MODE === "demo" ? "&demo=1" : "");
 }
 
 /* ==========================================================================
@@ -720,6 +740,7 @@ function clearAuthSession() {
 }
 
 async function apiFetch(path, options) {
+  if (APP_MODE === "demo") return null;
   var token = localStorage.getItem("session_token");
   try {
     var res = await fetch(
@@ -748,6 +769,7 @@ async function apiFetch(path, options) {
 }
 
 async function syncToServer() {
+  if (APP_MODE === "demo") return;
   var token = localStorage.getItem("session_token");
   if (!token) return;
   var data = {
@@ -782,6 +804,7 @@ async function syncToServer() {
 }
 
 async function loadFromServer() {
+  if (APP_MODE === "demo") return false;
   var token = localStorage.getItem("session_token");
   if (!token) return false;
   try {
@@ -1472,6 +1495,24 @@ function showAlert(message) {
   document.getElementById("confirm-modal").classList.add("is-open");
 }
 
+async function initializeDemoFromUrl() {
+  if (APP_MODE === "demo") return true;
+  var params = new URLSearchParams(window.location.search);
+  var demoCode = params.get("demo_code");
+  if (!demoCode && params.get("demo") !== "1") return false;
+  if (!demoCode) { activateDemoMode(); return true; }
+  try {
+    var res = await fetch("/api/demo/exchange", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ demoCode: demoCode }) });
+    var data = await res.json();
+    if (!res.ok || data.mode !== "demo") throw new Error("Invalid demo code");
+    activateDemoMode();
+    return true;
+  } catch (e) {
+    window.location.replace("/login");
+    return false;
+  }
+}
+
 /* ==========================================================================
     12. INIT — Entry point, wires all event listeners
    ========================================================================== */
@@ -1482,6 +1523,8 @@ function init() {
   buildFilterDropdowns();
   reinitLucide();
   showSkeletonRows(20);
+  var demoBanner = document.getElementById("demo-mode-banner");
+  if (demoBanner && APP_MODE === "demo") demoBanner.classList.remove("hidden");
 
   /* Bottom nav & sheet listeners */
   var moreBtn = document.getElementById("bottom-nav-more");
@@ -2330,6 +2373,8 @@ function init() {
     12. DOM READY — Boot
    ========================================================================== */
 
+if (new URLSearchParams(window.location.search).get("demo") === "1") activateDemoMode();
+
 document.addEventListener("DOMContentLoaded", function () {
   if (typeof COURSES === "undefined") {
     console.error(
@@ -2339,5 +2384,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   /* Cegah init() jalan di halaman onboarding yang tidak perlu dashboard penuh */
   if (window.location.pathname.indexOf("onboarding") !== -1) return;
-  init();
+  initializeDemoFromUrl().then(function (isDemo) {
+    if (!isDemo && !nativeLocalStorage.getItem("session_token")) {
+      window.location.replace("/login");
+      return;
+    }
+    init();
+    if (isDemo) setTimeout(function () {
+      showAlert("Anda sedang dalam Mode Demo. Semua perubahan hanya bersifat sementara dan tidak akan disimpan. Hubungi developer untuk mendapatkan Developer Key Asli.");
+    }, 350);
+  });
 });

@@ -176,6 +176,11 @@
                 return;
             }
 
+            if (data.mode === 'demo' && data.demoCode) {
+                window.location.replace('/?demo_code=' + encodeURIComponent(data.demoCode));
+                return;
+            }
+
             localStorage.setItem('session_token', data.token);
             localStorage.setItem('session_user', data.username);
 

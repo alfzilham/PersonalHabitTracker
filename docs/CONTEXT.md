@@ -103,6 +103,13 @@ A single personal dashboard as a productivity hub with 9 tabs:
 - Developer key disimpan sebagai hash scrypt dan API data menerapkan allowlist feature/key.
 - Markdown/rich text disanitasi sebelum dimasukkan ke DOM.
 
+## Demo Mode
+
+- Public demo key: `TRY DEM` melalui manual login form.
+- Demo users tidak membuat akun, session, atau data di database.
+- Seluruh data demo hanya berada di memory browser dan hilang saat reload/tab ditutup.
+- Demo mode tidak boleh memanggil cloud sync atau menggunakan IndexedDB untuk data demo.
+
 ## Profile Fields
 
 - **Name:** Default from session username, editable in Settings

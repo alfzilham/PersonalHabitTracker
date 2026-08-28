@@ -19,7 +19,7 @@ var notesSearchQuery = "";
 
 function loadNotes() {
   try {
-    return JSON.parse(localStorage.getItem(NOTES_STORAGE_KEY)) || [];
+    return JSON.parse(appStorage.getItem(NOTES_STORAGE_KEY)) || [];
   } catch (e) {
     return [];
   }
@@ -27,7 +27,7 @@ function loadNotes() {
 
 function saveNotes(list) {
   try {
-    localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(list));
+    appStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(list));
   } catch (e) {}
 }
 

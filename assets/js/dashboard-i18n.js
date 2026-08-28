@@ -746,11 +746,11 @@ var DASHBOARD_LANG = (function () {
 
 
     function getSettings() {
-        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
+        try { return JSON.parse(appStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; }
     }
 
     function saveSettings(data) {
-        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { }
+        try { appStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { }
     }
 
 
@@ -759,7 +759,7 @@ var DASHBOARD_LANG = (function () {
 
         /* Save to settings_profile — hanya jika sudah ada; jangan buat objek minimal
            yang bisa menghalangi loadFromServer mengisi profil penuh (name/email/avatar). */
-        if (localStorage.getItem(STORAGE_KEY) !== null) {
+        if (appStorage.getItem(STORAGE_KEY) !== null) {
             var s = getSettings();
             s.language = lang;
             saveSettings(s);

@@ -4875,3 +4875,14 @@ body.pb-view-mode #rich-editor-wrap {
         min-height: 200px;
     }
 }
+/* Demo Mode banner */
+.demo-mode-banner {
+    margin: var(--space-3) var(--space-6) 0;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-blue);
+    border-radius: var(--radius-md);
+    background: var(--color-blue-bg);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    text-align: center;
+}

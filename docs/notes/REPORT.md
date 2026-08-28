@@ -301,3 +301,5 @@ The project has a sound basic server-side ownership pattern and parameterized da
 ## Remediation Update
 
 The following source-level remediation changes were applied after the audit: sanitized Markdown/rich text and safer dynamic attributes/URLs; OAuth state cookie plus one-time server-side handoff; server-side seven-day session expiry and cleanup; scrypt hashing with legacy-key migration; in-memory login throttling; API feature/key allowlisting and value limits; security response headers; removal of permissive CORS; and safer client-side image URL handling. Runtime OAuth, database migration, deployment headers, and production secret rotation still require environment-specific verification.
+
+Demo Mode was subsequently added with the public manual-login key `TRY DEM`. It uses a one-time handoff without creating an application user/session, keeps structured data in memory, bypasses cloud sync, and keeps journal images in memory. Reloading or closing the tab discards demo state.

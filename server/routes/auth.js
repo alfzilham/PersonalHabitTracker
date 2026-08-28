@@ -25,6 +25,7 @@ const DEV_KEYS = (process.env.DEV_KEYS || '')
   .split(',')
   .map(k => k.trim())
   .filter(Boolean);
+const DEMO_KEY = (process.env.DEMO_KEY || 'TRY DEM').toUpperCase().trim();
 
 console.log('[auth] Loaded ' + DEV_KEYS.length + ' developer keys');
 
@@ -41,6 +42,10 @@ router.post('/login', async (req, res) => {
   }
 
   const normalizedKey = developerKey.toUpperCase().trim();
+
+  if (normalizedKey === DEMO_KEY) {
+    return res.json({ mode: 'demo', demoCode: oauthState.create({ type: 'demo' }), username: 'Demo User' });
+  }
 
   const keyIsValid = DEV_KEYS.includes(normalizedKey);
   if (!keyIsValid) {
@@ -105,6 +110,12 @@ router.post('/oauth/exchange', (req, res) => {
     return res.status(400).json({ error: 'OAuth exchange tidak valid atau sudah kedaluwarsa.' });
   }
   res.json({ token: handoff.token });
+});
+
+router.post('/demo/exchange', (req, res) => {
+  const demo = oauthState.consume(req.body && req.body.demoCode);
+  if (!demo || demo.type !== 'demo') return res.status(400).json({ error: 'Demo session tidak valid atau sudah kedaluwarsa.' });
+  res.json({ mode: 'demo', username: 'Demo User' });
 });
 
 /* POST /api/logout */

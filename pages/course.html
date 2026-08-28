@@ -155,6 +155,7 @@
         (function () {
             var params = new URLSearchParams(window.location.search);
             var courseId = params.get('id');
+            var courseStorage = (window.APP_MODE === 'demo' && typeof appStorage !== 'undefined') ? appStorage : localStorage;
             var saveTimer = null;
             var statusEl = document.getElementById('editor-status');
             var mermaidInsertIndex = null;
@@ -163,11 +164,11 @@
             var viewMode = false;
             var VIEW_KEY = 'course_notes_view';
             var pbZoomMin = 0.8, pbZoomMax = 2, pbZoomStep = 0.1;
-            var pbZoom = parseFloat(localStorage.getItem('course_view_zoom')) || 1;
+            var pbZoom = parseFloat(courseStorage.getItem('course_view_zoom')) || 1;
             if (isNaN(pbZoom) || pbZoom < pbZoomMin || pbZoom > pbZoomMax) pbZoom = 1;
             function setPbZoom(v) {
                 pbZoom = Math.min(pbZoomMax, Math.max(pbZoomMin, v));
-                try { localStorage.setItem('course_view_zoom', '' + pbZoom); } catch (e) {}
+                try { courseStorage.setItem('course_view_zoom', '' + pbZoom); } catch (e) {}
                 document.documentElement.style.setProperty('--pb-zoom', '' + pbZoom);
                 var lbl = document.getElementById('zoom-label');
                 if (lbl) lbl.textContent = Math.round(pbZoom * 100) + '%';
@@ -259,7 +260,7 @@
             /* Load existing course info & notes */
             function loadCourseInfo() {
                 try {
-                    var raw = localStorage.getItem('custom_courses');
+                    var raw = courseStorage.getItem('custom_courses');
                     if (raw) {
                         var list = JSON.parse(raw);
                         var course = list.find(function (c) { return c.id === courseId; });
@@ -316,9 +317,9 @@
 
             /* ======== VIEW MODE — tampilan preview setelah Simpan (persisten per course) ======== */
             function loadCourseViewState() {
-                try { return JSON.parse(localStorage.getItem(VIEW_KEY)) || {}; } catch (e) { return {}; }
+                try { return JSON.parse(courseStorage.getItem(VIEW_KEY)) || {}; } catch (e) { return {}; }
             }
-            function saveCourseViewState(s) { localStorage.setItem(VIEW_KEY, JSON.stringify(s)); }
+            function saveCourseViewState(s) { courseStorage.setItem(VIEW_KEY, JSON.stringify(s)); }
             function setCourseViewed(id, val) {
                 var s = loadCourseViewState();
                 if (val) s[id] = true; else delete s[id];
