@@ -557,6 +557,35 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function sanitizeHtml(html) {
+  var doc = new DOMParser().parseFromString(String(html || ''), 'text/html');
+  doc.querySelectorAll('script,style,iframe,object,embed,form,base,meta,link').forEach(function (el) { el.remove(); });
+  doc.querySelectorAll('*').forEach(function (el) {
+    Array.from(el.attributes).forEach(function (attr) {
+      var name = attr.name.toLowerCase();
+      var value = attr.value.trim().toLowerCase();
+      if (name.indexOf('on') === 0 || name === 'style' || name === 'srcdoc' || name === 'formaction') el.removeAttribute(attr.name);
+      if ((name === 'href' || name === 'src' || name === 'cite') && /^(javascript|vbscript|data):/.test(value)) {
+        if (name === 'src' && /^data:image\/(png|jpe?g|webp|gif);base64,/.test(value)) return;
+        el.removeAttribute(attr.name);
+      }
+    });
+  });
+  return doc.body.innerHTML;
+}
+
+function safeImageDataUrl(value) {
+  var url = String(value || '');
+  return /^data:image\/(png|jpe?g|webp|gif);base64,[a-z0-9+/=]+$/i.test(url) ? url : '';
+}
+
+function safeHttpUrl(value) {
+  try {
+    var url = new URL(String(value || ''), window.location.origin);
+    return (url.protocol === 'http:' || url.protocol === 'https:') ? url.href : '';
+  } catch (e) { return ''; }
+}
+
 function reinitLucide() {
   if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
 }

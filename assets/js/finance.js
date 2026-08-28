@@ -87,7 +87,7 @@ function renderFinanceWeek(weekNum) {
     if (tbody) {
         var sortedRecords = weekRecords.slice().sort(function (a, b) { return b.date.localeCompare(a.date) || b.id.localeCompare(a.id); });
         tbody.innerHTML = sortedRecords.map(function (r) {
-            return '<tr data-finance-id="' + r.id + '"><td><span class="text-sm text-muted">' + r.date + '</span></td><td><span class="text-sm font-medium text-primary">' + formatCurrency(r.amount, r.currency || 'IDR') + '</span></td><td><span class="text-sm text-muted">' + (r.category || '\u2014') + '</span></td><td><span class="text-sm text-muted">' + (r.description || '') + '</span></td><td><button class="btn btn-ghost btn-sm finance-del" data-finance-id="' + r.id + '" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;color:var(--color-text-muted);"></i></button></td></tr>';
+            return '<tr data-finance-id="' + escapeHtml(r.id) + '"><td><span class="text-sm text-muted">' + escapeHtml(r.date) + '</span></td><td><span class="text-sm font-medium text-primary">' + escapeHtml(formatCurrency(r.amount, r.currency || 'IDR')) + '</span></td><td><span class="text-sm text-muted">' + escapeHtml(r.category || '\u2014') + '</span></td><td><span class="text-sm text-muted">' + escapeHtml(r.description || '') + '</span></td><td><button class="btn btn-ghost btn-sm finance-del" data-finance-id="' + escapeHtml(r.id) + '" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;color:var(--color-text-muted);"></i></button></td></tr>';
         }).join('');
         reinitLucide();
         tbody.querySelectorAll('.finance-del').forEach(function (btn) {

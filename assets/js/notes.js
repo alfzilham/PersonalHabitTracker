@@ -45,7 +45,7 @@ function scheduleNotesSync() {
 
 function renderNoteMarkdown(md) {
   if (typeof marked !== "undefined")
-    return marked.parse(md || "", { gfm: true, breaks: true });
+    return sanitizeHtml(marked.parse(md || "", { gfm: true, breaks: true }));
   return '<div style="white-space:pre-wrap;">' + escapeHtml(md) + "</div>";
 }
 

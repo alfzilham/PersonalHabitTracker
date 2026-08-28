@@ -32,17 +32,17 @@ function renderStudyTable() {
         if (edits[key]) mk = Object.assign({}, mk, edits[key]);
         var checked = !!completion[key];
         if (checked) done++;
-        return '<tr data-study-key="' + key + '">' +
+        return '<tr data-study-key="' + escapeHtml(key) + '">' +
             '<td style="width:32px;"><label class="checkbox-wrapper" title="Tandai selesai">' +
-            '<input type="checkbox" data-study-key="' + key + '" ' + (checked ? 'checked' : '') + '>' +
+            '<input type="checkbox" data-study-key="' + escapeHtml(key) + '" ' + (checked ? 'checked' : '') + '>' +
             '<span class="checkbox-custom"><i data-lucide="check"></i></span></label></td>' +
-            '<td><span class="text-sm text-muted">' + mk.kode + '</span></td>' +
-            '<td class="col-name">' + mk.nama + '</td>' +
-            '<td class="col-center"><span class="text-sm text-muted">' + mk.hari + '</span></td>' +
-            '<td class="col-center"><span class="text-sm text-muted">' + mk.jam + '</span></td>' +
-            '<td class="col-center"><span class="text-sm text-muted">' + (mk.kelas || '') + '</span></td>' +
-            '<td class="col-center"><span class="text-sm text-muted">' + mk.ruang + '</span></td>' +
-            '<td><span class="badge badge--' + (mk.paket === 'MKU' ? 'optional' : 'required') + '" style="font-size:var(--text-xs);">' + mk.paket + '</span></td>' +
+            '<td><span class="text-sm text-muted">' + escapeHtml(mk.kode) + '</span></td>' +
+            '<td class="col-name">' + escapeHtml(mk.nama) + '</td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + escapeHtml(mk.hari) + '</span></td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + escapeHtml(mk.jam) + '</span></td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + escapeHtml(mk.kelas || '') + '</span></td>' +
+            '<td class="col-center"><span class="text-sm text-muted">' + escapeHtml(mk.ruang) + '</span></td>' +
+            '<td><span class="badge badge--' + (mk.paket === 'MKU' ? 'optional' : 'required') + '" style="font-size:var(--text-xs);">' + escapeHtml(mk.paket) + '</span></td>' +
             '<td style="width:32px;"><div class="course-dot-wrap">' +
             '<button class="course-dot-btn" data-course-key="' + key + '" aria-label="Actions"><i data-lucide="settings"></i></button>' +
             '<div class="course-dropdown" data-dropdown-for="' + key + '">' +
@@ -224,7 +224,7 @@ function switchJournalToMd() {
 function switchJournalToRich() {
     ensureJournalQuill();
     var md = document.getElementById('study-entry-ringkasan').value;
-    var html = (typeof marked !== 'undefined') ? marked.parse(md || '') : '<pre>' + escapeHtml(md) + '</pre>';
+    var html = (typeof marked !== 'undefined') ? sanitizeHtml(marked.parse(md || '')) : '<pre>' + escapeHtml(md) + '</pre>';
     journalQuill.clipboard.dangerouslyPasteHTML(html, 'silent');
     setJournalEditorMode('rich');
 }
@@ -232,15 +232,15 @@ function switchJournalToRich() {
 /* Mode-aware rendering untuk lightbox & card journal */
 function journalRingkasanToHtml(entry) {
     var content = entry.ringkasan || '';
-    if (entry.mode === 'rich') return content;
-    return (typeof marked !== 'undefined') ? marked.parse(content) : renderMarkdown(content);
+    if (entry.mode === 'rich') return sanitizeHtml(content);
+    return (typeof marked !== 'undefined') ? sanitizeHtml(marked.parse(content)) : renderMarkdown(content);
 }
 
 function journalCardPreview(entry) {
     var s = entry.ringkasan || '';
     if (entry.mode === 'rich') {
         var d = document.createElement('div');
-        d.innerHTML = s;
+        d.innerHTML = sanitizeHtml(s);
         return d.textContent || '';
     }
     return stripMarkdown(s);
@@ -411,7 +411,7 @@ function openJournalEditModal(entry) {
         document.getElementById('study-entry-ringkasan').value = entry.ringkasan || '';
         setJournalEditorMode('md');
     } else {
-        if (journalQuill) journalQuill.root.innerHTML = entry.ringkasan || '';
+        if (journalQuill) journalQuill.root.innerHTML = sanitizeHtml(entry.ringkasan || '');
         setJournalEditorMode('rich');
     }
     document.getElementById('study-input-image').value = '';

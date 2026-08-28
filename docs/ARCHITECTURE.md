@@ -195,3 +195,12 @@ global.css (design tokens, reset, typography, layout)
 - Progress-by-Role labels in Analytics tab use dynamic counts from user data (no longer hardcoded).
 - Study weekly reset uses localStorage timestamp; Journal entries persist.
 - Developer keys are defined in `.env.local` — update requires server restart.
+
+## Security Controls
+
+- OAuth uses a short-lived, single-use server-side state/handoff and does not place bearer session tokens in URLs.
+- Session tokens expire after seven days and expired records are purged during startup.
+- Developer keys are stored as scrypt hashes; legacy plaintext records are migrated after successful verification.
+- Data synchronization accepts only the documented feature/key allowlist and rejects oversized individual values.
+- User-authored Markdown and rich text are sanitized before HTML rendering; image/data URLs are restricted.
+- Same-origin deployment is assumed; permissive CORS is not enabled. Security response headers are set by the Express server.

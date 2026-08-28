@@ -19,11 +19,8 @@
 
     /* Cek parameter URL */
     var params = new URLSearchParams(window.location.search);
-    var tokenParam = params.get('token');
+    var oauthCode = params.get('oauth_code');
     var onboarding = params.get('onboarding');
-    var googleId = params.get('googleId');
-    var googleEmail = params.get('email');
-    var googleAvatar = params.get('avatar');
     var errorParam = params.get('error');
 
     /* Jika sudah login, redirect */
@@ -32,11 +29,23 @@
         return;
     }
 
-    /* Jika ada token dari Google callback — simpan & redirect */
-    if (tokenParam) {
-        localStorage.setItem('session_token', tokenParam);
-        localStorage.setItem('session_user', 'user');
-        window.location.href = 'index.html';
+    /* Mode onboarding Google — teruskan one-time code tanpa identitas di URL. */
+    if (onboarding === 'google' && oauthCode) {
+        window.location.replace('onboarding?oauth_code=' + encodeURIComponent(oauthCode));
+        return;
+    }
+
+    /* Tukarkan one-time OAuth code; bearer token tidak pernah disimpan di URL. */
+    if (oauthCode) {
+        fetch('/api/oauth/exchange', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oauthCode: oauthCode }) })
+            .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+            .then(function (result) {
+                if (!result.ok || !result.data.token) { showGoogleError('Login Google gagal atau link sudah kedaluwarsa.'); return; }
+                localStorage.setItem('session_token', result.data.token);
+                localStorage.setItem('session_user', 'user');
+                window.location.replace('index.html');
+            })
+            .catch(function () { showGoogleError('Tidak dapat terhubung ke server.'); });
         return;
     }
 
@@ -44,15 +53,6 @@
     if (errorParam === 'google_auth_failed') {
         var errorMsg = params.get('msg') || 'Login Google gagal. Silakan coba lagi.';
         showGoogleError(errorMsg);
-    }
-
-    /* Mode onboarding Google — redirect ke halaman khusus */
-    if (onboarding === 'google' && googleId) {
-        var onboardingUrl = 'onboarding?googleId=' + encodeURIComponent(googleId);
-        if (googleEmail) onboardingUrl += '&email=' + encodeURIComponent(googleEmail);
-        if (googleAvatar) onboardingUrl += '&avatar=' + encodeURIComponent(googleAvatar);
-        window.location.href = onboardingUrl;
-        return;
     }
 
     function showError(msg) {

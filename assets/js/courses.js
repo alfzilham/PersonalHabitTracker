@@ -17,21 +17,21 @@ function buildCheckbox(key, checked) {
 function buildTableRow(course, index) {
     var key = getCourseKey(course);
     var completedClass = course.completed ? 'is-completed' : '';
-    var companyHtml = course.url
-        ? '<a class="text-sm text-muted" href="' + course.url + '" target="_blank" rel="noopener" style="text-decoration:underline;text-underline-offset:2px;">' + course.company + '</a>'
-        : '<span class="text-sm text-muted">' + (course.company || '\u2014') + '</span>';
-    return '<tr class="' + completedClass + '" data-course-key="' + key + '" data-slug="' + (course.slug || '') + '" role="row" tabindex="0">' +
+    var companyHtml = safeHttpUrl(course.url)
+        ? '<a class="text-sm text-muted" href="' + escapeHtml(safeHttpUrl(course.url)) + '" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-underline-offset:2px;">' + escapeHtml(course.company) + '</a>'
+        : '<span class="text-sm text-muted">' + escapeHtml(course.company || '\u2014') + '</span>';
+    return '<tr class="' + escapeHtml(completedClass) + '" data-course-key="' + escapeHtml(key) + '" data-slug="' + escapeHtml(course.slug || '') + '" role="row" tabindex="0">' +
         '<td class="col-num">' + index + '</td>' +
-        '<td class="col-name">' + course.title + '</td>' +
-        '<td class="col-desc">' + (course.description || '') + '</td>' +
-        '<td><span class="text-sm text-muted">' + (course.subCategory || '\u2014') + '</span></td>' +
+        '<td class="col-name">' + escapeHtml(course.title) + '</td>' +
+        '<td class="col-desc">' + escapeHtml(course.description || '') + '</td>' +
+        '<td><span class="text-sm text-muted">' + escapeHtml(course.subCategory || '\u2014') + '</span></td>' +
         '<td>' + companyHtml + '</td>' +
         '<td style="width:32px;"><div class="course-dot-wrap">' +
-        '<button class="course-dot-btn" data-course-key="' + key + '" aria-label="Actions"><i data-lucide="settings"></i></button>' +
-        '<div class="course-dropdown" data-dropdown-for="' + key + '">' +
-        '<button class="course-dropdown__item" data-action="edit" data-key="' + key + '"><i data-lucide="pencil"></i> Edit</button>' +
-        '<button class="course-dropdown__item" data-action="archive" data-key="' + key + '"><i data-lucide="archive"></i> Archive</button>' +
-        '<button class="course-dropdown__item course-dropdown__item--danger" data-action="delete" data-key="' + key + '"><i data-lucide="trash-2"></i> Delete</button>' +
+        '<button class="course-dot-btn" data-course-key="' + escapeHtml(key) + '" aria-label="Actions"><i data-lucide="settings"></i></button>' +
+        '<div class="course-dropdown" data-dropdown-for="' + escapeHtml(key) + '">' +
+        '<button class="course-dropdown__item" data-action="edit" data-key="' + escapeHtml(key) + '"><i data-lucide="pencil"></i> Edit</button>' +
+        '<button class="course-dropdown__item" data-action="archive" data-key="' + escapeHtml(key) + '"><i data-lucide="archive"></i> Archive</button>' +
+        '<button class="course-dropdown__item course-dropdown__item--danger" data-action="delete" data-key="' + escapeHtml(key) + '"><i data-lucide="trash-2"></i> Delete</button>' +
         '</div></div></td>' +
         '<td class="col-check">' + buildCheckbox(key, course.completed) + '</td></tr>';
 }

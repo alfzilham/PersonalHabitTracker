@@ -108,6 +108,13 @@ Personal-Habit-Tracker/
 - Nothing is shared with third parties
 - Data can be exported via Settings → Export
 
+## Security
+
+- OAuth uses short-lived, single-use server-side handoffs and state validation.
+- Sessions expire server-side after seven days.
+- Developer keys are stored as scrypt hashes, and data API buckets are allowlisted.
+- User-authored Markdown/rich text is sanitized before rendering.
+
 ---
 
 Develop by Alfiz Ilham © 2026 **Alfiz Ilham**. All rights reserved.

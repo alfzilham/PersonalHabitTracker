@@ -6,9 +6,7 @@
 (function () {
 
     var params = new URLSearchParams(window.location.search);
-    var googleId = params.get('googleId');
-    var email = params.get('email');
-    var avatar = params.get('avatar');
+    var oauthCode = params.get('oauth_code');
     var currentStep = 1;
     var totalSteps = 3;
 
@@ -19,16 +17,16 @@
         'Writer', 'Educator', 'Consultant', 'Researcher', 'Software Engineer', 'Other',
     ];
 
-    /* Redirect if no googleId */
-    if (!googleId) {
+    /* Redirect if no one-time OAuth code */
+    if (!oauthCode) {
         window.location.href = 'login.html';
         return;
     }
 
     /* Isi hidden fields */
-    document.getElementById('onb-google-id').value = googleId;
-    document.getElementById('onb-email').value = email || '';
-    document.getElementById('onb-avatar').value = avatar || '';
+    document.getElementById('onb-google-id').value = '';
+    document.getElementById('onb-email').value = '';
+    document.getElementById('onb-avatar').value = '';
 
     /* Init role dropdown */
     createViewDropdown('onb-role-container', ROLE_OPTIONS, 'Software Engineer', null, true);
@@ -126,9 +124,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    googleId: gId,
-                    email: emailVal,
-                    avatarUrl: avatarVal,
+                    oauthCode: oauthCode,
                     username: username,
                     role: role,
                     developerKey: formattedKey,

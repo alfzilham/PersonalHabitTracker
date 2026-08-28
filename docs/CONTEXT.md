@@ -94,7 +94,14 @@ A single personal dashboard as a productivity hub with 9 tabs:
 
 - **File sensitif diblokir** di `server/server.js` (`/docs`, `/server`, `/logs`, `/graphify-out`, `/README.md`, `/package.json`, dotfile apa pun) → 404.
 - **Clean-URL:** `index.html` / `login.html` / `onboarding.html` di-redirect (query string **dipertahankan**) ke `/`, `/login`, `/onboarding`. URL di address bar tidak menampilkan `.html`.
-- **Login persisten:** `session_token` disimpan di `localStorage` (bukan sessionStorage), jadi login bertahan saat tab ditutup.
+- **Login persisten:** `session_token` disimpan di `localStorage` (bukan sessionStorage), jadi login bertahan saat tab ditutup. Token server-side kedaluwarsa setelah tujuh hari.
+
+## Security Notes
+
+- OAuth callback memakai `state` one-time yang diikat melalui HttpOnly cookie dan server-side handoff.
+- Bearer token tidak lagi dikirim melalui query string; `/api/oauth/exchange` hanya menerima one-time code.
+- Developer key disimpan sebagai hash scrypt dan API data menerapkan allowlist feature/key.
+- Markdown/rich text disanitasi sebelum dimasukkan ke DOM.
 
 ## Profile Fields
 

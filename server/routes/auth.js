@@ -2,7 +2,24 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database/db');
 const { requireAuth } = require('../middleware/auth');
+const oauthState = require('../oauth-state');
 const router = express.Router();
+const attempts = new Map();
+const WINDOW_MS = 15 * 60 * 1000;
+const MAX_ATTEMPTS = 10;
+
+function clientAllowed(req) {
+  const key = req.ip || 'unknown';
+  const now = Date.now();
+  const item = attempts.get(key);
+  if (!item || item.resetAt <= now) { attempts.set(key, { count: 1, resetAt: now + WINDOW_MS }); return true; }
+  item.count += 1;
+  return item.count <= MAX_ATTEMPTS;
+}
+
+function rejectLogin(res) {
+  return res.status(401).json({ error: 'Username atau Developer Key tidak valid.' });
+}
 
 const DEV_KEYS = (process.env.DEV_KEYS || '')
   .split(',')
@@ -13,6 +30,7 @@ console.log('[auth] Loaded ' + DEV_KEYS.length + ' developer keys');
 
 /* POST /api/login */
 router.post('/login', async (req, res) => {
+  if (!clientAllowed(req)) return res.status(429).json({ error: 'Terlalu banyak percobaan. Coba lagi nanti.' });
   const { username, developerKey } = req.body;
 
   if (!username || !username.trim()) {
@@ -43,11 +61,7 @@ router.post('/login', async (req, res) => {
     return res.json({ token, username: username.trim(), isNewUser: true });
   }
 
-  if (existingUser.developer_key !== normalizedKey) {
-    return res.status(401).json({
-      error: 'Developer Key tidak sesuai dengan data yang tersimpan. Gunakan key yang sama saat pendaftaran.',
-    });
-  }
+  if (!(await db.verifyUserDeveloperKey(existingUser, normalizedKey))) return rejectLogin(res);
 
   const token = uuidv4();
   await db.createSession(existingUser.id, token);
@@ -56,9 +70,11 @@ router.post('/login', async (req, res) => {
 
 /* POST /api/login/google — menyelesaikan onboarding Google */
 router.post('/login/google', async (req, res) => {
-  const { googleId, email, avatarUrl, username, role, developerKey } = req.body;
+  if (!clientAllowed(req)) return res.status(429).json({ error: 'Terlalu banyak percobaan. Coba lagi nanti.' });
+  const { oauthCode, username, role, developerKey } = req.body;
+  const oauth = oauthState.consume(oauthCode);
 
-  if (!googleId) return res.status(400).json({ error: 'Google ID diperlukan.' });
+  if (!oauth || oauth.type !== 'onboarding' || !oauth.googleId) return res.status(400).json({ error: 'OAuth session tidak valid atau sudah kedaluwarsa.' });
   if (!username || !username.trim()) return res.status(400).json({ error: 'Username wajib diisi.' });
   if (!developerKey || !developerKey.trim()) return res.status(400).json({ error: 'Developer Key wajib diisi.' });
 
@@ -70,17 +86,25 @@ router.post('/login/google', async (req, res) => {
   const existingKey = await db.findUserByKey(normalizedKey);
   if (existingKey) return res.status(401).json({ error: 'Developer Key sudah dipakai oleh user lain.' });
 
-  const userId = await db.createGoogleUser(username.trim(), normalizedKey, googleId, email || '', avatarUrl || '');
+  const userId = await db.createGoogleUser(username.trim(), normalizedKey, oauth.googleId, oauth.email || '', oauth.avatarUrl || '');
   const token = uuidv4();
   await db.createSession(userId, token);
 
   /* Simpan data Google ke settings_profile — include role */
   try {
-    var settings = { name: username.trim(), email: email || '', avatar: avatarUrl || '', role: role || '', theme: 'light', notifTodo: true, language: 'en' };
+    var settings = { name: username.trim(), email: oauth.email || '', avatar: oauth.avatarUrl || '', role: role || '', theme: 'light', notifTodo: true, language: 'en' };
     await db.upsertUserData(userId, 'settings', 'settings_profile', JSON.stringify(settings));
   } catch (e) {}
 
   res.json({ token, username: username.trim(), isNewUser: true });
+});
+
+router.post('/oauth/exchange', (req, res) => {
+  const handoff = oauthState.consume(req.body && req.body.oauthCode);
+  if (!handoff || handoff.type !== 'session' || !handoff.token) {
+    return res.status(400).json({ error: 'OAuth exchange tidak valid atau sudah kedaluwarsa.' });
+  }
+  res.json({ token: handoff.token });
 });
 
 /* POST /api/logout */

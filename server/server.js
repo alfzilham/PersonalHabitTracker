@@ -1,7 +1,6 @@
 require('dotenv').config({ path: require('path').join(__dirname, '.env.local') });
 
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
 
 const { initDb } = require('./database/db');
@@ -12,9 +11,18 @@ const oauthRoutes = require('./routes/oauth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1);
 
-app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
 
 /* Blokir akses ke folder & file sensitif — HARUS sebelum static serving */
 const BLOCKED_PATHS = ['/docs', '/server', '/logs', '/graphify-out', '/README.md', '/.gitignore', '/package.json'];
@@ -75,6 +83,8 @@ app.get('*', (req, res) => {
 });
 
 initDb().then(() => {
+  const db = require('./database/db');
+  db.deleteExpiredSessions().catch(() => {});
   app.listen(PORT, () => {
     console.log('[server] Personal Habit Tracker API running on http://localhost:' + PORT);
     console.log('[server] Serving frontend from ' + path.join(__dirname, '..'));
